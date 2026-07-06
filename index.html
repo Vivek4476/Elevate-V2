@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#96172E">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Elevate">
+<title>Elevate — Promotion Dashboard</title>
+<link rel="icon" type="image/png" href="assets/img/favicon.png">
+<link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
+<link rel="manifest" href="site.webmanifest">
+<script src="assets/js/xlsx.full.min.js"></script>
+<link rel="stylesheet" href="assets/css/fonts.css">
+<link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body>
+
+<!-- ============ LOGIN ============ -->
+<div class="orbwrap"><div class="orb o1"></div><div class="orb o2"></div></div>
+<div id="landing">
+  <div class="auth">
+    <img class="ablogo stag" style="height:54px;margin:0 auto" src="assets/img/absli-logo.png" alt="Aditya Birla Capital Life Insurance">
+    <h2 class="stag d1">Elevate <b>·</b> Promotion Dashboard</h2>
+    <p class="stag d1">Aditya Birla Sun Life Insurance · Direct Marketing</p>
+
+    <!-- step 1: employee code -->
+    <div class="card authcard stag d2" id="authStep1">
+      <div class="eyebrow">Sign in</div>
+      <label style="font-size:12px;color:var(--muted);font-weight:700;display:block;margin-bottom:7px">Employee Code (DSE ID)</label>
+      <input class="f2" id="authCode" type="tel" inputmode="numeric" placeholder="e.g. 593994" autocomplete="off">
+      <div class="err" id="authErr"></div>
+      <button class="startbtn" onclick="authSend()">Get OTP →</button>
+      <div style="font-size:11.5px;color:var(--faint);margin-top:10px;text-align:center">A one-time passcode is sent to your registered mobile. No password needed.</div>
+      <div class="demolink"><a onclick="toggleLookup()">Browse demo profiles</a></div>
+      <div id="lookupWrap" class="hide" style="margin-top:12px">
+        <div class="tyw">
+          <input class="f2" id="lookupInput" placeholder="Search by name or employee code…" autocomplete="off" oninput="tySearch(this.value)">
+          <div class="tylist hide" id="tyList"></div>
+        </div>
+        <div style="font-size:11px;color:var(--faint);margin-top:7px">Type at least 2 characters — opens the profile directly (demo shortcut, skips OTP).</div>
+      </div>
+    </div>
+
+    <!-- step 2: OTP -->
+    <div class="card authcard hide" id="authStep2">
+      <div class="eyebrow">Verify it's you</div>
+      <div style="font-size:13.5px;color:var(--ink2);margin-bottom:12px" id="otpToLine">We sent a 6-digit code to your registered mobile.</div>
+      <input class="f2" id="authOtp" type="tel" inputmode="numeric" maxlength="6" placeholder="______" style="letter-spacing:.55em;text-align:center;font-size:22px;font-weight:800" autocomplete="off">
+      <div class="err" id="otpErr"></div>
+      <button class="startbtn" onclick="authVerify()">Verify &amp; continue →</button>
+      <div style="display:flex;justify-content:space-between;margin-top:10px;font-size:12.5px">
+        <a style="color:var(--muted);font-weight:700;cursor:pointer" onclick="authBack()">← Change code</a>
+        <a id="authResend" style="color:var(--red);font-weight:800;cursor:pointer" onclick="authResend()">Resend OTP</a>
+      </div>
+      <div class="demo" id="otpDemoNote" style="margin-top:14px"></div>
+    </div>
+
+    <div class="datastat stag d3"><span class="dot" id="dsDot" style="background:var(--warn);animation:pulse 1.4s infinite"></span><span id="dsText">Checking for company dataset…</span></div>
+    <div class="adminlink stag d4"><a onclick="showAdminGate()">⚙ Admin console — upload data</a></div>
+  </div>
+</div>
+
+<!-- ============ ADMIN PIN GATE ============ -->
+<div id="adminGate" class="hide">
+  <div class="auth">
+    <img class="ablogo" style="height:52px;margin:0 auto" src="assets/img/absli-logo.png" alt="Aditya Birla Capital Life Insurance">
+    <h2>Admin access</h2>
+    <p>Enter the admin PIN to open the data console.</p>
+    <div class="card">
+      <input class="f2" id="pinInput" type="password" inputmode="numeric" maxlength="6" placeholder="• • • •" style="letter-spacing:.5em;text-align:center;font-size:22px;font-weight:800">
+      <div style="color:var(--no);font-size:13px;font-weight:700;margin-top:8px;min-height:16px" id="pinErr"></div>
+      <button class="startbtn" onclick="checkPin()">Unlock console →</button>
+      <button class="startbtn" style="background:none;color:var(--muted);box-shadow:none;margin-top:4px" onclick="backToLanding()">← Back</button>
+      <div style="font-size:11.5px;color:var(--faint);margin-top:10px">Demo PIN: <b>7421</b>. This is a soft gate to keep DSEs out of the console — real admin authentication comes with the backend (the PIN is visible in page source, so it is not a security control).</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ ADMIN CONSOLE ============ -->
+<div id="adminView" class="hide">
+  <div class="nav"><div class="nav-in">
+    <div class="l"><img class="ablogo" src="assets/img/absli-logo.png" alt="Aditya Birla Capital Life Insurance"><div><div class="nm">Elevate <b>·</b> Admin Console</div><div class="tag">Data Management</div></div></div>
+    <div class="r"><button class="ahead back" style="margin:0" onclick="backToLanding()">← Exit admin</button></div>
+  </div></div>
+  <div class="apage">
+    <div class="ahead">
+      <div>
+        <h1>Upload the monthly data</h1>
+        <div style="font-size:13px;color:var(--muted);margin-top:4px">Three files, same shape as your Excel sheets. CSV or Excel (.xlsx) — first sheet is read. Templates below.</div>
+      </div>
+    </div>
+
+    <div class="atabs" id="atabs">
+      <button class="on" onclick="adminTab('ov',this)">📊 Overview</button>
+      <button onclick="adminTab('up',this)">📤 Data Uploads</button>
+      <button onclick="adminTab('ru',this)">⚖ Rules &amp; Targets</button>
+      <button onclick="adminTab('vp',this)">✅ Validation &amp; Publish</button>
+      <button onclick="adminTab('au',this)">📜 Audit Logs</button>
+    </div>
+
+    <div class="apanel" id="ap_ov">
+      <div class="card"><div class="eyebrow" style="margin-top:0">Operations overview</div>
+        <div class="ovgrid" id="ovGrid"></div>
+        <div style="display:flex;gap:10px;margin-top:14px;flex-wrap:wrap">
+          <button class="ghostbtn" onclick="dlDataset()">⬇ Download current dataset (JSON)</button>
+          <button class="ghostbtn" onclick="adminTab('up',document.querySelectorAll('#atabs button')[1])">Go to uploads →</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="apanel hide" id="ap_up"><div class="steps">
+      <!-- Employee master -->
+      <div class="up" id="up_master">
+        <div class="uh"><div><div class="ut">1 · Employee Master</div><div class="us">One row per DSE. Columns: <b>DSE_ID, BO_Code, Name, Designation_Full, Desg, Zone, Persistency</b> (number like 96.55, or NA for new joiners).</div></div><span class="req must">Required</span></div>
+        <div class="drop" onclick="pick('master')">Drop file here or <b>browse</b></div>
+        <input type="file" id="f_master" accept=".csv,.xlsx,.xls" class="hide" onchange="fileChosen('master',this)">
+        <div class="stat" id="s_master"></div>
+        <div class="tlink"><a onclick="dlTemplate('master')">⬇ Download template</a></div>
+      </div>
+      <!-- Monthly performance -->
+      <div class="up" id="up_monthly">
+        <div class="uh"><div><div class="ut">2 · Monthly Performance</div><div class="us">One row per DSE per month. Columns: <b>BO_Code, Month, WFYP, NOP</b>. Month as <b>2026-03</b> or <b>Mar'26</b>. Negative WFYP allowed.</div></div><span class="req must">Required</span></div>
+        <div class="drop" onclick="pick('monthly')">Drop file here or <b>browse</b></div>
+        <input type="file" id="f_monthly" accept=".csv,.xlsx,.xls" class="hide" onchange="fileChosen('monthly',this)">
+        <div class="stat" id="s_monthly"></div>
+        <div class="tlink"><a onclick="dlTemplate('monthly')">⬇ Download template</a></div>
+      </div>
+      <!-- Targets -->
+      <div class="up" id="up_targets">
+        <div class="uh"><div><div class="ut">3 · Designation Targets</div><div class="us">One row per grade. Columns: <b>Desg, WFYP_Target, NOP_Target, Persistency_Threshold</b> (e.g. 87). If skipped, the current built-in table is used.</div></div><span class="req opt">Optional</span></div>
+        <div class="drop" onclick="pick('targets')">Drop file here or <b>browse</b></div>
+        <input type="file" id="f_targets" accept=".csv,.xlsx,.xls" class="hide" onchange="fileChosen('targets',this)">
+        <div class="stat" id="s_targets"></div>
+        <div class="tlink"><a onclick="dlTemplate('targets')">⬇ Download template</a></div>
+      </div>
+    </div>
+
+    </div>
+
+    <div class="apanel hide" id="ap_ru">
+      <div class="card"><div class="eyebrow" style="margin-top:0">Rule engine — the four promotion gates</div>
+        <div style="font-size:13px;color:var(--ink2);line-height:1.75;margin-bottom:14px">
+          1 · WFYP achievement ≥ <b>75%</b> of the annual grade target&nbsp;&nbsp; 2 · NOP achievement ≥ <b>50%</b><br>
+          3 · Overall WAS above <b>100%</b> &nbsp;(75% × WFYP + 25% × NOP, each capped at 150%)&nbsp;&nbsp; 4 · Persistency ≥ <b>87%</b> (new joiners exempt)<br>
+          <span style="color:var(--muted);font-size:12px">Computed on a rolling trailing-12-month window ending at the assessment month. Gate rules are fixed in the engine; the grade targets below update via the Designation Targets upload.</span>
+        </div>
+        <div class="eyebrow">Designation targets in force</div>
+        <div class="tblwrap"><table id="rulesTbl"></table></div>
+      </div>
+    </div>
+
+    <div class="apanel hide" id="ap_vp"><div class="problems hide" id="probBox"></div>
+    <div class="prevtbl hide card" id="prevBox"></div>
+
+    <div class="pubbar">
+      <div class="info" id="pubInfo">Upload the Employee Master and Monthly Performance to enable publishing.</div>
+      <input class="f2" id="pubBy" placeholder="Published by (your name)" style="max-width:220px;padding:11px 13px;font-size:13px">
+      <button class="ghostbtn" onclick="resetToDemo()">Reset to demo data</button>
+      <button class="pubbtn" id="pubBtn" disabled onclick="publish()">Publish dataset →</button>
+    </div>
+    <div class="pubdone hide" id="pubDone"></div>
+
+    </div>
+
+    <div class="apanel hide" id="ap_au"><div class="card" style="margin-top:16px">
+      <div class="eyebrow" style="margin-top:0">📜 Upload history</div>
+      <div class="tblwrap"><table id="histLog"><thead><tr><th>When</th><th>By</th><th>DSEs</th><th>Rows</th><th>Data window</th><th>Files</th><th>Warnings</th></tr></thead><tbody></tbody></table></div>
+      <div style="font-size:11.5px;color:var(--faint);margin-top:9px">Every publish is logged here (kept in this browser and embedded in the exported elevate_data.json so it travels with the hosted dataset).</div>
+    </div>
+</div>
+  </div>
+</div>
+
+<!-- ============ DASHBOARD ============ -->
+<div id="appView" class="hide">
+  <div class="nav"><div class="nav-in">
+    <div class="l"><img class="ablogo" src="assets/img/absli-logo.png" alt="Aditya Birla Capital Life Insurance"><div><div class="nm">Elevate <b>·</b> Promotion Dashboard</div><div class="tag">ABSLI Direct Marketing</div></div></div>
+    <div class="r"><span class="mpill" id="topMonth">—</span><div class="av" id="topAv" onclick="toggleMe()">–</div></div>
+  </div></div>
+
+  <div class="page">
+    <!-- onboarding: no results until Calculate -->
+    <div id="onboard" class="onb">
+      <div class="welc stag"><h1>Welcome, <b id="obName">there</b> 👋</h1>
+        <p>Every month is a step on your climb. Log this month's numbers to see exactly where you stand — and the one move that takes you higher.</p></div>
+      <div class="card ecard stag d1">
+        <div class="eyebrow" style="display:flex;justify-content:space-between;align-items:center">
+          <span>This month · <span id="entryMonth" style="color:var(--red)"></span></span>
+          <span style="text-transform:none;letter-spacing:0;font-weight:700">Assessment month:
+            <select id="c_month" onchange="onMonth()" style="border:none;background:none;font-weight:800;color:var(--red);font-size:12px;font-family:inherit;cursor:pointer"></select></span>
+        </div>
+        <div class="entry" style="margin-top:4px">
+          <div class="erow">
+            <div class="ef w2"><label>WFYP Actual (₹)</label><div class="ip"><span class="pre">₹</span><input class="pad" id="c_wfyp" type="tel" inputmode="decimal" placeholder="0" oninput="onInput()"></div></div>
+            <div class="ef"><label>NOP Actual</label><input id="c_nop" type="tel" inputmode="numeric" placeholder="0" oninput="onInput()"></div>
+            <div class="ef"><label>Persistency %</label><input id="c_pers" type="tel" inputmode="decimal" placeholder="—" oninput="onInput()"></div>
+          </div>
+          <div class="note" id="persRec"></div>
+          <div class="note" id="windowNote" style="margin-top:4px"></div>
+        </div>
+        <button class="calcbtn" id="calcBtn" disabled onclick="calculate()">Enter WFYP &amp; NOP to calculate</button>
+      </div>
+    </div>
+
+    <!-- dashboard: revealed only after Calculate -->
+    <div id="dashContent" class="hide">
+      <div class="sumbar">
+        <div class="mi">WFYP<b id="sumW">—</b></div>
+        <div class="mi">NOP<b id="sumN">—</b></div>
+        <div class="mi">Persist.<b id="sumP">—</b></div>
+        <div class="mi">Month<b id="sumM">—</b></div>
+        <div class="sp"></div>
+        <button class="edit" onclick="shareStatus()">↗ Share</button>
+        <button class="edit" onclick="downloadReport()">⬇ Report</button>
+        <button class="edit" onclick="editEntries()">✎ Edit entries</button>
+      </div>
+      <div class="dashgrid">
+        <div id="heroHost"></div>
+        <div><div id="coachHost"></div></div>
+      </div>
+
+    <div class="sechead">The four gates</div>
+    <div id="kpiHost" class="kpis"></div>
+
+    <div class="sechead">Explore &amp; plan</div>
+    <details class="exp" id="expChk">
+      <summary><div><div class="t">✦ Milestones to promotion</div><div class="s" id="chkSum">The four camps on your climb</div></div><span class="ar">▾</span></summary>
+      <div class="body"><div id="chkHost"></div></div>
+    </details>
+
+    <details class="exp" id="expHist">
+      <summary><div><div class="t">📈 Performance history</div><div class="s">Twelve months — interactive trends & month-by-month detail</div></div><span class="ar">▾</span></summary>
+      <div class="body">
+        <div class="seg" id="chartSeg">
+          <button class="on" data-c="cum" onclick="chartTab('cum')">Cumulative %</button>
+          <button data-c="was" onclick="chartTab('was')">WAS climb</button>
+          <button data-c="wfyp" onclick="chartTab('wfyp')">WFYP pace</button>
+          <button data-c="nop" onclick="chartTab('nop')">NOP pace</button>
+        </div>
+        <div class="chart" id="chartBox"><canvas id="cv"></canvas><div class="tip" id="tip"></div></div>
+        <div class="legend" id="chartLegend"></div>
+        <div style="height:16px"></div>
+        <div class="eyebrow">Month-by-month</div>
+        <div class="tblwrap"><table id="jTbl"></table></div>
+      </div>
+    </details>
+
+    <details class="exp">
+      <summary><div><div class="t">🎚️ What-if simulator</div><div class="s">How extra business this month moves your promotion</div></div><span class="ar">▾</span></summary>
+      <div class="body">
+        <div class="slrow"><div class="sh"><span>WFYP this month</span><span class="v" id="wfLW">₹0</span></div><input type="range" id="sl_w" min="0" step="10000" value="0" oninput="whatif()"></div>
+        <div class="slrow"><div class="sh"><span>NOP this month</span><span class="v" id="wfLN">0</span></div><input type="range" id="sl_n" min="0" max="40" step="1" value="0" oninput="whatif()"></div>
+        <div class="slrow" id="wfPersRow"><div class="sh"><span>Persistency</span><span class="v" id="wfLP">87%</span></div><input type="range" id="sl_p" min="60" max="100" step="0.5" value="87" oninput="whatif()"></div>
+        <div class="wfout"><div><div class="eyebrow" style="margin:0">Projected WAS</div><div class="wv" id="wfWas">—</div></div>
+          <div><div class="eyebrow" style="margin:0">Readiness</div><div class="wv" id="wfNear">—</div></div>
+          <div class="chip w" id="wfBadge" style="font-size:11.5px;padding:7px 13px">—</div></div>
+        <button class="startbtn" style="background:none;color:var(--red);box-shadow:none;margin-top:8px" onclick="applyWhatif()">↑ Apply to my entry</button>
+        <div style="font-size:11.5px;color:var(--faint)" id="wfNote"></div>
+      </div>
+    </details>
+
+    <details class="exp">
+      <summary><div><div class="t">📋 Rules & my details</div><div class="s">How promotion is decided · your grade targets</div></div><span class="ar">▾</span></summary>
+      <div class="body">
+        <div class="eyebrow">The four gates</div>
+        <div style="font-size:13.5px;color:var(--ink2);line-height:1.65;margin-bottom:16px">
+          1 · <b>WFYP</b> achievement ≥ 75% &nbsp;&nbsp; 2 · <b>NOP</b> achievement ≥ 50%<br>
+          3 · <b>Overall WAS</b> above 100% &nbsp;&nbsp; 4 · <b>Persistency</b> ≥ 87% (new joiners exempt)<br>
+          <span style="color:var(--muted);font-size:12.5px">WAS = 75% × WFYP% + 25% × NOP%, each capped at 150%, on your rolling trailing-12-month totals.</span>
+        </div>
+        <div class="eyebrow">My details</div>
+        <div id="meHost" style="max-width:520px"></div>
+        <button class="startbtn" style="max-width:240px;background:none;color:var(--no);box-shadow:none;padding:10px" onclick="backToLanding()">← Switch DSE</button>
+      </div>
+    </details>
+    </div><!-- /dashContent -->
+  </div>
+  <div class="foot" id="footNote">Elevate · ABSLI Direct Marketing · Prototype</div>
+</div>
+
+<script src="assets/js/app.js"></script>
+<div id="toast"><span class="ti">✓</span><span id="toastMsg"></span></div>
+<div id="printReport"></div>
+</body>
+</html>
+<!-- test -->
