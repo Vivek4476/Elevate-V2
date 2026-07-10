@@ -136,6 +136,14 @@
         <div class="stat" id="s_targets"></div>
         <div class="tlink"><a onclick="dlTemplate('targets')">⬇ Download template</a></div>
       </div>
+      <!-- Monthly incentive (Earnings) -->
+      <div class="up" id="up_incentive">
+        <div class="uh"><div><div class="ut">4 · Monthly Incentive <span style="font-weight:600;color:var(--muted)">(Earnings)</span></div><div class="us">The DSE incentive sheet, as delivered. Columns: <b>Agent Code, Desgn, WFYP Target, WFYP (Others), WFYP (ULIP+GAP), FYP (ULIP+GAP), Persistency (CM), Persistency (LM), NOP Count, PIFA</b>. Powers the Earnings experience.</div></div><span class="req opt">Optional</span></div>
+        <div class="drop" onclick="pick('incentive')">Drop file here or <b>browse</b></div>
+        <input type="file" id="f_incentive" accept=".csv,.xlsx,.xls" class="hide" onchange="fileChosen('incentive',this)">
+        <div class="stat" id="s_incentive"></div>
+        <div class="tlink"><a onclick="dlIncentive()">⬇ Download elevate_incentive.json</a></div>
+      </div>
     </div>
 
     </div>
@@ -178,7 +186,7 @@
 <div id="appView" class="hide">
   <div class="nav"><div class="nav-in">
     <div class="l"><img class="ablogo" src="assets/img/absli-logo.png" alt="Aditya Birla Capital Life Insurance"><div><div class="nm">Elevate <b>·</b> Promotion Dashboard</div><div class="tag">ABSLI Direct Marketing</div></div></div>
-    <div class="r"><button class="earnbtn" onclick="openEarnings()">₹ Earnings</button><span class="mpill" id="topMonth">—</span><div class="av" id="topAv" onclick="toggleMe()">–</div></div>
+    <div class="r"><button class="earnbtn" onclick="openCareer()">◈ Career</button><button class="earnbtn" onclick="openEarnings()">₹ Earnings</button><span class="mpill" id="topMonth">—</span><div class="av" id="topAv" onclick="toggleMe()">–</div></div>
   </div></div>
 
   <div class="page">
@@ -217,6 +225,7 @@
         <button class="edit" onclick="downloadReport()">⬇ Report</button>
         <button class="edit" onclick="editEntries()">✎ Edit entries</button>
       </div>
+      <div id="bridgeHost"></div>
       <div class="dashgrid">
         <div id="heroHost"></div>
         <div><div id="coachHost"></div></div>
@@ -290,12 +299,22 @@
   <div class="page"><div id="earnHost"></div></div>
 </div>
 
+<!-- ============ CAREER JOURNEY ============ -->
+<div id="careerView" class="hide">
+  <div class="nav"><div class="nav-in">
+    <div class="l"><img class="ablogo" src="assets/img/absli-logo.png" alt="Aditya Birla Capital Life Insurance"><div><div class="nm">Elevate <b>·</b> Career</div><div class="tag">Your climb</div></div></div>
+    <div class="r"><button class="ahead back" style="margin:0" onclick="closeCareer()">← Back</button></div>
+  </div></div>
+  <div class="page"><div id="careerHost"></div></div>
+</div>
+
 <!-- Rules engine (ES module). Exposes the tested SP engine to app.js; on file:// or if it
      fails to load, app.js falls back to its built-in math (identical output — see engine/parity-app-sp.test.js). -->
 <script type="module">
   import { evaluateSalesProgression } from './engine/spEngine.js';
   import { SP_RULES } from './engine/designs/spRules.js';
   import { buildEarningsStatement } from './engine/statement.js';
+  import { buildDashboardRecommendation } from './engine/bridge.js';
   import { parseIncentiveDseRow } from './engine/transform.js';
   import { APR26 } from './engine/designs/apr26.js';
   window.Elevate = {
@@ -303,6 +322,10 @@
     earningsFor(row) {
       const { incentiveInputs } = parseIncentiveDseRow(row);
       return buildEarningsStatement(APR26, incentiveInputs, { month: 'April' });
+    },
+    bridgeFor(row, spInputs) {
+      const { incentiveInputs } = parseIncentiveDseRow(row);
+      return buildDashboardRecommendation({ incentiveDesign: APR26, incentiveInputs, spRules: SP_RULES, spInputs });
     },
   };
 </script>

@@ -249,6 +249,23 @@ function renderAll(first){
   buildJourney(c);
   if($('expHist').open)drawChart(first);
   whatif();
+  renderBridge(c);
+}
+async function renderBridge(c){
+  const host=$('bridgeHost');if(!host)return;
+  const e=state.emp;await loadIncentive();
+  const row=INCENTIVE&&INCENTIVE[e.bo];
+  if(!row||!(window.Elevate&&window.Elevate.bridgeFor)){host.innerHTML='';return;}
+  const spInputs={trailingWfyp:c.sW,trailingNop:c.sN,targetWfyp:c.tgt.wfyp,targetNop:c.tgt.nop,persistency:(e.pers==='NA'?'NA':e.pers),persistencyThreshold:c.tgt.thr};
+  let rec;try{rec=window.Elevate.bridgeFor(Object.assign({},row),spInputs);}catch(err){host.innerHTML='';return;}
+  if(!rec){host.innerHTML='';return;}
+  const dp=Math.round(rec.promotionImpact.deltaProgress*100);
+  const promo=rec.promotionImpact.alreadyEligible?'Already promotion-eligible':(dp>0?`+${dp}% toward promotion`:'No promotion change');
+  host.innerHTML=`<div class="bcard rise"><div class="bglow"></div>
+    <div class="bk">Your one move</div>
+    <div class="bmove">${rec.move.label}</div>
+    <div class="bduo"><div class="bpill"><b>+${inr(rec.incentiveImpact.rupees)}</b><span>this month · earnings</span></div><div class="bpill"><b>${rec.promotionImpact.alreadyEligible?'✓':(dp>0?'+'+dp+'%':'—')}</b><span>${rec.promotionImpact.alreadyEligible?'promotion':'rolling · promotion'}</span></div></div>
+    <button class="bcta" onclick="openEarnings()">Open earnings →</button></div>`;
 }
 function nextMoveText(c){
   if(!c.wg)return `Your next move: ${lakh(c.gapWfyp)} more WFYP opens the first gate.`;
@@ -487,6 +504,9 @@ function renderRules(){
 function dlDataset(){const a=document.createElement('a');
   a.href=URL.createObjectURL(new Blob([JSON.stringify(DATA)],{type:'application/json'}));
   a.download='elevate_data.json';a.click();showToast('Dataset JSON downloaded');}
+function dlIncentive(){if(!admin.incentive){showToast('Upload the incentive file first','info');return;}
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(admin.incentive.data)],{type:'application/json'}));
+  a.download='elevate_incentive.json';a.click();showToast('elevate_incentive.json downloaded — place it next to index.html');}
 function renderHistory(){
   const h=loadHist();const tb=$('histLog').querySelector('tbody');
   if(!h.length){tb.innerHTML='<tr><td colspan="7" style="text-align:center;color:var(--faint)">No uploads yet — the demo dataset is active.</td></tr>';return;}
@@ -494,7 +514,7 @@ function renderHistory(){
 }
 function pick(kind){$('f_'+kind).click();}
 /* drag & drop */
-['master','monthly','targets'].forEach(kind=>{
+['master','monthly','targets','incentive'].forEach(kind=>{
   const el=$('up_'+kind);
   el.addEventListener('dragover',e=>{e.preventDefault();el.classList.add('over');});
   el.addEventListener('dragleave',()=>el.classList.remove('over'));
@@ -539,7 +559,11 @@ const ALIASES={
  monthly:{bocode:['bocode','bo_code','dsebocode','bo'],month:['month','monthkey','period','yearmonth'],
    wfyp:['wfyp','wfypactual','wfypamount'],nop:['nop','nopactual','policies','nopcount']},
  targets:{desg:['desg','designation','grade','desgcode'],wfyp:['wfyptarget','wfyp','wfypannualtarget'],
-   nop:['noptarget','nop','nopannualtarget'],thr:['persistencythreshold','threshold','persistency','persistthreshold']}
+   nop:['noptarget','nop','nopannualtarget'],thr:['persistencythreshold','threshold','persistency','persistthreshold']},
+ incentive:{agent:['agentcode','dsecode','agent','bocode','bo','employeecode'],desg:['desgn','designation','desg','grade'],
+   target:['wfyptarget','target'],wfypothers:['wfypothers'],ulipgap:['wfypulipgap','ulipgap'],ulipfyp:['fypulipgap','ulipfyp'],
+   perscm:['persistencycmii','persistencycm','perscm'],perslm:['persistencylmi','persistencylm','perslm'],
+   nop:['nopcount','nop'],holdflag:['pifa','25incentivehold','holdflag','hold']}
 };
 function mapHeader(kind,hdr){
   const map={};const spec=ALIASES[kind];
@@ -562,7 +586,7 @@ function ingest(kind,rows,fname){
   if(!rows.length){setStat(kind,false,"File is empty.");return;}
   const map=mapHeader(kind,rows[0]);const body=rows.slice(1);
   const errors=[],warns=[];
-  const need={master:['dseid','bocode','name','desg','pers'],monthly:['bocode','month','wfyp','nop'],targets:['desg','wfyp','nop']}[kind];
+  const need={master:['dseid','bocode','name','desg','pers'],monthly:['bocode','month','wfyp','nop'],targets:['desg','wfyp','nop'],incentive:['agent','desg','target']}[kind];
   const missing=need.filter(k=>map[k]===undefined);
   if(missing.length){setStat(kind,false,"Missing column(s): "+missing.join(', ')+". Download the template to see the expected headers.");admin[kind]=null;refreshPub();return;}
   if(kind==='master'){
@@ -605,6 +629,19 @@ function ingest(kind,rows,fname){
       if(out[dg]){errors.push(`Row ${ln}: duplicate grade ${dg}`);return;}
       out[dg]={wfyp:w,nop:n,thr:th};});
     finish(kind,out,Object.keys(out).length+" grades",errors,warns,fname,body.slice(0,4),rows[0]);
+  }
+  if(kind==='incentive'){
+    const out={};
+    const P=v=>{const s=String(v??'').trim().toUpperCase();if(s===''||s==='NA'||s==='#N/A'||s==='N/A')return '#N/A';let n=numv(s);if(n==null)return '#N/A';if(n>1.5)n=n/100;return String(n);};
+    const N=v=>{const n=numv(v);return String(n==null?0:n);};
+    body.forEach((r,ix)=>{const ln=ix+2;
+      const agent=String(r[map.agent]||'').trim().toUpperCase();
+      if(!agent){errors.push(`Row ${ln}: missing Agent Code`);return;}
+      if(out[agent]){errors.push(`Row ${ln}: duplicate Agent Code ${agent}`);return;}
+      out[agent]={agent,desg:String(r[map.desg]||'').trim(),target:N(r[map.target]),wfypOthers:N(r[map.wfypothers]),
+        ulipGap:N(r[map.ulipgap]),ulipFyp:N(r[map.ulipfyp]),persCM:P(r[map.perscm]),persLM:P(r[map.perslm]),
+        nop:N(r[map.nop]),holdFlag:(String(r[map.holdflag]||'').trim()||'Achieved')};});
+    finish(kind,out,Object.keys(out).length+' DSEs',errors,warns,fname,body.slice(0,4),rows[0]);
   }
 }
 function finish(kind,data,summary,errors,warns,fname,preview,hdr){
@@ -815,6 +852,48 @@ function renderEarnings(s,e){
     <details class="exp" style="margin-top:16px"><summary><div><div class="t">How it adds up</div><div class="s">Every number, traceable to a rule</div></div><span class="ar">▾</span></summary><div class="body"><div class="ejourney">${renderJourney(s.journey)}</div></div></details>
     <details class="exp"><summary><div><div class="t">Ways to earn more</div><div class="s">Ranked by return before month-end</div></div><span class="ar">▾</span></summary><div class="body">${renderOpt(s.recommendations)}</div></details>
     <div class="etrust">From the company payout sheet · ${e.name} · ${e.desg}</div>`;
+}
+/* ===== Career Journey (engine-driven) ===== */
+const GRADE_LADDER=['SDSE','ADSM','EADSM','DSM','Sr.DSM','SWM','PM','SPMG','CPM','EPM'];
+function careerInputs(e){
+  const A=DATA.meta.maxMonth;let sW=0,sN=0;
+  for(let k=0;k<12;k++){const key=addM(A,k-11);const {w,n}=mval(e.bo,key);sW+=w;sN+=n;}
+  const tgt=targetFor(e.desg);
+  return {trailingWfyp:sW,trailingNop:sN,targetWfyp:tgt.wfyp,targetNop:tgt.nop,persistency:(e.pers==='NA'?'NA':e.pers),persistencyThreshold:tgt.thr};
+}
+function openCareer(){
+  const e=state.emp;if(!e)return;
+  $('appView').classList.add('hide');$('careerView').classList.remove('hide');window.scrollTo(0,0);
+  if(!(window.Elevate&&window.Elevate.evaluateSalesProgression)){$('careerHost').innerHTML='<div class="eempty">The engine could not load. Serve the app over http (not file://).</div>';return;}
+  const sp=window.Elevate.evaluateSalesProgression(window.Elevate.SP_RULES,careerInputs(e));
+  renderCareer(sp,e);
+}
+function closeCareer(){$('careerView').classList.add('hide');$('appView').classList.remove('hide');window.scrollTo(0,0);}
+function renderCareer(sp,e){
+  const i=GRADE_LADDER.indexOf(e.desg),next=(i>=0&&i<GRADE_LADDER.length-1)?GRADE_LADDER[i+1]:null;
+  const prog=Math.round(sp.progress*100);
+  const gate=(nm,val,need,ok)=>`<div class="cgate ${ok?'ok':'no'}"><div class="cgi">${ok?'✓':'!'}</div><div style="flex:1"><div class="cgn">${nm}</div><div class="cgs">${val} · needs ${need}</div></div><div class="cgv">${val}</div></div>`;
+  const gates=gate('WFYP achievement',(sp.wfypAch*100).toFixed(0)+'%','≥ 75%',sp.gates.wfyp)
+    +gate('NOP achievement',(sp.nopAch*100).toFixed(0)+'%','≥ 50%',sp.gates.nop)
+    +gate('Overall WAS',(sp.was*100).toFixed(0)+'%','> 100%',sp.gates.was)
+    +gate('Persistency',sp.persistencyExempt?'Exempt':(sp.persistencyValue*100).toFixed(1)+'%','≥ 87%',sp.gates.persistency);
+  const rungs=[[GRADE_LADDER[i-1],'done','Cleared'],[e.desg,'you','You'],[next,'next','Next'],[GRADE_LADDER[i+2],'lock','Later']]
+    .filter(r=>r[0]).map(([g,cls,lbl])=>`<div class="crung ${cls}"><div class="cdot">${cls==='done'?'✓':cls==='you'?'●':cls==='next'?'◆':'·'}</div><div class="cgl">${g}</div><div class="crl">${lbl}</div></div>`).join('');
+  const ngName={wfyp:'WFYP',nop:'NOP',was:'Overall WAS',persistency:'Persistency'}[sp.nextGate]||'the last gate';
+  const remain=sp.eligible
+    ?`<div class="cremain ok"><div class="ic">🏆</div><div class="tx"><b>All four gates cleared</b> — you're eligible for ${next||'promotion'}. Keep the momentum to lock it in.</div></div>`
+    :`<div class="cremain"><div class="ic">⚑</div><div class="tx"><b>${4-sp.gatesCleared} gate${4-sp.gatesCleared>1?'s':''} to go</b> — <b>${ngName}</b> is next. Clear it to reach <b>${next||'the next grade'}</b>.</div></div>`;
+  $('careerHost').innerHTML=`
+    <div class="chero"><div class="cglow"></div>
+      <div class="cline"><span>${e.desg}</span><span class="carr">→</span><b>${next||'—'}</b><span class="cnl">next grade</span></div>
+      <div class="cmid"><div class="cring"><b>${prog}</b><small>%</small><span>of the way</span></div>
+        <div class="cmsg"><div class="cbig">You've cleared <b>${sp.gatesCleared} of 4 gates</b>${next?` for ${next}`:''}.</div>
+          <div class="cbadge ${sp.eligible?'ok':''}">${sp.eligible?'✓ Eligible now':'Rolling · never resets'}</div></div></div></div>
+    <div class="card" style="padding:8px 6px"><div class="cladder">${rungs}</div></div>
+    <div class="eyebrow" style="margin:16px 0 8px">The four gates · rolling 12 months</div>
+    <div class="card" style="padding:4px 15px">${gates}</div>
+    ${remain}
+    <div class="etrust">${e.name} · ${e.desg} · rolling trailing-12-month promotion track</div>`;
 }
 /* boot */
 initData();
