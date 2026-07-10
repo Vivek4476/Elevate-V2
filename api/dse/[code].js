@@ -2,7 +2,7 @@
 // Vercel Serverless Function (Node.js). Auth (SSO) attaches at the top — deferred for now.
 
 import { getData, dataSource } from '../_lib/data.js';
-import { transformDse, parseIncentiveDseRow } from '../../engine/transform.js';
+import { transformDse, parseIncentiveDseRow, trailingWindow } from '../../engine/transform.js';
 import { buildDseView } from '../../engine/view.js';
 import { buildEarningsStatement } from '../../engine/statement.js';
 import { APR26 } from '../../engine/designs/apr26.js';
@@ -22,8 +22,14 @@ export default async function handler(req, res) {
 
   try {
     const rec = transformDse(row, data.sp, null);
+    // 12-month WFYP/NOP series for the Perform screen + Career momentum strip.
+    const win = trailingWindow(data.sp.meta.maxMonth);
+    const m = data.sp.monthly[code] || {};
+    const perform = { months: win.map(k => ({ m: k, w: (m[k] || {}).w || 0, n: (m[k] || {}).n || 0 })) };
     if (rec.joined) {
-      return res.status(200).json(buildDseView({ designs: APR26, spRules: SP_RULES, ...rec }));
+      const view = buildDseView({ designs: APR26, spRules: SP_RULES, ...rec });
+      view.perform = perform;
+      return res.status(200).json(view);
     }
     const { incentiveInputs } = parseIncentiveDseRow(row);
     return res.status(200).json({

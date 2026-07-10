@@ -1,337 +1,480 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#96172E">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="Elevate">
-<title>Elevate — Promotion Dashboard</title>
+<title>Elevate — Personal Performance OS</title>
 <link rel="icon" type="image/png" href="assets/img/favicon.png">
 <link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
-<link rel="manifest" href="site.webmanifest">
-<script src="assets/js/xlsx.full.min.js"></script>
-<link rel="stylesheet" href="assets/css/fonts.css">
-<link rel="stylesheet" href="assets/css/styles.css">
+<style>
+  :root{
+    --paper:#FAF6F2; --card:#FFFFFF; --card2:#FCF8F5;
+    --ink:#1D1519; --ink2:#574B50; --muted:#8E8186; --faint:#B4A8AC;
+    --hair:#EEE6E2; --hair2:#F4ECE9;
+    --maroon:#96172E; --maroon2:#6E0F21; --maroon-tint:#FBEEF1; --maroon-line:#F2D7DD;
+    --sun2:#F58220; --sun3:#FDB913; --sun1:#E4322B;
+    --green:#0E9A66; --green-bg:#E7F4EE; --green-line:#CDE9DB;
+    --gold:#B87410; --gold-bg:#FBEFD7; --gold-line:#F0DBAE;
+    --s1:4px; --s2:8px; --s3:12px; --s4:16px; --s5:20px; --s6:24px; --s8:32px;
+    --ui:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --mono:ui-monospace,"SF Mono",SFMono-Regular,Menlo,Consolas,monospace;
+    --r-card:18px; --r-lg:22px;
+    --sh1:0 1px 2px rgba(90,20,32,.05);
+    --sh2:0 2px 8px rgba(90,20,32,.06),0 16px 36px rgba(90,20,32,.09);
+    --sh3:0 30px 70px rgba(90,20,32,.18);
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:var(--ui);color:var(--ink);
+    background:radial-gradient(120% 60% at 100% -10%,rgba(253,185,19,.10),transparent 55%),radial-gradient(120% 60% at -10% 0%,rgba(150,23,46,.05),transparent 50%),var(--paper);
+    -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+  .hide{display:none !important}
+  .num{font-family:var(--mono);font-variant-numeric:tabular-nums}
+
+  /* ---------- shell ---------- */
+  #main{max-width:480px;margin:0 auto;height:100dvh;display:flex;flex-direction:column;background:var(--paper);box-shadow:0 0 50px rgba(90,20,32,.07)}
+  .apphead{flex:0 0 auto;padding:14px 18px 12px;display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+  .apphead .ht{font-size:20px;font-weight:800;letter-spacing:-.02em}
+  .apphead .hc{display:inline-flex;align-items:center;gap:6px;margin-top:5px;font-size:10.5px;font-weight:700;letter-spacing:.02em;padding:4px 9px;border-radius:14px}
+  .hc.money{color:var(--maroon);background:var(--maroon-tint);border:1px solid var(--maroon-line)}
+  .hc.sp{color:var(--gold);background:var(--gold-bg);border:1px solid var(--gold-line)}
+  .hc.neutral{color:var(--ink2);background:var(--card);border:1px solid var(--hair)}
+  .hc .dot{width:6px;height:6px;border-radius:50%;background:currentColor}
+  .who{display:flex;align-items:center;gap:8px;flex:0 0 auto}
+  .av{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--maroon),var(--sun2));color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;cursor:pointer}
+  .body{flex:1;overflow-y:auto;overflow-x:hidden;padding:2px 16px 20px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+  .body::-webkit-scrollbar{display:none}
+  .view{display:none;flex-direction:column;gap:var(--s3)}
+  .view.on{display:flex;animation:fade .28s ease both}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  .lbl{font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--muted);padding:2px 2px 0}
+  .c{background:var(--card);border:1px solid var(--hair);border-radius:var(--r-card);box-shadow:var(--sh1)}
+
+  /* hero (money) */
+  .hero{position:relative;overflow:hidden;padding:var(--s5);border-radius:var(--r-lg);color:#fff;box-shadow:var(--sh2);background:radial-gradient(130% 130% at 100% 0%,#a51f39 0%,var(--maroon) 46%,var(--maroon2) 100%)}
+  .hero .glow{position:absolute;right:-40px;top:-46px;width:170px;height:170px;border-radius:50%;background:radial-gradient(circle at 40% 40%,rgba(253,185,19,.5),transparent 70%);pointer-events:none}
+  .hero .row{position:relative;display:flex;align-items:center;justify-content:space-between;gap:12px}
+  .hero .k{font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;font-weight:800;color:rgba(255,255,255,.72)}
+  .hero .big{font-size:40px;font-weight:800;letter-spacing:-.03em;margin-top:7px;line-height:1}
+  .hero .big small{font-size:19px;font-weight:700;opacity:.8;margin-right:2px}
+  .hero .pot{margin-top:12px;display:inline-flex;align-items:center;gap:6px;font-size:12.5px;background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.2);padding:6px 11px;border-radius:20px;font-weight:600}
+  .hero .pot b{color:var(--sun3)}
+  .ring{position:relative;flex:0 0 auto}
+  .ring .rc{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+  .ring .rn{font-family:var(--mono);font-size:19px;font-weight:700}
+  .ring .ru{font-size:7.5px;letter-spacing:.06em;text-transform:uppercase;color:rgba(255,255,255,.72);margin-top:1px;font-weight:700}
+  .ring .over{font-size:9.5px;color:var(--sun3);font-weight:700;margin-top:2px}
+
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:var(--s2)}
+  .stat{padding:13px 14px}
+  .stat .k{font-size:11px;color:var(--ink2);font-weight:700}
+  .stat .k small{display:block;font-size:9.5px;color:var(--faint);font-weight:600;letter-spacing:.03em;margin-top:1px;text-transform:uppercase}
+  .stat .v{font-family:var(--mono);font-size:18px;font-weight:700;letter-spacing:-.02em;margin-top:6px}
+  .stat .m{font-size:11px;color:var(--ink2);margin-top:3px;font-weight:550}
+  .stat .m.up{color:var(--green)} .stat .m.warn{color:var(--gold)}
+
+  .nudge{display:flex;align-items:center;gap:12px;padding:14px 15px;border-radius:var(--r-card);background:linear-gradient(100deg,#fff7ec,#fffdf8);border:1px solid var(--gold-line);cursor:pointer}
+  .nudge .ic{width:34px;height:34px;border-radius:11px;flex:0 0 auto;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--sun2),var(--sun3));box-shadow:0 5px 12px rgba(245,130,32,.3)}
+  .nudge .tx{font-size:12.5px;line-height:1.4;color:var(--ink2);font-weight:550} .nudge .tx b{color:var(--ink);font-weight:700}
+  .nudge .go{margin-left:auto;color:var(--maroon);font-weight:800;font-size:16px;flex:0 0 auto}
+  .trust{display:flex;align-items:center;gap:8px;font-size:11px;color:var(--muted);font-weight:550;padding:2px 4px}
+  .trust svg{width:13px;height:13px;stroke:var(--green);stroke-width:2;fill:none;flex:0 0 auto}
+
+  .seg{display:flex;gap:3px;background:var(--hair2);border:1px solid var(--hair);border-radius:13px;padding:3px;position:sticky;top:0;z-index:4}
+  .seg button{flex:1;border:none;background:none;font-family:inherit;font-size:11.5px;font-weight:700;color:var(--muted);padding:8px 4px;border-radius:10px;cursor:pointer;transition:.15s}
+  .seg button.on{background:var(--card);color:var(--maroon);box-shadow:var(--sh1)}
+  .sub{display:none;flex-direction:column;gap:var(--s3)}
+  .sub.on{display:flex;animation:fade .24s ease both}
+
+  .stmt-net{padding:16px 18px;display:flex;align-items:flex-end;justify-content:space-between;gap:10px}
+  .stmt-net .v{font-family:var(--mono);font-size:28px;font-weight:800;letter-spacing:-.03em}
+  .stmt-net .tagm{font-size:10px;font-weight:700;letter-spacing:.02em;color:var(--gold);background:var(--gold-bg);border:1px solid var(--gold-line);padding:4px 9px;border-radius:14px;text-align:center}
+  .sect{display:flex;align-items:center;justify-content:space-between;padding:4px 2px 0}
+  .sect .h{font-size:11px;letter-spacing:.08em;text-transform:uppercase;font-weight:800}
+  .sect .h.cr{color:var(--green)} .sect .h.op{color:var(--gold)}
+  .sect .sum{font-family:var(--mono);font-size:12.5px;font-weight:700}
+  .sect .sum.cr{color:var(--green)} .sect .sum.op{color:var(--gold)}
+  .ledger{overflow:hidden}
+  .li{display:flex;align-items:center;gap:12px;padding:12px 15px;border-top:1px solid var(--hair2)}
+  .li:first-child{border-top:0}
+  .li .bar{width:3px;align-self:stretch;border-radius:3px;flex:0 0 auto}
+  .li.cr .bar{background:var(--green)} .li.op .bar{background:var(--gold)}
+  .li .nm{font-size:13px;font-weight:650;letter-spacing:-.01em}
+  .li .ds{font-size:11px;color:var(--muted);margin-top:2px;font-weight:500;line-height:1.35}
+  .li .amt{margin-left:auto;text-align:right;flex:0 0 auto;padding-left:6px}
+  .li .amt .a{font-family:var(--mono);font-size:14px;font-weight:700}
+  .li.cr .amt .a{color:var(--green)} .li.op .amt .a{color:var(--gold)}
+  .li .amt .t{font-size:9px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;margin-top:2px;color:var(--gold)}
+
+  .steps{position:relative;padding:6px 6px 6px 4px}
+  .step{position:relative;display:flex;gap:14px;padding:10px 0}
+  .rail{position:absolute;left:14px;top:18px;bottom:18px;width:2px;background:var(--hair);z-index:0}
+  .node{position:relative;z-index:1;width:28px;height:28px;border-radius:50%;flex:0 0 auto;background:var(--card);border:2px solid var(--hair);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:11px;font-weight:700;color:var(--muted)}
+  .step.on .node{border-color:var(--maroon);color:var(--maroon)}
+  .step.drag .node{border-color:var(--gold);color:var(--gold);background:var(--gold-bg)}
+  .step.final .node{background:linear-gradient(135deg,var(--maroon),var(--maroon2));border-color:var(--maroon2);color:#fff}
+  .step .top{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+  .step .nm{font-size:13px;font-weight:700}
+  .step .rt{font-family:var(--mono);font-size:13px;font-weight:700;white-space:nowrap}
+  .step.drag .rt{color:var(--gold)} .step.final .rt{font-size:16px;font-weight:800;color:var(--maroon)}
+  .rulechip{display:inline-block;margin-top:5px;font-size:10px;font-weight:650;color:var(--ink2);background:var(--hair2);border:1px solid var(--hair);padding:3px 9px;border-radius:11px}
+  .rulechip.g{color:var(--gold);background:var(--gold-bg);border-color:var(--gold-line)}
+  .step .why{font-size:11px;color:var(--muted);margin-top:6px;line-height:1.4;font-weight:500}
+  .step.final .nm{font-size:14px}
+
+  .opt{padding:15px 16px}
+  .opt .oh{display:flex;align-items:center;gap:11px}
+  .opt .rank{width:26px;height:26px;border-radius:9px;flex:0 0 auto;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:13px;font-weight:800;color:#fff;background:linear-gradient(135deg,var(--sun2),var(--sun3));box-shadow:0 4px 10px rgba(245,130,32,.28)}
+  .opt.two .rank,.opt.three .rank,.opt.four .rank{background:var(--maroon-tint);color:var(--maroon);box-shadow:none}
+  .opt .act{font-size:14px;font-weight:750;letter-spacing:-.01em;flex:1}
+  .opt .eff{font-size:9.5px;font-weight:800;letter-spacing:.03em;text-transform:uppercase;padding:4px 8px;border-radius:11px;white-space:nowrap}
+  .eff.easy,.eff.low{color:var(--green);background:var(--green-bg);border:1px solid var(--green-line)}
+  .eff.medium,.eff.med{color:var(--gold);background:var(--gold-bg);border:1px solid var(--gold-line)}
+  .eff.hard,.eff.high{color:var(--ink2);background:var(--hair2);border:1px solid var(--hair)}
+  .opt .why{font-size:12px;color:var(--ink2);line-height:1.45;margin-top:10px;font-weight:500} .opt .why b{color:var(--ink);font-weight:700}
+  .impact{display:flex;gap:8px;margin-top:13px}
+  .imp{flex:1;display:flex;flex-direction:column;gap:3px;padding:9px 11px;border-radius:13px;border:1px solid}
+  .imp.money{background:var(--green-bg);border-color:var(--green-line)} .imp.promo{background:var(--maroon-tint);border-color:var(--maroon-line)}
+  .imp .ik{font-size:9px;letter-spacing:.03em;text-transform:uppercase;font-weight:750}
+  .imp.money .ik{color:var(--green)} .imp.promo .ik{color:var(--maroon)}
+  .imp .iv{font-family:var(--mono);font-size:15px;font-weight:800;letter-spacing:-.02em}
+  .imp.money .iv{color:var(--green)} .imp.promo .iv{color:var(--maroon)}
+  .imp .isub{font-size:8.5px;color:var(--muted);font-weight:600;letter-spacing:.02em;text-transform:uppercase}
+
+  .bridge{position:relative;overflow:hidden;padding:19px 20px;border-radius:var(--r-lg);color:#fff;box-shadow:var(--sh2);background:radial-gradient(130% 130% at 0% 0%,#a51f39 0%,var(--maroon) 46%,var(--maroon2) 100%)}
+  .bridge .glow{position:absolute;right:-40px;top:-46px;width:170px;height:170px;border-radius:50%;background:radial-gradient(circle at 40% 40%,rgba(253,185,19,.5),transparent 70%);pointer-events:none}
+  .bridge .k{position:relative;font-size:10px;letter-spacing:.11em;text-transform:uppercase;font-weight:800;color:rgba(255,255,255,.72)}
+  .bridge .act{position:relative;font-size:21px;font-weight:800;letter-spacing:-.02em;margin-top:7px;line-height:1.15}
+  .bridge .sub{position:relative;font-size:12px;color:rgba(255,255,255,.82);margin-top:7px;font-weight:500;line-height:1.4}
+  .bridge .dual{position:relative;display:flex;gap:9px;margin-top:15px}
+  .bridge .d{flex:1;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);border-radius:14px;padding:9px 11px}
+  .bridge .d .dk{font-size:9px;letter-spacing:.04em;text-transform:uppercase;font-weight:750;color:rgba(255,255,255,.72)}
+  .bridge .d .dv{font-family:var(--mono);font-size:17px;font-weight:800;margin-top:3px}
+  .bridge .d.money .dv{color:var(--sun3)} .bridge .d.promo .dv{color:#fff}
+  .bridge .d .dsub{font-size:8px;letter-spacing:.03em;text-transform:uppercase;color:rgba(255,255,255,.6);font-weight:700;margin-top:2px}
+  .bridge .cta{position:relative;display:flex;align-items:center;justify-content:center;gap:7px;margin-top:14px;background:#fff;color:var(--maroon);font-weight:800;font-size:13px;padding:12px;border-radius:14px;cursor:pointer}
+
+  .twocol{display:grid;grid-template-columns:1fr 1fr;gap:var(--s2)}
+  .pcard{padding:15px;cursor:pointer}
+  .pcard .pk{display:flex;align-items:center;gap:7px;font-size:11px;font-weight:750;color:var(--muted);text-transform:uppercase;letter-spacing:.03em}
+  .pcard .pk svg{width:15px;height:15px;fill:none;stroke-width:1.9}
+  .pcard.earn .pk svg{stroke:var(--green)} .pcard.career .pk svg{stroke:var(--maroon)}
+  .pcard .pv{font-family:var(--mono);font-size:22px;font-weight:800;letter-spacing:-.03em;margin-top:9px}
+  .pcard .pm{font-size:11px;color:var(--ink2);font-weight:550;margin-top:4px} .pcard .pm.warn{color:var(--gold)}
+  .pcard .mini{height:5px;border-radius:5px;background:var(--hair2);overflow:hidden;margin-top:10px}
+  .pcard .mini i{display:block;height:100%;border-radius:5px}
+  .pcard.earn .mini i{background:linear-gradient(90deg,var(--green),#54cf96)} .pcard.career .mini i{background:linear-gradient(90deg,var(--maroon),var(--sun2))}
+  .pcard .go{float:right;color:var(--faint);font-weight:800}
+  .glance{display:flex;gap:8px;padding:12px 14px}
+  .glance .g{flex:1;text-align:center}
+  .glance .g+.g{border-left:1px solid var(--hair2)}
+  .glance .gv{font-family:var(--mono);font-size:16px;font-weight:800}
+  .glance .gk{font-size:9.5px;color:var(--muted);font-weight:700;text-transform:uppercase;margin-top:3px}
+  .recog{display:flex;align-items:center;gap:12px;padding:14px 16px}
+  .recog .rg-k{font-size:10px;letter-spacing:.09em;text-transform:uppercase;font-weight:800;color:var(--muted)}
+  .stars{display:flex;gap:3px;margin:7px 0 5px}
+  .stars svg{width:17px;height:17px;display:block}
+  .stars svg path{fill:var(--hair)} .stars svg.full path{fill:var(--sun2)}
+  .recog .rg-s{font-size:11.5px;color:var(--ink2);font-weight:600} .recog .rg-s b{color:var(--maroon)}
+  .recog .rg-badge{display:flex;flex-direction:column;align-items:center;line-height:1;flex:0 0 auto;padding-left:6px}
+  .recog .rg-badge .n{font-family:var(--mono);font-size:24px;font-weight:800;color:var(--sun2);letter-spacing:-.03em}
+  .recog .rg-badge small{font-size:8px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-top:4px}
+
+  .barwrap{padding:14px 14px 8px}
+  .barhead{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:12px}
+  .barhead .bt{font-size:12.5px;font-weight:700} .barhead .bm{font-size:11px;color:var(--muted);font-weight:600}
+  .bars{display:flex;align-items:flex-end;gap:4px;height:78px}
+  .bars .col{flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%}
+  .bars .col i{display:block;border-radius:3px 3px 2px 2px;background:linear-gradient(180deg,var(--sun3),var(--sun2));min-height:3px}
+  .bars .col.cur i{background:linear-gradient(180deg,var(--maroon),var(--maroon2))}
+  .bars .col.zero i{background:var(--hair)}
+  .barx{display:flex;justify-content:space-between;font-size:8.5px;color:var(--faint);font-weight:650;margin-top:7px}
+
+  .chero{position:relative;overflow:hidden;padding:var(--s5);border-radius:var(--r-lg);box-shadow:var(--sh2);background:linear-gradient(160deg,#fff8ee 0%,#fffdfa 60%);border:1px solid #fbe6c9}
+  .chero .glow{position:absolute;left:-40px;bottom:-56px;width:180px;height:180px;border-radius:50%;background:radial-gradient(circle at 50% 50%,rgba(253,185,19,.3),transparent 68%);pointer-events:none}
+  .climbline{position:relative;display:flex;align-items:center;gap:9px;font-size:13px;font-weight:750}
+  .climbline .now{color:var(--ink)} .climbline .nxt{color:var(--maroon)} .climbline .arr{color:var(--sun2);font-weight:800}
+  .climbline .nl{color:var(--muted);font-weight:600;font-size:11px;margin-left:auto}
+  .chero .mid{position:relative;display:flex;align-items:center;gap:16px;margin-top:14px}
+  .cring{position:relative;flex:0 0 auto}
+  .cring .rc{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+  .cring .rn{font-family:var(--mono);font-size:24px;font-weight:800;color:var(--ink)}
+  .cring .ru{font-size:8px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-top:1px;font-weight:700}
+  .chero .msg .big{font-size:15px;font-weight:750;line-height:1.3} .chero .msg .big b{color:var(--maroon)}
+  .chero .msg .eta{margin-top:9px;display:inline-flex;align-items:center;gap:7px;font-size:11px;font-weight:700;padding:5px 10px;border-radius:16px}
+  .eta.roll{color:var(--gold);background:var(--gold-bg);border:1px solid var(--gold-line)}
+  .eta.ok{color:var(--green);background:var(--green-bg);border:1px solid var(--green-line)}
+  .ladder{display:flex;padding:14px 8px}
+  .rung{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;position:relative}
+  .rung::before{content:"";position:absolute;top:13px;left:-50%;width:100%;height:2px;background:var(--hair);z-index:0}
+  .rung:first-child::before{display:none}
+  .rung.done::before,.rung.you::before{background:linear-gradient(90deg,var(--sun3),var(--sun2))}
+  .rdot{position:relative;z-index:1;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--card);border:2px solid var(--hair);font-size:11px;color:var(--faint)}
+  .rung.done .rdot{background:linear-gradient(135deg,var(--sun2),var(--sun3));border-color:var(--sun2);color:#fff}
+  .rung.you .rdot{background:linear-gradient(135deg,var(--maroon),var(--maroon2));border-color:var(--maroon2);color:#fff;box-shadow:0 0 0 4px var(--maroon-tint)}
+  .rung.next .rdot{border-color:var(--maroon);border-style:dashed;color:var(--maroon)}
+  .rung .gl{position:relative;font-family:var(--mono);font-size:11px;font-weight:700}
+  .rung.you .gl{color:var(--maroon)} .rung.lock .gl{color:var(--faint)}
+  .rung .rl{font-size:8px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.03em}
+  .gate{display:flex;align-items:center;gap:12px;padding:12px 15px;border-top:1px solid var(--hair2)}
+  .gate:first-child{border-top:0}
+  .gate .gi{width:28px;height:28px;border-radius:9px;flex:0 0 auto;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800}
+  .gate.ok .gi{background:var(--green-bg);color:var(--green);border:1px solid var(--green-line)} .gate.no .gi{background:var(--gold-bg);color:var(--gold);border:1px solid var(--gold-line)}
+  .gate .gn{font-size:12.5px;font-weight:700} .gate .gs{font-size:10.5px;color:var(--muted);margin-top:1px}
+  .gate .gv{margin-left:auto;font-family:var(--mono);font-size:13px;font-weight:800}
+  .gate.ok .gv{color:var(--green)} .gate.no .gv{color:var(--gold)}
+  .remain{display:flex;align-items:center;gap:12px;padding:14px 15px;border-radius:var(--r-card);background:linear-gradient(100deg,#fff7ec,#fffdf8);border:1px solid var(--gold-line)}
+  .remain.ok{background:var(--green-bg);border-color:var(--green-line)}
+  .remain .ic{width:36px;height:36px;border-radius:11px;flex:0 0 auto;display:flex;align-items:center;justify-content:center;font-size:18px;background:linear-gradient(135deg,var(--sun2),var(--sun3))}
+  .remain.ok .ic{background:linear-gradient(135deg,var(--green),#54cf96)}
+  .remain .tx{font-size:12.5px;line-height:1.4;color:var(--ink2);font-weight:550} .remain .tx b{color:var(--ink)}
+  .momrow{display:flex;gap:5px;padding:12px 14px 8px}
+  .mcell{flex:1;aspect-ratio:1/1.4;border-radius:4px;background:var(--hair2)}
+  .mcell.l1{background:#fdeccf} .mcell.l2{background:#fbcf8f} .mcell.l3{background:var(--sun2)} .mcell.l4{background:var(--sun1)}
+  .benefits{padding:14px 15px}
+  .benefits .brow{display:flex;align-items:center;gap:10px;padding:8px 0;border-top:1px solid var(--hair2)}
+  .benefits .brow:first-of-type{border-top:0}
+  .benefits .bi{color:var(--sun2)} .benefits .bt{font-size:12px;font-weight:600;color:var(--ink2)} .benefits .bt b{color:var(--ink)}
+  .coachlead{padding:16px 17px;border-radius:var(--r-lg);background:linear-gradient(120deg,#fff6ea,#fffdf9);border:1px solid var(--gold-line)}
+  .coachlead .cl-k{font-size:10px;letter-spacing:.1em;text-transform:uppercase;font-weight:800;color:var(--sun2)}
+  .coachlead .cl-t{font-size:16px;font-weight:800;letter-spacing:-.01em;margin-top:6px;line-height:1.25} .coachlead .cl-t b{color:var(--maroon)}
+  .coachlead .cl-s{font-size:12px;color:var(--ink2);margin-top:8px;line-height:1.45;font-weight:500}
+  .etrust{font-size:11px;color:var(--faint);font-weight:550;padding:2px}
+
+  /* ---------- bottom nav ---------- */
+  .tabbar{flex:0 0 auto;display:flex;justify-content:space-around;align-items:center;padding:9px 6px calc(12px + env(safe-area-inset-bottom));background:rgba(255,255,255,.92);backdrop-filter:saturate(160%) blur(14px);border-top:1px solid var(--hair)}
+  .tab{display:flex;flex-direction:column;align-items:center;gap:4px;font-size:9.5px;font-weight:650;color:var(--faint);flex:1;background:none;border:none;font-family:inherit;cursor:pointer;padding:4px 2px;min-height:44px}
+  .tab svg{width:22px;height:22px;stroke:var(--faint);stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round}
+  .tab.on{color:var(--maroon)} .tab.on svg{stroke:var(--maroon)}
+
+  /* ---------- login ---------- */
+  .loginwrap{min-height:100dvh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;max-width:440px;margin:0 auto;text-align:center}
+  .loginwrap img{height:52px;margin-bottom:8px}
+  .loginwrap h1{font-size:26px;font-weight:800;letter-spacing:-.02em;margin:8px 0 2px}
+  .loginwrap h1 b{color:var(--maroon)}
+  .loginwrap .tag{font-size:12.5px;color:var(--muted);font-weight:600;margin-bottom:22px}
+  .logincard{width:100%;background:var(--card);border:1px solid var(--hair);border-radius:var(--r-lg);box-shadow:var(--sh2);padding:22px 20px}
+  .logincard .le{font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;font-weight:800;color:var(--muted);text-align:left}
+  .logincard input{width:100%;margin-top:9px;padding:13px 14px;border:1.5px solid var(--hair);border-radius:13px;font-size:16px;font-weight:700;font-family:var(--mono);background:#fbfbfd;color:var(--ink);outline:none;text-align:center;letter-spacing:.08em;text-transform:uppercase}
+  .logincard input:focus{border-color:var(--maroon);background:#fff;box-shadow:0 0 0 3px rgba(150,23,46,.09)}
+  .signbtn{width:100%;margin-top:12px;border:none;font-family:inherit;font-size:15px;font-weight:750;color:#fff;cursor:pointer;padding:14px;border-radius:14px;background:linear-gradient(135deg,var(--maroon),var(--maroon2));box-shadow:var(--sh2)}
+  .signbtn:disabled{opacity:.6}
+  .loginerr{color:var(--sun1);font-size:12.5px;font-weight:700;min-height:16px;margin-top:10px}
+  .demohint{font-size:11.5px;color:var(--muted);margin-top:14px}
+  .demohint b{color:var(--maroon);cursor:pointer}
+  .spin{width:18px;height:18px;border:2.5px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;display:inline-block;animation:sp .7s linear infinite;vertical-align:-3px}
+  @keyframes sp{to{transform:rotate(360deg)}}
+  @media(prefers-reduced-motion:reduce){.view,.sub{animation:none !important}.spin{animation-duration:1.4s}}
+</style>
 </head>
 <body>
 
-<!-- ============ LOGIN ============ -->
-<div class="orbwrap"><div class="orb o1"></div><div class="orb o2"></div></div>
-<div id="landing">
-  <div class="auth">
-    <img class="ablogo stag" style="height:54px;margin:0 auto" src="assets/img/absli-logo.png" alt="Aditya Birla Capital Life Insurance">
-    <h2 class="stag d1">Elevate <b>·</b> Promotion Dashboard</h2>
-    <p class="stag d1">Aditya Birla Sun Life Insurance · Direct Marketing</p>
-
-    <!-- step 1: employee code -->
-    <div class="card authcard stag d2" id="authStep1">
-      <div class="eyebrow">Sign in</div>
-      <label style="font-size:12px;color:var(--muted);font-weight:700;display:block;margin-bottom:7px">Employee Code (DSE ID)</label>
-      <input class="f2" id="authCode" type="tel" inputmode="numeric" placeholder="e.g. 593994" autocomplete="off">
-      <div class="err" id="authErr"></div>
-      <button class="startbtn" onclick="authSend()">Get OTP →</button>
-      <div style="font-size:11.5px;color:var(--faint);margin-top:10px;text-align:center">A one-time passcode is sent to your registered mobile. No password needed.</div>
-      <div class="demolink"><a onclick="toggleLookup()">Browse demo profiles</a></div>
-      <div id="lookupWrap" class="hide" style="margin-top:12px">
-        <div class="tyw">
-          <input class="f2" id="lookupInput" placeholder="Search by name or employee code…" autocomplete="off" oninput="tySearch(this.value)">
-          <div class="tylist hide" id="tyList"></div>
-        </div>
-        <div style="font-size:11px;color:var(--faint);margin-top:7px">Type at least 2 characters — opens the profile directly (demo shortcut, skips OTP).</div>
-      </div>
-    </div>
-
-    <!-- step 2: OTP -->
-    <div class="card authcard hide" id="authStep2">
-      <div class="eyebrow">Verify it's you</div>
-      <div style="font-size:13.5px;color:var(--ink2);margin-bottom:12px" id="otpToLine">We sent a 6-digit code to your registered mobile.</div>
-      <input class="f2" id="authOtp" type="tel" inputmode="numeric" maxlength="6" placeholder="______" style="letter-spacing:.55em;text-align:center;font-size:22px;font-weight:800" autocomplete="off">
-      <div class="err" id="otpErr"></div>
-      <button class="startbtn" onclick="authVerify()">Verify &amp; continue →</button>
-      <div style="display:flex;justify-content:space-between;margin-top:10px;font-size:12.5px">
-        <a style="color:var(--muted);font-weight:700;cursor:pointer" onclick="authBack()">← Change code</a>
-        <a id="authResend" style="color:var(--red);font-weight:800;cursor:pointer" onclick="authResend()">Resend OTP</a>
-      </div>
-      <div class="demo" id="otpDemoNote" style="margin-top:14px"></div>
-    </div>
-
-    <div class="datastat stag d3"><span class="dot" id="dsDot" style="background:var(--warn);animation:pulse 1.4s infinite"></span><span id="dsText">Checking for company dataset…</span></div>
-    <div class="adminlink stag d4"><a onclick="showAdminGate()">⚙ Admin console — upload data</a></div>
+<!-- ===================== LOGIN ===================== -->
+<div id="login" class="loginwrap">
+  <img src="assets/img/absli-logo.png" alt="Aditya Birla Sun Life Insurance">
+  <h1>Elevate <b>·</b> Your day</h1>
+  <div class="tag">ABSLI Direct Marketing · Personal Performance OS</div>
+  <div class="logincard">
+    <div class="le">Employee code (DSE ID)</div>
+    <input id="code" type="text" inputmode="text" placeholder="e.g. AAA634" autocomplete="off" autocapitalize="characters">
+    <button class="signbtn" id="signbtn" onclick="signIn()">Open my day →</button>
+    <div class="loginerr" id="loginerr"></div>
+    <div class="demohint">Demo code: <b onclick="document.getElementById('code').value='AAA634';signIn()">AAA634</b> · numbers are live from the server</div>
   </div>
 </div>
 
-<!-- ============ ADMIN PIN GATE ============ -->
-<div id="adminGate" class="hide">
-  <div class="auth">
-    <img class="ablogo" style="height:52px;margin:0 auto" src="assets/img/absli-logo.png" alt="Aditya Birla Capital Life Insurance">
-    <h2>Admin access</h2>
-    <p>Enter the admin PIN to open the data console.</p>
-    <div class="card">
-      <input class="f2" id="pinInput" type="password" inputmode="numeric" maxlength="6" placeholder="• • • •" style="letter-spacing:.5em;text-align:center;font-size:22px;font-weight:800">
-      <div style="color:var(--no);font-size:13px;font-weight:700;margin-top:8px;min-height:16px" id="pinErr"></div>
-      <button class="startbtn" onclick="checkPin()">Unlock console →</button>
-      <button class="startbtn" style="background:none;color:var(--muted);box-shadow:none;margin-top:4px" onclick="backToLanding()">← Back</button>
-      <div style="font-size:11.5px;color:var(--faint);margin-top:10px">Demo PIN: <b>7421</b>. This is a soft gate to keep DSEs out of the console — real admin authentication comes with the backend (the PIN is visible in page source, so it is not a security control).</div>
-    </div>
+<!-- ===================== APP ===================== -->
+<div id="main" class="hide">
+  <div class="apphead">
+    <div><div class="ht" id="hTitle">Today</div><div class="hc neutral" id="hCtx"><span class="dot"></span>Today</div></div>
+    <div class="who"><div class="av" id="av" onclick="signOut()">–</div></div>
   </div>
-</div>
-
-<!-- ============ ADMIN CONSOLE ============ -->
-<div id="adminView" class="hide">
-  <div class="nav"><div class="nav-in">
-    <div class="l"><img class="ablogo" src="assets/img/absli-logo.png" alt="Aditya Birla Capital Life Insurance"><div><div class="nm">Elevate <b>·</b> Admin Console</div><div class="tag">Data Management</div></div></div>
-    <div class="r"><button class="ahead back" style="margin:0" onclick="backToLanding()">← Exit admin</button></div>
-  </div></div>
-  <div class="apage">
-    <div class="ahead">
-      <div>
-        <h1>Upload the monthly data</h1>
-        <div style="font-size:13px;color:var(--muted);margin-top:4px">Three files, same shape as your Excel sheets. CSV or Excel (.xlsx) — first sheet is read. Templates below.</div>
-      </div>
-    </div>
-
-    <div class="atabs" id="atabs">
-      <button class="on" onclick="adminTab('ov',this)">📊 Overview</button>
-      <button onclick="adminTab('up',this)">📤 Data Uploads</button>
-      <button onclick="adminTab('ru',this)">⚖ Rules &amp; Targets</button>
-      <button onclick="adminTab('vp',this)">✅ Validation &amp; Publish</button>
-      <button onclick="adminTab('au',this)">📜 Audit Logs</button>
-    </div>
-
-    <div class="apanel" id="ap_ov">
-      <div class="card"><div class="eyebrow" style="margin-top:0">Operations overview</div>
-        <div class="ovgrid" id="ovGrid"></div>
-        <div style="display:flex;gap:10px;margin-top:14px;flex-wrap:wrap">
-          <button class="ghostbtn" onclick="dlDataset()">⬇ Download current dataset (JSON)</button>
-          <button class="ghostbtn" onclick="adminTab('up',document.querySelectorAll('#atabs button')[1])">Go to uploads →</button>
-        </div>
-      </div>
-    </div>
-
-    <div class="apanel hide" id="ap_up"><div class="steps">
-      <!-- Employee master -->
-      <div class="up" id="up_master">
-        <div class="uh"><div><div class="ut">1 · Employee Master</div><div class="us">One row per DSE. Columns: <b>DSE_ID, BO_Code, Name, Designation_Full, Desg, Zone, Persistency</b> (number like 96.55, or NA for new joiners).</div></div><span class="req must">Required</span></div>
-        <div class="drop" onclick="pick('master')">Drop file here or <b>browse</b></div>
-        <input type="file" id="f_master" accept=".csv,.xlsx,.xls" class="hide" onchange="fileChosen('master',this)">
-        <div class="stat" id="s_master"></div>
-        <div class="tlink"><a onclick="dlTemplate('master')">⬇ Download template</a></div>
-      </div>
-      <!-- Monthly performance -->
-      <div class="up" id="up_monthly">
-        <div class="uh"><div><div class="ut">2 · Monthly Performance</div><div class="us">One row per DSE per month. Columns: <b>BO_Code, Month, WFYP, NOP</b>. Month as <b>2026-03</b> or <b>Mar'26</b>. Negative WFYP allowed.</div></div><span class="req must">Required</span></div>
-        <div class="drop" onclick="pick('monthly')">Drop file here or <b>browse</b></div>
-        <input type="file" id="f_monthly" accept=".csv,.xlsx,.xls" class="hide" onchange="fileChosen('monthly',this)">
-        <div class="stat" id="s_monthly"></div>
-        <div class="tlink"><a onclick="dlTemplate('monthly')">⬇ Download template</a></div>
-      </div>
-      <!-- Targets -->
-      <div class="up" id="up_targets">
-        <div class="uh"><div><div class="ut">3 · Designation Targets</div><div class="us">One row per grade. Columns: <b>Desg, WFYP_Target, NOP_Target, Persistency_Threshold</b> (e.g. 87). If skipped, the current built-in table is used.</div></div><span class="req opt">Optional</span></div>
-        <div class="drop" onclick="pick('targets')">Drop file here or <b>browse</b></div>
-        <input type="file" id="f_targets" accept=".csv,.xlsx,.xls" class="hide" onchange="fileChosen('targets',this)">
-        <div class="stat" id="s_targets"></div>
-        <div class="tlink"><a onclick="dlTemplate('targets')">⬇ Download template</a></div>
-      </div>
-      <!-- Monthly incentive (Earnings) -->
-      <div class="up" id="up_incentive">
-        <div class="uh"><div><div class="ut">4 · Monthly Incentive <span style="font-weight:600;color:var(--muted)">(Earnings)</span></div><div class="us">The DSE incentive sheet, as delivered. Columns: <b>Agent Code, Desgn, WFYP Target, WFYP (Others), WFYP (ULIP+GAP), FYP (ULIP+GAP), Persistency (CM), Persistency (LM), NOP Count, PIFA</b>. Powers the Earnings experience.</div></div><span class="req opt">Optional</span></div>
-        <div class="drop" onclick="pick('incentive')">Drop file here or <b>browse</b></div>
-        <input type="file" id="f_incentive" accept=".csv,.xlsx,.xls" class="hide" onchange="fileChosen('incentive',this)">
-        <div class="stat" id="s_incentive"></div>
-        <div class="tlink"><a onclick="dlIncentive()">⬇ Download elevate_incentive.json</a></div>
-      </div>
-    </div>
-
-    </div>
-
-    <div class="apanel hide" id="ap_ru">
-      <div class="card"><div class="eyebrow" style="margin-top:0">Rule engine — the four promotion gates</div>
-        <div style="font-size:13px;color:var(--ink2);line-height:1.75;margin-bottom:14px">
-          1 · WFYP achievement ≥ <b>75%</b> of the annual grade target&nbsp;&nbsp; 2 · NOP achievement ≥ <b>50%</b><br>
-          3 · Overall WAS above <b>100%</b> &nbsp;(75% × WFYP + 25% × NOP, each capped at 150%)&nbsp;&nbsp; 4 · Persistency ≥ <b>87%</b> (new joiners exempt)<br>
-          <span style="color:var(--muted);font-size:12px">Computed on a rolling trailing-12-month window ending at the assessment month. Gate rules are fixed in the engine; the grade targets below update via the Designation Targets upload.</span>
-        </div>
-        <div class="eyebrow">Designation targets in force</div>
-        <div class="tblwrap"><table id="rulesTbl"></table></div>
-      </div>
-    </div>
-
-    <div class="apanel hide" id="ap_vp"><div class="problems hide" id="probBox"></div>
-    <div class="prevtbl hide card" id="prevBox"></div>
-
-    <div class="pubbar">
-      <div class="info" id="pubInfo">Upload the Employee Master and Monthly Performance to enable publishing.</div>
-      <input class="f2" id="pubBy" placeholder="Published by (your name)" style="max-width:220px;padding:11px 13px;font-size:13px">
-      <button class="ghostbtn" onclick="resetToDemo()">Reset to demo data</button>
-      <button class="pubbtn" id="pubBtn" disabled onclick="publish()">Publish dataset →</button>
-    </div>
-    <div class="pubdone hide" id="pubDone"></div>
-
-    </div>
-
-    <div class="apanel hide" id="ap_au"><div class="card" style="margin-top:16px">
-      <div class="eyebrow" style="margin-top:0">📜 Upload history</div>
-      <div class="tblwrap"><table id="histLog"><thead><tr><th>When</th><th>By</th><th>DSEs</th><th>Rows</th><th>Data window</th><th>Files</th><th>Warnings</th></tr></thead><tbody></tbody></table></div>
-      <div style="font-size:11.5px;color:var(--faint);margin-top:9px">Every publish is logged here (kept in this browser and embedded in the exported elevate_data.json so it travels with the hosted dataset).</div>
-    </div>
-</div>
+  <div class="body" id="scroll">
+    <section class="view on" data-view="today" id="v_today"></section>
+    <section class="view" data-view="perform" id="v_perform"></section>
+    <section class="view" data-view="earnings" id="v_earnings"></section>
+    <section class="view" data-view="career" id="v_career"></section>
+    <section class="view" data-view="coach" id="v_coach"></section>
   </div>
+  <nav class="tabbar">
+    <button class="tab on" data-tab="today" onclick="go('today')"><svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>Today</button>
+    <button class="tab" data-tab="perform" onclick="go('perform')"><svg viewBox="0 0 24 24"><path d="M4 20V10"/><path d="M10 20V4"/><path d="M16 20v-7"/><path d="M22 20H2"/></svg>Perform</button>
+    <button class="tab" data-tab="earnings" onclick="go('earnings')"><svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="13" rx="2.5"/><path d="M3 10h18"/><path d="M16 14h2"/></svg>Earnings</button>
+    <button class="tab" data-tab="career" onclick="go('career')"><svg viewBox="0 0 24 24"><path d="M5 21V4l13 4-13 4"/></svg>Career</button>
+    <button class="tab" data-tab="coach" onclick="go('coach')"><svg viewBox="0 0 24 24"><path d="M12 3l2 5 5 2-5 2-2 5-2-5-5-2 5-2z"/></svg>Coach</button>
+  </nav>
 </div>
 
-<!-- ============ DASHBOARD ============ -->
-<div id="appView" class="hide">
-  <div class="nav"><div class="nav-in">
-    <div class="l"><img class="ablogo" src="assets/img/absli-logo.png" alt="Aditya Birla Capital Life Insurance"><div><div class="nm">Elevate <b>·</b> Promotion Dashboard</div><div class="tag">ABSLI Direct Marketing</div></div></div>
-    <div class="r"><button class="earnbtn" onclick="openCareer()">◈ Career</button><button class="earnbtn" onclick="openEarnings()">₹ Earnings</button><span class="mpill" id="topMonth">—</span><div class="av" id="topAv" onclick="toggleMe()">–</div></div>
-  </div></div>
+<script>
+  var VM=null;
+  var GRADE_LADDER=['SDSE','ADSM','EADSM','DSM','Sr.DSM','SWM','PM','SPMG','CPM','EPM'];
+  var $=function(id){return document.getElementById(id);};
+  var inr=function(n){return '₹'+Math.round(n).toLocaleString('en-IN');};
+  var lakh=function(n){var a=Math.abs(n);if(a>=1e7)return '₹'+(n/1e7).toFixed(2).replace(/\.?0+$/,'')+' Cr';if(a>=1e5)return '₹'+(n/1e5).toFixed(2).replace(/\.?0+$/,'')+' L';return inr(n);};
+  var pct=function(x){return Math.round(x*100)+'%';};
+  var mLabel=function(k){var p=k.split('-');var mo=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];return mo[(+p[1])-1]+" '"+p[0].slice(2);};
 
-  <div class="page">
-    <!-- onboarding: no results until Calculate -->
-    <div id="onboard" class="onb">
-      <div class="welc stag"><h1>Welcome, <b id="obName">there</b> 👋</h1>
-        <p>Every month is a step on your climb. Log this month's numbers to see exactly where you stand — and the one move that takes you higher.</p></div>
-      <div class="card ecard stag d1">
-        <div class="eyebrow" style="display:flex;justify-content:space-between;align-items:center">
-          <span>This month · <span id="entryMonth" style="color:var(--red)"></span></span>
-          <span style="text-transform:none;letter-spacing:0;font-weight:700">Assessment month:
-            <select id="c_month" onchange="onMonth()" style="border:none;background:none;font-weight:800;color:var(--red);font-size:12px;font-family:inherit;cursor:pointer"></select></span>
-        </div>
-        <div class="entry" style="margin-top:4px">
-          <div class="erow">
-            <div class="ef w2"><label>WFYP Actual (₹)</label><div class="ip"><span class="pre">₹</span><input class="pad" id="c_wfyp" type="tel" inputmode="decimal" placeholder="0" oninput="onInput()"></div></div>
-            <div class="ef"><label>NOP Actual</label><input id="c_nop" type="tel" inputmode="numeric" placeholder="0" oninput="onInput()"></div>
-            <div class="ef"><label>Persistency %</label><input id="c_pers" type="tel" inputmode="decimal" placeholder="—" oninput="onInput()"></div>
-          </div>
-          <div class="note" id="persRec"></div>
-          <div class="note" id="windowNote" style="margin-top:4px"></div>
-        </div>
-        <button class="calcbtn" id="calcBtn" disabled onclick="calculate()">Enter WFYP &amp; NOP to calculate</button>
-      </div>
-    </div>
+  function ring(frac,size,sw,stroke,track){
+    var r=(size-sw)/2, cx=size/2, C=2*Math.PI*r, off=C*(1-Math.max(0,Math.min(1,frac)));
+    return '<svg width="'+size+'" height="'+size+'" viewBox="0 0 '+size+' '+size+'" style="transform:rotate(-90deg)">'+
+      '<circle cx="'+cx+'" cy="'+cx+'" r="'+r.toFixed(1)+'" fill="none" stroke="'+track+'" stroke-width="'+sw+'"/>'+
+      '<circle cx="'+cx+'" cy="'+cx+'" r="'+r.toFixed(1)+'" fill="none" stroke="'+stroke+'" stroke-width="'+sw+'" stroke-linecap="round" stroke-dasharray="'+C.toFixed(1)+'" stroke-dashoffset="'+off.toFixed(1)+'"/></svg>';
+  }
+  function moveLabel(r){
+    if(!r)return 'Your best move';
+    if(r.lever==='nop')return r.extraPolicies===1?'Sell one more policy':'Sell '+r.extraPolicies+' more policies';
+    if(r.lever==='ulipGrid')return 'Grow ULIP premium by '+lakh(r.rupeesNeeded);
+    if(r.lever==='achievement')return 'Bring in '+lakh(r.rupeesNeeded)+' more premium';
+    if(r.lever==='persistency')return 'Improve persistency';
+    return 'Your best move';
+  }
+  var CTX={today:['Today','neutral','Good day'],perform:['Perform','neutral','This month · business pace'],
+    earnings:['Earnings','money','Apr ’26 · incentive'],career:['Career','sp','Rolling 12-mo · promotion'],coach:['Coach','neutral','Your best moves']};
 
-    <!-- dashboard: revealed only after Calculate -->
-    <div id="dashContent" class="hide">
-      <div class="sumbar">
-        <div class="mi">WFYP<b id="sumW">—</b></div>
-        <div class="mi">NOP<b id="sumN">—</b></div>
-        <div class="mi">Persist.<b id="sumP">—</b></div>
-        <div class="mi">Month<b id="sumM">—</b></div>
-        <div class="sp"></div>
-        <button class="edit" onclick="shareStatus()">↗ Share</button>
-        <button class="edit" onclick="downloadReport()">⬇ Report</button>
-        <button class="edit" onclick="editEntries()">✎ Edit entries</button>
-      </div>
-      <div id="bridgeHost"></div>
-      <div class="dashgrid">
-        <div id="heroHost"></div>
-        <div><div id="coachHost"></div></div>
-      </div>
+  /* ---------- login ---------- */
+  async function signIn(){
+    var code=($('code').value||'').trim().toUpperCase();
+    if(!code){$('loginerr').textContent='Enter your employee code.';return;}
+    var btn=$('signbtn');btn.disabled=true;btn.innerHTML='<span class="spin"></span>';
+    $('loginerr').textContent='';
+    try{
+      var r=await fetch('/api/dse/'+encodeURIComponent(code));
+      if(r.status===404){$('loginerr').textContent='No record for '+code+'. Check the code and try again.';return;}
+      if(!r.ok){$('loginerr').textContent='Something went wrong ('+r.status+'). Try again.';return;}
+      VM=await r.json();
+      $('login').classList.add('hide');$('main').classList.remove('hide');
+      var nm=(VM.dse.name||code).split(' ');$('av').textContent=(nm[0][0]+(nm[1]?nm[1][0]:'')).toUpperCase();
+      renderAll();go('today');
+    }catch(e){$('loginerr').textContent='Network error — is the server up?';}
+    finally{btn.disabled=false;btn.textContent='Open my day →';}
+  }
+  function signOut(){VM=null;$('main').classList.add('hide');$('login').classList.remove('hide');$('code').value='';}
 
-    <div class="sechead">The four gates</div>
-    <div id="kpiHost" class="kpis"></div>
+  /* ---------- nav ---------- */
+  function go(v){
+    document.querySelectorAll('.view').forEach(function(s){s.classList.toggle('on',s.dataset.view===v);});
+    document.querySelectorAll('.tab').forEach(function(b){b.classList.toggle('on',b.dataset.tab===v);});
+    var x=CTX[v];$('hTitle').textContent=x[0];var h=$('hCtx');h.className='hc '+x[1];h.innerHTML='<span class="dot"></span>'+x[2];
+    $('scroll').scrollTop=0;
+  }
+  function subTo(s,btn){
+    document.querySelectorAll('#v_earnings [data-sub]').forEach(function(el){el.classList.toggle('on',el.dataset.sub===s);});
+    document.querySelectorAll('#earnseg button').forEach(function(b){b.classList.remove('on');});if(btn)btn.classList.add('on');
+    $('scroll').scrollTop=0;
+  }
 
-    <div class="sechead">Explore &amp; plan</div>
-    <details class="exp" id="expChk">
-      <summary><div><div class="t">✦ Milestones to promotion</div><div class="s" id="chkSum">The four camps on your climb</div></div><span class="ar">▾</span></summary>
-      <div class="body"><div id="chkHost"></div></div>
-    </details>
+  /* ---------- render ---------- */
+  function renderAll(){renderToday();renderPerform();renderEarnings();renderCareer();renderCoach();}
 
-    <details class="exp" id="expHist">
-      <summary><div><div class="t">📈 Performance history</div><div class="s">Twelve months — interactive trends & month-by-month detail</div></div><span class="ar">▾</span></summary>
-      <div class="body">
-        <div class="seg" id="chartSeg">
-          <button class="on" data-c="cum" onclick="chartTab('cum')">Cumulative %</button>
-          <button data-c="was" onclick="chartTab('was')">WAS climb</button>
-          <button data-c="wfyp" onclick="chartTab('wfyp')">WFYP pace</button>
-          <button data-c="nop" onclick="chartTab('nop')">NOP pace</button>
-        </div>
-        <div class="chart" id="chartBox"><canvas id="cv"></canvas><div class="tip" id="tip"></div></div>
-        <div class="legend" id="chartLegend"></div>
-        <div style="height:16px"></div>
-        <div class="eyebrow">Month-by-month</div>
-        <div class="tblwrap"><table id="jTbl"></table></div>
-      </div>
-    </details>
+  function renderToday(){
+    var b=VM.bridge,e=VM.earnings,c=VM.career;
+    var elig=b.promotionImpact.alreadyEligible;
+    var dp=Math.round(b.promotionImpact.deltaProgress*100);
+    var promoV=elig?'✓':(dp>0?'+'+dp+'%':'—');
+    var wallet='<svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="13" rx="2.5"/><path d="M3 10h18"/></svg>';
+    var flag='<svg viewBox="0 0 24 24"><path d="M5 21V4l13 4-13 4"/></svg>';
+    var g=function(v,k){return '<div class="g"><div class="gv num">'+v+'</div><div class="gk">'+k+'</div></div>';};
+    var stars=Math.max(0,Math.min(5,Math.round(c.progress*5)));
+    var star='<svg class="full" viewBox="0 0 24 24"><path d="M12 2l3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z"/></svg>';
+    var starE='<svg viewBox="0 0 24 24"><path d="M12 2l3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z"/></svg>';
+    var starRow='';for(var i=0;i<5;i++)starRow+=(i<stars?star:starE);
+    $('v_today').innerHTML=
+      '<div class="bridge"><div class="glow"></div>'+
+        '<div class="k">Your one move today</div><div class="act">'+b.move.label+'</div>'+
+        '<div class="sub">'+b.headline+'</div>'+
+        '<div class="dual"><div class="d money"><div class="dk">Earn this month</div><div class="dv">+'+inr(b.incentiveImpact.rupees)+'</div><div class="dsub">incentive</div></div>'+
+        '<div class="d promo"><div class="dk">'+(elig?'Promotion':'Toward promotion')+'</div><div class="dv">'+promoV+'</div><div class="dsub">'+(elig?'already eligible':'rolling')+'</div></div></div>'+
+        '<div class="cta" onclick="go(\'coach\')">Why this move <span>›</span></div></div>'+
+      '<div class="twocol"><div class="c pcard earn" onclick="go(\'earnings\')"><div class="pk">'+wallet+'Earnings <span class="go">›</span></div><div class="pv">'+inr(e.headline.finalAmount)+'</div><div class="pm warn">'+inr(e.headline.onTheTable)+' on the table</div><div class="mini"><i style="width:'+Math.round(e.headline.finalAmount/e.headline.baseline*100)+'%"></i></div></div>'+
+        '<div class="c pcard career" onclick="go(\'career\')"><div class="pk">'+flag+'Career <span class="go">›</span></div><div class="pv">'+pct(c.progress)+'</div><div class="pm">'+c.gatesCleared+' of 4 gates'+(c.eligible?' · eligible':'')+'</div><div class="mini"><i style="width:'+pct(c.progress)+'"></i></div></div></div>'+
+      '<div class="c recog"><div style="flex:1"><div class="rg-k">Promotion readiness</div><div class="stars">'+starRow+'</div><div class="rg-s"><b>'+c.gatesCleared+' of 4 gates</b> · '+pct(c.progress)+' of the way</div></div><div class="rg-badge"><span class="n">'+(c.progress*5).toFixed(1)+'</span><small>ready</small></div></div>'+
+      '<div class="lbl">This month at a glance</div>'+
+      '<div class="c"><div class="glance">'+g(lakh(e.achievement.wfypOthers+e.achievement.ulipGap),'WFYP')+g(e.achievement.nop,'NOP')+g(e.achievement.persCM?pct(e.achievement.persCM):'—','Persist.')+'</div></div>';
+  }
 
-    <details class="exp">
-      <summary><div><div class="t">🎚️ What-if simulator</div><div class="s">How extra business this month moves your promotion</div></div><span class="ar">▾</span></summary>
-      <div class="body">
-        <div class="slrow"><div class="sh"><span>WFYP this month</span><span class="v" id="wfLW">₹0</span></div><input type="range" id="sl_w" min="0" step="10000" value="0" oninput="whatif()"></div>
-        <div class="slrow"><div class="sh"><span>NOP this month</span><span class="v" id="wfLN">0</span></div><input type="range" id="sl_n" min="0" max="40" step="1" value="0" oninput="whatif()"></div>
-        <div class="slrow" id="wfPersRow"><div class="sh"><span>Persistency</span><span class="v" id="wfLP">87%</span></div><input type="range" id="sl_p" min="60" max="100" step="0.5" value="87" oninput="whatif()"></div>
-        <div class="wfout"><div><div class="eyebrow" style="margin:0">Projected WAS</div><div class="wv" id="wfWas">—</div></div>
-          <div><div class="eyebrow" style="margin:0">Readiness</div><div class="wv" id="wfNear">—</div></div>
-          <div class="chip w" id="wfBadge" style="font-size:11.5px;padding:7px 13px">—</div></div>
-        <button class="startbtn" style="background:none;color:var(--red);box-shadow:none;margin-top:8px" onclick="applyWhatif()">↑ Apply to my entry</button>
-        <div style="font-size:11.5px;color:var(--faint)" id="wfNote"></div>
-      </div>
-    </details>
+  function renderPerform(){
+    var p=VM.perform, host=$('v_perform');
+    if(!p||!p.months){host.innerHTML='<div class="c" style="padding:24px;text-align:center;color:var(--muted)">No monthly history available.</div>';return;}
+    var months=p.months;
+    function bars(vals,cur){
+      var mx=Math.max.apply(null,vals.map(Math.abs).concat([1]));
+      var h='';vals.forEach(function(v,i){var pctH=Math.max(3,Math.abs(v)/mx*100);var cls=(v===0?'zero':'')+(i===vals.length-1?' cur':'');h+='<div class="col '+cls+'"><i style="height:'+pctH.toFixed(0)+'%"></i></div>';});return h;
+    }
+    var w=months.map(function(m){return m.w;}), n=months.map(function(m){return m.n;});
+    host.innerHTML=
+      '<div class="lbl">Raw business — the shared input to earnings & promotion</div>'+
+      '<div class="c barwrap"><div class="barhead"><span class="bt">WFYP per month</span><span class="bm">'+lakh(w.reduce(function(a,b){return a+b;},0))+' / 12 mo</span></div><div class="bars">'+bars(w)+'</div><div class="barx"><span>'+mLabel(months[0].m)+'</span><span>'+mLabel(months[11].m)+'</span></div></div>'+
+      '<div class="c barwrap"><div class="barhead"><span class="bt">Policies (NOP) per month</span><span class="bm">'+n.reduce(function(a,b){return a+b;},0)+' / 12 mo</span></div><div class="bars">'+bars(n)+'</div><div class="barx"><span>'+mLabel(months[0].m)+'</span><span>'+mLabel(months[11].m)+'</span></div></div>'+
+      '<div class="c" style="padding:13px 15px;font-size:12px;color:var(--ink2);line-height:1.5;font-weight:500">Your rolling 12-month totals feed both your <b style="color:var(--ink)">incentive</b> (this month) and your <b style="color:var(--ink)">promotion</b> gates — see Earnings and Career.</div>';
+  }
 
-    <details class="exp">
-      <summary><div><div class="t">📋 Rules & my details</div><div class="s">How promotion is decided · your grade targets</div></div><span class="ar">▾</span></summary>
-      <div class="body">
-        <div class="eyebrow">The four gates</div>
-        <div style="font-size:13.5px;color:var(--ink2);line-height:1.65;margin-bottom:16px">
-          1 · <b>WFYP</b> achievement ≥ 75% &nbsp;&nbsp; 2 · <b>NOP</b> achievement ≥ 50%<br>
-          3 · <b>Overall WAS</b> above 100% &nbsp;&nbsp; 4 · <b>Persistency</b> ≥ 87% (new joiners exempt)<br>
-          <span style="color:var(--muted);font-size:12.5px">WAS = 75% × WFYP% + 25% × NOP%, each capped at 150%, on your rolling trailing-12-month totals.</span>
-        </div>
-        <div class="eyebrow">My details</div>
-        <div id="meHost" style="max-width:520px"></div>
-        <button class="startbtn" style="max-width:240px;background:none;color:var(--no);box-shadow:none;padding:10px" onclick="backToLanding()">← Switch DSE</button>
-      </div>
-    </details>
-    </div><!-- /dashContent -->
-  </div>
-  <div class="foot" id="footNote">Elevate · ABSLI Direct Marketing · Prototype</div>
-</div>
+  function renderEarnings(){
+    var e=VM.earnings, H=e.headline, A=e.achievement;
+    var achFrac=Math.min(1,A.achievementPct||0);
+    var heroRing='<div class="ring" style="width:92px;height:92px">'+ring(achFrac,92,8,'#FDB913','rgba(255,255,255,.18)')+'<div class="rc"><div class="rn">'+pct(A.achievementPct)+'</div><div class="ru">this month</div>'+(A.achievementPct>1?'<div class="over">+'+Math.round((A.achievementPct-1)*100)+'% over</div>':'')+'</div></div>';
+    var crRows=e.credits.map(function(c){return '<div class="li cr"><span class="bar"></span><div class="nm">'+c.label+'</div><div class="amt"><div class="a">+'+inr(c.amount)+'</div></div></div>';}).join('');
+    var opRows=e.deductions.length?e.deductions.map(function(c){return '<div class="li op"><span class="bar"></span><div><div class="nm">'+c.label+'</div>'+(c.recoverable?'<div class="ds">recoverable</div>':'')+'</div><div class="amt"><div class="a">−'+inr(Math.abs(c.amount))+'</div>'+(c.recoverable?'<div class="t">Claim it</div>':'')+'</div></div>';}).join(''):'<div class="li"><div class="nm" style="color:var(--muted)">Nothing on the table — fully optimised ✓</div></div>';
+    var journey=e.journey.map(function(s,i){
+      var drag=(s.key==='nopMultiplier'||s.key==='hold'), fin=(s.key==='final');
+      var chip=s.key==='achievement'?'<span class="rulechip">'+pct(s.value)+' of target</span>':(s.mult!=null?'<span class="rulechip">× '+Math.round(s.mult*100)+'%</span>':'');
+      var right=(s.running!=null?inr(s.running):(s.value!=null?inr(s.value):''));
+      return '<div class="step '+(drag?'drag':'on')+(fin?' final':'')+'"><div class="node">'+(fin?'✓':(i+1))+'</div><div style="flex:1"><div class="top"><span class="nm">'+s.label+'</span><span class="rt">'+right+'</span></div>'+chip+'</div></div>';
+    }).join('');
+    var opt=e.recommendations.map(function(r,i){return '<div class="c opt '+['','','two','three','four'][Math.min(i,4)]+'"><div class="oh"><span class="rank">'+(i+1)+'</span><span class="act">'+moveLabel(r)+'</span><span class="eff '+r.effort+'">'+r.effort+'</span></div><div class="impact"><div class="imp money"><span class="ik">Earnings</span><span class="iv">+'+inr(r.deltaFinal)+'</span><span class="isub">this month</span></div></div></div>';}).join('');
+    $('v_earnings').innerHTML=
+      '<div class="seg" id="earnseg"><button class="on" onclick="subTo(\'snap\',this)">Snapshot</button><button onclick="subTo(\'stmt\',this)">Statement</button><button onclick="subTo(\'jrn\',this)">Journey</button><button onclick="subTo(\'opt\',this)">Optimize</button></div>'+
+      '<div class="sub on" data-sub="snap">'+
+        '<div class="hero"><div class="glow"></div><div class="row"><div><div class="k">Estimated incentive · April</div><div class="big"><small>₹</small><span class="num">'+Math.round(H.finalAmount).toLocaleString('en-IN')+'</span></div><div class="pot">Potential <b>'+inr(H.baseline)+'</b> · <b>'+inr(H.onTheTable)+'</b> to claim</div></div>'+heroRing+'</div></div>'+
+        '<div class="grid2"><div class="c stat"><div class="k"><span>WFYP</span><small>premium credited</small></div><div class="v">'+lakh(A.wfypOthers+A.ulipGap)+'</div><div class="m up">'+pct(A.achievementPct)+' this month</div></div>'+
+        '<div class="c stat"><div class="k"><span>NOP</span><small>policies sold</small></div><div class="v">'+A.nop+'</div><div class="m '+(A.nopMult<1?'warn':'up')+'">'+Math.round(A.nopMult*100)+'% multiplier</div></div>'+
+        '<div class="c stat"><div class="k"><span>Persistency</span><small>renewals kept</small></div><div class="v">'+(A.persCM?pct(A.persCM):'—')+'</div><div class="m up">'+Math.round(A.persMult*100)+'% booster</div></div>'+
+        '<div class="c stat"><div class="k"><span>Payout rate</span><small>slab</small></div><div class="v">'+pct(A.payoutPct)+'</div><div class="m">achievement band</div></div></div>'+
+        '<div class="nudge" onclick="subTo(\'opt\',document.querySelectorAll(\'#earnseg button\')[3])"><div class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h7l-1 8 10-12h-7z"/></svg></div><div class="tx"><b>'+moveLabel(e.recommendations[0])+'</b> adds <b>'+inr(e.recommendations[0].deltaFinal)+'</b> this month.</div><span class="go">›</span></div>'+
+        '<div class="trust"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg><span>From the company payout sheet</span></div></div>'+
+      '<div class="sub" data-sub="stmt">'+
+        '<div class="c stmt-net"><div><div class="lbl" style="padding:0">Net incentive · so far</div><div class="v">'+inr(H.finalAmount)+'</div></div><span class="tagm">Live</span></div>'+
+        '<div class="sect"><span class="h cr">Earned · in the bank</span><span class="sum cr">+'+inr(H.baseline)+'</span></div><div class="c ledger">'+crRows+'</div>'+
+        '<div class="sect"><span class="h op">Still on the table</span><span class="sum op">'+inr(H.onTheTable)+'</span></div><div class="c ledger">'+opRows+'</div></div>'+
+      '<div class="sub" data-sub="jrn"><div class="c" style="padding:8px 16px 12px"><div class="steps"><div class="rail"></div>'+journey+'</div></div></div>'+
+      '<div class="sub" data-sub="opt">'+opt+'</div>';
+  }
 
-<!-- ============ EARNINGS ============ -->
-<div id="earningsView" class="hide">
-  <div class="nav"><div class="nav-in">
-    <div class="l"><img class="ablogo" src="assets/img/absli-logo.png" alt="Aditya Birla Capital Life Insurance"><div><div class="nm">Elevate <b>·</b> Earnings</div><div class="tag">April statement</div></div></div>
-    <div class="r"><button class="ahead back" style="margin:0" onclick="closeEarnings()">← Back</button></div>
-  </div></div>
-  <div class="page"><div id="earnHost"></div></div>
-</div>
+  function renderCareer(){
+    var c=VM.career, d=VM.dse, idx=GRADE_LADDER.indexOf(d.grade), next=(idx>=0&&idx<GRADE_LADDER.length-1)?GRADE_LADDER[idx+1]:null;
+    var cring='<div class="cring" style="width:100px;height:100px">'+ring(c.progress,100,8,'#F58220','#f2e6d6')+'<div class="rc"><div class="rn">'+pct(c.progress)+'</div><div class="ru">of the way</div></div></div>';
+    var gate=function(nm,val,need,ok){return '<div class="gate '+(ok?'ok':'no')+'"><div class="gi">'+(ok?'✓':'!')+'</div><div class="gt"><div class="gn">'+nm+'</div><div class="gs">'+val+' · needs '+need+'</div><div class="gbar"><i style="width:'+(ok?100:Math.min(100,Math.round(val.replace('%','')/parseFloat(need.replace(/[^0-9.]/g,''))*100||90)))+'%"></i></div></div><div class="gv">'+val+'</div></div>';};
+    var gates=gate('WFYP achievement',pct(c.wfypAch),'≥ 75%',c.gates.wfyp)+gate('NOP achievement',pct(c.nopAch),'≥ 50%',c.gates.nop)+gate('Overall WAS',pct(c.was),'> 100%',c.gates.was)+gate('Persistency',c.persistencyExempt?'Exempt':(c.persistencyValue*100).toFixed(1)+'%','≥ 87%',c.gates.persistency);
+    var rungs=[[GRADE_LADDER[idx-1],'done','Cleared'],[d.grade,'you','You'],[next,'next','Next'],[GRADE_LADDER[idx+2],'lock','Later']].filter(function(r){return r[0];}).map(function(r){var cl=r[1];return '<div class="rung '+cl+'"><div class="rdot">'+(cl==='done'?'✓':cl==='you'?'●':cl==='next'?'◆':'·')+'</div><div class="gl">'+r[0]+'</div><div class="rl">'+r[2]+'</div></div>';}).join('');
+    var ngName={wfyp:'WFYP',nop:'NOP',was:'Overall WAS',persistency:'Persistency'}[c.nextGate]||'the last gate';
+    var remain=c.eligible?'<div class="remain ok"><div class="ic">🏆</div><div class="tx"><b>All four gates cleared</b> — you\'re eligible for '+(next||'promotion')+'. Keep the momentum to lock it in.</div></div>':'<div class="remain"><div class="ic">⚑</div><div class="tx"><b>'+(4-c.gatesCleared)+' gate'+(4-c.gatesCleared>1?'s':'')+' to go</b> — <b>'+ngName+'</b> is next. Clear it to reach <b>'+(next||'the next grade')+'</b>.</div></div>';
+    // momentum from perform
+    var mom='';
+    if(VM.perform&&VM.perform.months){var mw=VM.perform.months.map(function(m){return m.w;});var mx=Math.max.apply(null,mw.map(Math.abs).concat([1]));mom='<div class="lbl">Your last 12 months · momentum</div><div class="c"><div class="momrow">'+VM.perform.months.map(function(m){var f=Math.abs(m.w)/mx;var lv=m.w<=0?0:f<.25?1:f<.5?2:f<.8?3:4;return '<div class="mcell '+(lv?'l'+lv:'')+'"></div>';}).join('')+'</div></div>';}
+    var tgtBand={CPM:'₹1.2 Cr',EPM:'₹1.6 Cr',SPMG:'₹1 Cr',PM:'₹80 L'}[next]||'a higher';
+    $('v_career').innerHTML=
+      '<div class="chero"><div class="glow"></div><div class="climbline"><span class="now">'+d.grade+'</span><span class="arr">→</span><b>'+(next||'—')+'</b><span class="nl">next grade</span></div>'+
+        '<div class="mid">'+cring+'<div class="msg"><div class="big">You\'ve cleared <b>'+c.gatesCleared+' of 4 gates</b>'+(next?' for '+next:'')+'.</div><div class="eta '+(c.eligible?'ok':'roll')+'">'+(c.eligible?'✓ Eligible now':'Rolling · never resets')+'</div></div></div></div>'+
+      '<div class="c"><div class="ladder">'+rungs+'</div></div>'+
+      '<div class="lbl">The four gates · rolling 12 months</div><div class="c">'+gates+'</div>'+
+      remain+mom+
+      '<div class="c benefits"><div class="lbl" style="padding:0 0 6px">When you reach '+(next||'the next grade')+'</div><div class="brow"><span class="bi">◆</span><div class="bt">Higher incentive grid — <b>'+tgtBand+'</b> annual band</div></div><div class="brow"><span class="bi">◆</span><div class="bt">New designation &amp; team</div></div><div class="brow"><span class="bi">◆</span><div class="bt">Bigger per-policy credit ceiling</div></div></div>';
+  }
 
-<!-- ============ CAREER JOURNEY ============ -->
-<div id="careerView" class="hide">
-  <div class="nav"><div class="nav-in">
-    <div class="l"><img class="ablogo" src="assets/img/absli-logo.png" alt="Aditya Birla Capital Life Insurance"><div><div class="nm">Elevate <b>·</b> Career</div><div class="tag">Your climb</div></div></div>
-    <div class="r"><button class="ahead back" style="margin:0" onclick="closeCareer()">← Back</button></div>
-  </div></div>
-  <div class="page"><div id="careerHost"></div></div>
-</div>
+  function renderCoach(){
+    var e=VM.earnings, b=VM.bridge, c=VM.career;
+    var elig=b.promotionImpact.alreadyEligible, dp=Math.round(b.promotionImpact.deltaProgress*100);
+    var lead='<div class="coachlead"><div class="cl-k">Your coach</div><div class="cl-t">Do one thing: <b>'+b.move.label.toLowerCase()+'.</b></div><div class="cl-s">'+b.headline+'</div></div>';
+    var cards=e.recommendations.map(function(r,i){
+      var promo='';
+      if(i===0){promo='<div class="imp promo"><span class="ik">Promotion</span><span class="iv">'+(elig?'—':(dp>0?'+'+dp+'%':'—'))+'</span><span class="isub">'+(elig?'already eligible':'rolling')+'</span></div>';}
+      return '<div class="c opt '+['','','two','three','four'][Math.min(i,4)]+'"><div class="oh"><span class="rank">'+(i+1)+'</span><span class="act">'+moveLabel(r)+'</span><span class="eff '+r.effort+'">'+r.effort+'</span></div>'+
+        '<div class="impact"><div class="imp money"><span class="ik">Earn now</span><span class="iv">+'+inr(r.deltaFinal)+'</span><span class="isub">this month</span></div>'+promo+'</div></div>';
+    }).join('');
+    $('v_coach').innerHTML=lead+'<div class="lbl">Ranked by return</div>'+cards+'<div class="etrust">'+(VM.dse.name||'')+' · '+VM.dse.grade+' · engine-ranked, before month-end</div>';
+  }
 
-<!-- Rules engine (ES module). Exposes the tested SP engine to app.js; on file:// or if it
-     fails to load, app.js falls back to its built-in math (identical output — see engine/parity-app-sp.test.js). -->
-<script type="module">
-  import { evaluateSalesProgression } from './engine/spEngine.js';
-  import { SP_RULES } from './engine/designs/spRules.js';
-  import { buildEarningsStatement } from './engine/statement.js';
-  import { buildDashboardRecommendation } from './engine/bridge.js';
-  import { parseIncentiveDseRow } from './engine/transform.js';
-  import { APR26 } from './engine/designs/apr26.js';
-  window.Elevate = {
-    evaluateSalesProgression, SP_RULES,
-    earningsFor(row) {
-      const { incentiveInputs } = parseIncentiveDseRow(row);
-      return buildEarningsStatement(APR26, incentiveInputs, { month: 'April' });
-    },
-    bridgeFor(row, spInputs) {
-      const { incentiveInputs } = parseIncentiveDseRow(row);
-      return buildDashboardRecommendation({ incentiveDesign: APR26, incentiveInputs, spRules: SP_RULES, spInputs });
-    },
-  };
+  // Enter key on login
+  document.addEventListener('keydown',function(e){if(e.key==='Enter'&&!$('login').classList.contains('hide'))signIn();});
 </script>
-<script src="assets/js/app.js"></script>
-<div id="toast"><span class="ti">✓</span><span id="toastMsg"></span></div>
-<div id="printReport"></div>
 </body>
 </html>
-<!-- test -->
