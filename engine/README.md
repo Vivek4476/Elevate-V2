@@ -32,6 +32,7 @@ The UI renders `view` and never sees a slab or a formula.
 
 | File | Responsibility |
 |------|----------------|
+| `transform.js` | Turns the two raw monthly files into per-DSE engine inputs (joins them) |
 | `view.js` | Facade — composes everything for one DSE |
 | `stage1.js` | Per-policy credit (WFYP / S2S / FT tiers / NOP) + "where the money came from" |
 | `incentiveEngine.js` | DSE payout chain → **Final** |
@@ -51,6 +52,21 @@ not a code change. Incentive numbers (this-month, ₹) and Sales-Progression num
 The workbook is delivered fully computed and is the source of truth; this engine **reads and
 explains** those numbers (validated to reproduce them) and computes the **marginal what-ifs**
 the Optimizer and bridge need — it does not replace the payout sheet.
+
+## Two files, joined
+
+Incentive (this-month, ₹) and Sales-Progression (rolling 12-month, %) arrive as **two separate
+files** and are joined on the DSE code (incentive "Agent Code" == SP "BO Code"):
+
+```js
+import { transformMonth } from './engine/transform.js';
+const records = transformMonth({ dseRows, spData, policyRows });   // per-DSE { incentiveInputs, spInputs, policies }
+records.forEach(r => render(buildDseView({ designs: APR26, spRules: SP_RULES, ...r })));
+```
+
+Not every DSE appears in both files, so `transformMonth` reports join coverage (and can keep
+unjoined rows with `{ withUnjoined: true }`) rather than silently dropping them — a real
+operational check for the monthly refresh.
 
 ## Adding a month
 
