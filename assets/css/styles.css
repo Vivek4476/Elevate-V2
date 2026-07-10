@@ -522,3 +522,30 @@ select.f,input.f2,.ef input{font-size:16px}
   .sumbar .mi{min-width:62px}
   .chart{height:200px}
 }
+
+/* ===== Earnings (engine-driven) ===== */
+.earnbtn{border:1px solid #f2d7dd;background:#fbeef1;color:var(--red);font-weight:800;font-size:11.5px;padding:6px 12px;border-radius:20px;cursor:pointer;font-family:inherit;margin-right:8px}
+.earnbtn:hover{background:#f8e2e7}
+#earnHost{max-width:640px;margin:0 auto}
+.ehero{position:relative;overflow:hidden;padding:20px;border-radius:20px;color:#fff;box-shadow:var(--sh3);background:radial-gradient(130% 130% at 100% 0%,#c0223f 0%,var(--red) 46%,#6e0f21 100%);margin-bottom:16px}
+.ehero .lbl{font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;font-weight:800;color:rgba(255,255,255,.72)}
+.ehero .big{font-size:40px;font-weight:800;letter-spacing:-.03em;margin-top:6px;line-height:1}
+.ehero .pot{margin-top:12px;display:inline-flex;gap:6px;font-size:12.5px;background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.2);padding:6px 11px;border-radius:20px;font-weight:600}
+.ehero .pot b{color:var(--sun3)}
+.esum{font-family:inherit}
+.eledger .er{display:flex;align-items:center;gap:12px;padding:12px 2px;border-top:1px solid var(--line)}
+.eledger .er:first-child{border-top:0}
+.eledger .bar{width:3px;align-self:stretch;border-radius:3px;flex:0 0 auto}
+.er.cr .bar{background:var(--ok)}
+.er.op .bar{background:var(--warn)}
+.eledger .nm{font-size:13.5px;font-weight:700;letter-spacing:-.01em}
+.eledger .ds{font-size:11px;color:var(--muted);margin-top:2px;font-weight:500}
+.eledger .amt{margin-left:auto;font-weight:800;font-size:14.5px;white-space:nowrap}
+.er.cr .amt{color:var(--ok)}
+.er.op .amt{color:var(--warn)}
+.emove{display:flex;align-items:center;gap:12px;padding:14px 15px;border-radius:16px;background:linear-gradient(110deg,#fff6ea,#fff);border:1px solid #fbe6cc;margin-top:16px}
+.emove .ic{width:36px;height:36px;border-radius:11px;flex:0 0 auto;display:flex;align-items:center;justify-content:center;font-size:18px;background:linear-gradient(135deg,var(--sun2),var(--sun3));box-shadow:0 5px 12px rgba(245,130,32,.3)}
+.emove .tx{font-size:13px;font-weight:600;color:var(--ink2);line-height:1.4}
+.emove .tx b{color:var(--ink)}
+.etrust{font-size:11.5px;color:var(--faint);margin-top:14px;font-weight:550}
+.eempty{text-align:center;color:var(--muted);padding:48px 16px;font-size:14px}

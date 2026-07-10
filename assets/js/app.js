@@ -768,5 +768,42 @@ function drawJourney(){
     setTimeout(()=>mn[0].classList.add('on','pop'),RM?0:1600);}
 }
 drawJourney();
+/* ===== Earnings (engine-driven) ===== */
+let INCENTIVE=null;
+async function loadIncentive(){if(INCENTIVE)return INCENTIVE;try{const r=await fetch('elevate_incentive.json',{cache:'no-store'});if(r.ok)INCENTIVE=await r.json();}catch(e){}return INCENTIVE;}
+function moveLabel(r){if(!r)return null;
+  if(r.lever==='nop')return r.extraPolicies===1?'Sell one more policy':`Sell ${r.extraPolicies} more policies`;
+  if(r.lever==='ulipGrid')return `Grow ULIP premium by ${lakh(r.rupeesNeeded)}`;
+  if(r.lever==='achievement')return `Bring in ${lakh(r.rupeesNeeded)} more premium`;
+  if(r.lever==='persistency')return 'Improve persistency';
+  return 'Your best move';}
+async function openEarnings(){
+  const e=state.emp;if(!e)return;
+  $('appView').classList.add('hide');$('earningsView').classList.remove('hide');window.scrollTo(0,0);
+  $('earnHost').innerHTML='<div class="eempty">Loading your statement…</div>';
+  await loadIncentive();
+  const row=INCENTIVE&&INCENTIVE[e.bo];
+  if(!row){$('earnHost').innerHTML=`<div class="eempty">No incentive statement was published for <b>${e.name}</b> this month.<br><span style="font-size:12px">Earnings appear once your DSE code is in the monthly incentive sheet.</span></div>`;return;}
+  if(!(window.Elevate&&window.Elevate.earningsFor)){$('earnHost').innerHTML='<div class="eempty">The earnings engine could not load. Serve the app over http (not file://).</div>';return;}
+  renderEarnings(window.Elevate.earningsFor(Object.assign({},row)),e);
+}
+function closeEarnings(){$('earningsView').classList.add('hide');$('appView').classList.remove('hide');window.scrollTo(0,0);}
+function renderEarnings(s,e){
+  const H=s.headline;
+  const crRows=s.credits.map(c=>`<div class="er cr"><span class="bar"></span><div class="nm">${c.label}</div><div class="amt">+${inr(c.amount)}</div></div>`).join('');
+  const opRows=s.deductions.length?s.deductions.map(c=>`<div class="er op"><span class="bar"></span><div><div class="nm">${c.label}</div><div class="ds">${c.recoverable?'recoverable':''}</div></div><div class="amt">−${inr(Math.abs(c.amount))}</div></div>`).join(''):`<div class="er"><div class="nm" style="color:var(--muted);font-weight:600">Nothing on the table — fully optimised ✓</div></div>`;
+  const rec=s.recommendations&&s.recommendations[0];
+  const move=rec?`<div class="emove"><div class="ic">⚡</div><div class="tx"><b>${moveLabel(rec)}</b> adds <b>${inr(rec.deltaFinal)}</b> this month.</div></div>`:'';
+  $('earnHost').innerHTML=`
+    <div class="ehero"><div class="lbl">Estimated incentive · April</div>
+      <div class="big">${inr(H.finalAmount)}</div>
+      <div class="pot">Potential <b>${inr(H.baseline)}</b> · <b>${inr(H.onTheTable)}</b> to claim</div></div>
+    <div class="card"><div class="eyebrow" style="margin-top:0;display:flex;justify-content:space-between"><span style="color:var(--ok)">Earned · in the bank</span><span class="esum" style="color:var(--ok)">+${inr(H.baseline)}</span></div>
+      <div class="eledger">${crRows}</div></div>
+    <div class="card" style="margin-top:14px"><div class="eyebrow" style="margin-top:0;display:flex;justify-content:space-between"><span style="color:var(--warn)">Still on the table</span><span class="esum" style="color:var(--warn)">${inr(H.onTheTable)}</span></div>
+      <div class="eledger">${opRows}</div></div>
+    ${move}
+    <div class="etrust">From the company payout sheet · ${e.name} · ${e.desg}</div>`;
+}
 /* boot */
 initData();

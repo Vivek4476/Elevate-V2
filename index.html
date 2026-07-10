@@ -178,7 +178,7 @@
 <div id="appView" class="hide">
   <div class="nav"><div class="nav-in">
     <div class="l"><img class="ablogo" src="assets/img/absli-logo.png" alt="Aditya Birla Capital Life Insurance"><div><div class="nm">Elevate <b>·</b> Promotion Dashboard</div><div class="tag">ABSLI Direct Marketing</div></div></div>
-    <div class="r"><span class="mpill" id="topMonth">—</span><div class="av" id="topAv" onclick="toggleMe()">–</div></div>
+    <div class="r"><button class="earnbtn" onclick="openEarnings()">₹ Earnings</button><span class="mpill" id="topMonth">—</span><div class="av" id="topAv" onclick="toggleMe()">–</div></div>
   </div></div>
 
   <div class="page">
@@ -281,12 +281,30 @@
   <div class="foot" id="footNote">Elevate · ABSLI Direct Marketing · Prototype</div>
 </div>
 
+<!-- ============ EARNINGS ============ -->
+<div id="earningsView" class="hide">
+  <div class="nav"><div class="nav-in">
+    <div class="l"><img class="ablogo" src="assets/img/absli-logo.png" alt="Aditya Birla Capital Life Insurance"><div><div class="nm">Elevate <b>·</b> Earnings</div><div class="tag">April statement</div></div></div>
+    <div class="r"><button class="ahead back" style="margin:0" onclick="closeEarnings()">← Back</button></div>
+  </div></div>
+  <div class="page"><div id="earnHost"></div></div>
+</div>
+
 <!-- Rules engine (ES module). Exposes the tested SP engine to app.js; on file:// or if it
      fails to load, app.js falls back to its built-in math (identical output — see engine/parity-app-sp.test.js). -->
 <script type="module">
   import { evaluateSalesProgression } from './engine/spEngine.js';
   import { SP_RULES } from './engine/designs/spRules.js';
-  window.Elevate = { evaluateSalesProgression, SP_RULES };
+  import { buildEarningsStatement } from './engine/statement.js';
+  import { parseIncentiveDseRow } from './engine/transform.js';
+  import { APR26 } from './engine/designs/apr26.js';
+  window.Elevate = {
+    evaluateSalesProgression, SP_RULES,
+    earningsFor(row) {
+      const { incentiveInputs } = parseIncentiveDseRow(row);
+      return buildEarningsStatement(APR26, incentiveInputs, { month: 'April' });
+    },
+  };
 </script>
 <script src="assets/js/app.js"></script>
 <div id="toast"><span class="ti">✓</span><span id="toastMsg"></span></div>
