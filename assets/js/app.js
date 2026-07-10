@@ -132,8 +132,18 @@ function compute(oW,oN,oP){
     if(cur){if(wIn!=="")w=parseFloat(wIn)||0;if(nIn!=="")n=parseFloat(nIn)||0;}
     sW+=w;sN+=n;const cwa=tgt.wfyp?sW/tgt.wfyp:0,cna=tgt.nop?sN/tgt.nop:0,cov=Math.min(cwa,1.5)*.75+Math.min(cna,1.5)*.25;
     rows.push({m:mLabel(key),cwa,cna,cov,wg:cwa>=.75,ng:cna>=.5,cur,w,n});}
-  const wa=tgt.wfyp?sW/tgt.wfyp:0,na=tgt.nop?sN/tgt.nop:0,wW=Math.min(wa,1.5)*.75,nW=Math.min(na,1.5)*.25,ov=wW+nW;
-  const wg=wa>=.75,ng=na>=.5,wasPass=ov>1;
+  /* Four-gate decision via the tested rules engine when present; identical built-in math as fallback. */
+  let wa,na,wW,nW,ov,wg,ng,wasPass;
+  if(window.Elevate&&window.Elevate.evaluateSalesProgression){
+    const _sp=window.Elevate.evaluateSalesProgression(window.Elevate.SP_RULES,
+      {trailingWfyp:sW,trailingNop:sN,targetWfyp:tgt.wfyp,targetNop:tgt.nop,
+       persistency:(e.pers==="NA"?"NA":e.pers),persistencyThreshold:tgt.thr});
+    wa=_sp.wfypAch;na=_sp.nopAch;ov=_sp.was;wg=_sp.gates.wfyp;ng=_sp.gates.nop;wasPass=_sp.gates.was;
+    wW=Math.min(wa,1.5)*.75;nW=Math.min(na,1.5)*.25;
+  }else{
+    wa=tgt.wfyp?sW/tgt.wfyp:0;na=tgt.nop?sN/tgt.nop:0;wW=Math.min(wa,1.5)*.75;nW=Math.min(na,1.5)*.25;ov=wW+nW;
+    wg=wa>=.75;ng=na>=.5;wasPass=ov>1;
+  }
   let pSource,pVal=null,pExempt=false,pPass=false;
   if(oP!==undefined&&oP!==null){pSource='sim';pVal=oP/100;pPass=pVal>=tgt.thr;}
   else if(pIn!==""&&!isNaN(pIn)){pSource='typed';pVal=parseFloat(pIn)/100;pPass=pVal>=tgt.thr;}
