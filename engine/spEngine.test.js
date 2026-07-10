@@ -79,6 +79,12 @@ test('a fully-eligible DSE: 4 gates, progress 1.0, no next gate', () => {
   assert.equal(o.nextGate, null);
 });
 
+test('progress clamps to 0 when trailing WFYP is negative (clawbacks)', () => {
+  const o = evaluateSalesProgression(SP_RULES, { ...base, trailingWfyp: -4724841, trailingNop: 3, persistency: 0.87 });
+  assert.equal(o.progress, 0);
+  assert.ok(o.was < 0); // WAS itself can go negative; progress must not
+});
+
 test('nextGate is the first unmet gate', () => {
   // WFYP met, NOP not -> chase NOP
   const o = evaluateSalesProgression(SP_RULES, { ...base, trailingWfyp: 1e6, trailingNop: 2 });

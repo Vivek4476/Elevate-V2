@@ -36,11 +36,13 @@ export function evaluateSalesProgression(rules, inp) {
   const gatesCleared = Object.values(gateStatus).filter(Boolean).length;
 
   // Progress-to-eligibility: how far each gate is toward its threshold, weighted.
-  const progress =
+  // Clamped to [0,1] — trailing WFYP can be negative (clawbacks), which would otherwise
+  // push a component below zero.
+  const progress = Math.max(0, Math.min(1,
     Math.min(wfypAch / gates.wfypMin, 1) * progressWeights.wfyp +
     Math.min(nopAch / gates.nopMin, 1) * progressWeights.nop +
     Math.min(wasScore / gates.wasMin, 1) * progressWeights.was +
-    (gateStatus.persistency ? 1 : Math.min(persistencyValue / thr, 1)) * progressWeights.persistency;
+    (gateStatus.persistency ? 1 : Math.min(persistencyValue / thr, 1)) * progressWeights.persistency));
 
   // Which gate to chase next (first unmet, in gate order).
   const nextGate = eligible

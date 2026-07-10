@@ -281,6 +281,13 @@
   <div class="foot" id="footNote">Elevate · ABSLI Direct Marketing · Prototype</div>
 </div>
 
+<!-- Rules engine (ES module). Exposes the tested SP engine to app.js; on file:// or if it
+     fails to load, app.js falls back to its built-in math (identical output — see engine/parity-app-sp.test.js). -->
+<script type="module">
+  import { evaluateSalesProgression } from './engine/spEngine.js';
+  import { SP_RULES } from './engine/designs/spRules.js';
+  window.Elevate = { evaluateSalesProgression, SP_RULES };
+</script>
 <script src="assets/js/app.js"></script>
 <div id="toast"><span class="ti">✓</span><span id="toastMsg"></span></div>
 <div id="printReport"></div>
