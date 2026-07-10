@@ -788,6 +788,15 @@ async function openEarnings(){
   renderEarnings(window.Elevate.earningsFor(Object.assign({},row)),e);
 }
 function closeEarnings(){$('earningsView').classList.add('hide');$('appView').classList.remove('hide');window.scrollTo(0,0);}
+function renderJourney(j){return j.map((s,i)=>{
+  const drag=s.key==='nopMultiplier'||s.key==='hold',fin=s.key==='final';
+  const chip=s.key==='achievement'?`<div class="ejc">${(s.value*100).toFixed(0)}% of target</div>`
+    :s.mult!=null?`<div class="ejc">× ${(s.mult*100).toFixed(0)}%</div>`:'';
+  const right=s.running!=null?inr(s.running):(s.value!=null?inr(s.value):'');
+  return `<div class="ejrow ${drag?'drag':''} ${fin?'final':''}"><div class="ejnode">${fin?'✓':(i+1)}</div><div style="flex:1"><div class="ejt">${s.label}</div>${chip}</div><div class="ejr">${right}</div></div>`;
+}).join('');}
+function renderOpt(recs){if(!recs||!recs.length)return '<div style="color:var(--muted);font-size:13px;padding:8px 0">Fully optimised — no moves left this month ✓</div>';
+  return recs.map((r,i)=>`<div class="eopt n${i+1}"><div class="erank">${i+1}</div><div style="flex:1"><div class="oa">${moveLabel(r)}</div></div><span class="oe">${r.effort}</span><div class="od">+${inr(r.deltaFinal)}</div></div>`).join('');}
 function renderEarnings(s,e){
   const H=s.headline;
   const crRows=s.credits.map(c=>`<div class="er cr"><span class="bar"></span><div class="nm">${c.label}</div><div class="amt">+${inr(c.amount)}</div></div>`).join('');
@@ -803,6 +812,8 @@ function renderEarnings(s,e){
     <div class="card" style="margin-top:14px"><div class="eyebrow" style="margin-top:0;display:flex;justify-content:space-between"><span style="color:var(--warn)">Still on the table</span><span class="esum" style="color:var(--warn)">${inr(H.onTheTable)}</span></div>
       <div class="eledger">${opRows}</div></div>
     ${move}
+    <details class="exp" style="margin-top:16px"><summary><div><div class="t">How it adds up</div><div class="s">Every number, traceable to a rule</div></div><span class="ar">▾</span></summary><div class="body"><div class="ejourney">${renderJourney(s.journey)}</div></div></details>
+    <details class="exp"><summary><div><div class="t">Ways to earn more</div><div class="s">Ranked by return before month-end</div></div><span class="ar">▾</span></summary><div class="body">${renderOpt(s.recommendations)}</div></details>
     <div class="etrust">From the company payout sheet · ${e.name} · ${e.desg}</div>`;
 }
 /* boot */

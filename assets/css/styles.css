@@ -549,3 +549,23 @@ select.f,input.f2,.ef input{font-size:16px}
 .emove .tx b{color:var(--ink)}
 .etrust{font-size:11.5px;color:var(--faint);margin-top:14px;font-weight:550}
 .eempty{text-align:center;color:var(--muted);padding:48px 16px;font-size:14px}
+
+/* ===== Earnings: journey + optimizer ===== */
+.ejourney{padding:2px 0}
+.ejrow{display:flex;align-items:center;gap:12px;padding:11px 0;border-top:1px solid var(--line)}
+.ejrow:first-child{border-top:0}
+.ejnode{width:24px;height:24px;border-radius:50%;flex:0 0 auto;display:flex;align-items:center;justify-content:center;font-size:10.5px;font-weight:800;background:#fbeef1;color:var(--red)}
+.ejrow.drag .ejnode{background:var(--warn-bg);color:var(--warn)}
+.ejrow.final .ejnode{background:linear-gradient(135deg,var(--red),#6e0f21);color:#fff}
+.ejt{font-size:13px;font-weight:700;letter-spacing:-.01em}
+.ejc{font-size:10.5px;color:var(--muted);margin-top:2px;font-weight:600}
+.ejr{margin-left:auto;font-weight:800;font-size:13.5px;white-space:nowrap}
+.ejrow.drag .ejr{color:var(--warn)}
+.ejrow.final .ejr{color:var(--red)}
+.eopt{display:flex;align-items:center;gap:11px;padding:12px 0;border-top:1px solid var(--line)}
+.eopt:first-child{border-top:0}
+.erank{width:24px;height:24px;border-radius:8px;flex:0 0 auto;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff;background:linear-gradient(135deg,var(--sun2),var(--sun3))}
+.eopt.n2 .erank,.eopt.n3 .erank,.eopt.n4 .erank{background:#efe6e8;color:var(--red)}
+.eopt .oa{font-size:13px;font-weight:700;letter-spacing:-.01em}
+.eopt .oe{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.03em;padding:3px 7px;border-radius:10px;color:var(--muted);background:var(--line);white-space:nowrap}
+.eopt .od{margin-left:auto;font-weight:800;color:var(--ok);font-size:13.5px;white-space:nowrap}
