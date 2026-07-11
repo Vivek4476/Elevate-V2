@@ -125,6 +125,27 @@
   .tprog i{display:block;height:100%;border-radius:6px;background:linear-gradient(90deg,var(--sun2),var(--sun3));transition:width 1s var(--ease-ring)}
   .targ .tsub{font-size:10.5px;color:var(--muted);font-weight:650;margin-top:8px}
 
+  /* Money surface (Step 5) — one contract-driven ledger */
+  .mbadge{display:inline-flex;align-items:center;gap:5px;font-size:9.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--sun3);background:rgba(253,185,19,.15);border:1px solid rgba(253,185,19,.32);padding:4px 9px;border-radius:12px}
+  .mbadge .d{width:5px;height:5px;border-radius:50%;background:var(--sun3)}
+  .fcast{display:flex;align-items:center;gap:12px;padding:13px 15px;border-radius:var(--r-card);border:1.5px dashed var(--hair);background:var(--card2)}
+  .fcast .fi{width:34px;height:34px;border-radius:11px;flex:0 0 auto;display:flex;align-items:center;justify-content:center;background:var(--hair2);color:var(--muted)}
+  .fcast .ft{font-size:12.5px;font-weight:750;color:var(--ink2)} .fcast .fs{font-size:10.5px;color:var(--muted);font-weight:550;margin-top:2px;line-height:1.4}
+  .fcast .soon{margin-left:auto;flex:0 0 auto;font-size:8.5px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);background:var(--hair2);border:1px solid var(--hair);padding:4px 8px;border-radius:10px}
+  .lever{padding:14px 15px;display:flex;align-items:flex-start;gap:12px}
+  .lever .lv-ic{width:34px;height:34px;border-radius:11px;flex:0 0 auto;display:flex;align-items:center;justify-content:center;background:var(--gold-bg);border:1px solid var(--gold-line);font-size:16px}
+  .lever .lv-t{font-size:13px;font-weight:750} .lever .lv-d{font-size:11.5px;color:var(--muted);font-weight:550;margin-top:3px;line-height:1.4}
+  .lever .flag{display:inline-block;margin-top:7px;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;color:var(--gold);background:var(--gold-bg);border:1px solid var(--gold-line);padding:3px 8px;border-radius:10px}
+  .lever .lv-amt{margin-left:auto;text-align:right;flex:0 0 auto;padding-left:6px}
+  .lever .lv-amt .a{font-family:var(--mono);font-size:15px;font-weight:800;color:var(--gold)} .lever .lv-amt .k{font-size:8.5px;font-weight:800;text-transform:uppercase;color:var(--muted);margin-top:2px}
+  .mathwrap{border:1px solid var(--hair);border-radius:var(--r-card);background:var(--card);box-shadow:var(--sh1);overflow:hidden}
+  .mathwrap>summary{list-style:none;cursor:pointer;padding:14px 16px;display:flex;align-items:center;font-size:12.5px;font-weight:800;color:var(--maroon)}
+  .mathwrap>summary::-webkit-details-marker{display:none}
+  .mathwrap>summary .chev{margin-left:auto;color:var(--faint);font-weight:800;transition:transform .2s var(--ease-out)}
+  .mathwrap[open]>summary .chev{transform:rotate(90deg)}
+  .mathwrap .mbody{padding:0 16px 10px}
+  .coachlink{display:flex;align-items:center;justify-content:center;gap:7px;padding:13px;border-radius:var(--r-card);background:var(--card);border:1px solid var(--hair);box-shadow:var(--sh1);font-size:13px;font-weight:800;color:var(--maroon);cursor:pointer}
+
   .nudge{display:flex;align-items:center;gap:12px;padding:14px 15px;border-radius:var(--r-card);background:linear-gradient(100deg,#fff7ec,#fffdf8);border:1px solid var(--gold-line);cursor:pointer}
   .nudge .ic{width:36px;height:36px;border-radius:12px;flex:0 0 auto;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--sun2),var(--sun3));box-shadow:0 5px 12px rgba(245,130,32,.3)}
   .nudge .tx{font-size:12.5px;line-height:1.4;color:var(--ink2);font-weight:550} .nudge .tx b{color:var(--ink);font-weight:800}
@@ -701,17 +722,27 @@
   function renderEarnings(){
     var e=VM.earnings,H=e.headline,A=e.achievement,p=VM.profile;
     var achFrac=Math.min(1,A.achievementPct||0);
-    var heroRing='<div class="ring" style="width:96px;height:96px">'+ring(achFrac,96,9,'#FDB913','rgba(255,255,255,.18)')+'<div class="rc"><div class="rn"><span class="cu" data-to="'+Math.round(A.achievementPct*100)+'" data-fmt="pct">'+pct(A.achievementPct)+'</span></div><div class="ru">this month</div>'+(A.achievementPct>1?'<div class="over">+'+Math.round((A.achievementPct-1)*100)+'% over</div>':'')+'</div></div>';
-    var crRows=e.credits.map(function(c){return '<div class="li cr"><span class="bar"></span><div class="nm">'+c.label+'</div><div class="amt"><div class="a">+'+inr(c.amount)+'</div></div></div>';}).join('');
-    var opRows=e.deductions.length?e.deductions.map(function(c){return '<div class="li op"><span class="bar"></span><div><div class="nm">'+c.label+'</div>'+(c.recoverable?'<div class="ds">recoverable</div>':'')+'</div><div class="amt"><div class="a">−'+inr(Math.abs(c.amount))+'</div>'+(c.recoverable?'<div class="t">Claim it</div>':'')+'</div></div>';}).join(''):'<div class="li"><div class="nm" style="color:var(--muted)">Nothing on the table — fully optimised ✓</div></div>';
+    var heroRing='<div class="ring" style="width:96px;height:96px">'+ring(achFrac,96,9,'#FDB913','rgba(255,255,255,.18)')+'<div class="rc"><div class="rn"><span class="cu" data-to="'+Math.round(A.achievementPct*100)+'" data-fmt="pct">'+pct(A.achievementPct)+'</span></div><div class="ru">of target</div>'+(A.achievementPct>1?'<div class="over">+'+Math.round((A.achievementPct-1)*100)+'% over</div>':'')+'</div></div>';
+
+    // lever cards = the recoverable deductions, each with a plain-language unlock
+    var levers=e.deductions.length?e.deductions.map(function(d){
+      var isNop=d.key==='nopMultiplier';
+      var icon=isNop?'📈':'🔒';
+      var title=isNop?'Lift your NOP multiplier':'Release the PIFA hold';
+      var desc=isNop?('You\'re at '+Math.round((A.nopMult||0)*100)+'% on '+A.nop+' polic'+(A.nop===1?'y':'ies')+' — reach 4 policies for the full 100%.')
+                    :'25% is held until your year-to-date PIFA target is met.';
+      var flag=(isNop&&A.nopMult<1)?'<span class="flag">Sell more policies</span>':(!isNop?'<span class="flag">Clear YTD PIFA</span>':'');
+      return '<div class="c lever"><div class="lv-ic">'+icon+'</div><div style="flex:1"><div class="lv-t">'+title+'</div><div class="lv-d">'+desc+'</div>'+flag+'</div><div class="lv-amt"><div class="a">+'+inr(Math.abs(d.amount))+'</div><div class="k">recover</div></div></div>';
+    }).join(''):'<div class="c" style="padding:16px;text-align:center;font-size:12.5px;color:var(--green);font-weight:700">Fully optimised — nothing on the table ✓</div>';
+
     var journey=e.journey.map(function(s,i){
       var drag=(s.key==='nopMultiplier'||s.key==='hold'),fin=(s.key==='final');
       var chip=s.key==='achievement'?'<span class="rulechip">'+pct(s.value)+' of target</span>':(s.mult!=null?'<span class="rulechip">× '+Math.round(s.mult*100)+'%</span>':'');
       var right=(s.running!=null?inr(s.running):(s.value!=null?inr(s.value):''));
       return '<div class="step '+(drag?'drag':'on')+(fin?' final':'')+'"><div class="node">'+(fin?'✓':(i+1))+'</div><div style="flex:1"><div class="top"><span class="nm">'+s.label+'</span><span class="rt">'+right+'</span></div>'+chip+'</div></div>';
     }).join('');
-    var opt=e.recommendations.map(function(r,i){return '<div class="c opt '+['','','two','three','four'][Math.min(i,4)]+'"><div class="oh"><span class="rank">'+(i+1)+'</span><span class="act">'+moveLabel(r)+'</span><span class="eff '+r.effort+'">'+r.effort+'</span></div><div class="impact"><div class="imp money"><span class="ik">'+t('earnings')+'</span><span class="iv">+'+inr(r.deltaFinal)+'</span><span class="isub">this month</span></div></div></div>';}).join('');
-    // product mix + target progress + persistency trend (all incentive-side)
+
+    // supporting: product mix + monthly target + persistency trend
     var extra='';
     if(p&&p.productMix){var up=Math.round(p.productMix.ulipPct*100),tp=100-up;
       extra+='<div class="c mix"><div class="mh"><span class="mt">'+t('mix')+'</span><span class="ms">ULIP vs traditional</span></div><div class="mixbar"><i class="u" data-w="'+up+'%" style="width:0"></i><i class="t" data-w="'+tp+'%" style="width:0"></i></div><div class="mixleg"><span class="ml"><span class="sw u"></span>ULIP <b>'+up+'%</b></span><span class="ml"><span class="sw t"></span>Traditional <b>'+tp+'%</b></span></div></div>';
@@ -722,23 +753,26 @@
     if(p&&p.persTrend){var d=p.persTrend.delta;
       extra+='<div class="c stat" style="padding:14px 16px"><div class="k"><span>'+t('persTrend')+'</span><small>13-month renewals kept</small></div><div class="v">'+pct(p.persTrend.lm)+' → '+pct(p.persTrend.cm)+'</div><div class="m '+(d>=0?'up':'warn')+'">'+(d>=0?'▲ +':'▼ ')+(d*100).toFixed(1)+'pt vs last month</div></div>';
     }
+
     $('v_earnings').innerHTML=
-      '<div class="seg" id="earnseg"><button class="on" onclick="subTo(\'snap\',this)">'+t('snapshot')+'</button><button onclick="subTo(\'stmt\',this)">'+t('statement')+'</button><button onclick="subTo(\'jrn\',this)">'+t('journey')+'</button><button onclick="subTo(\'opt\',this)">'+t('optimize')+'</button></div>'+
-      '<div class="sub on" data-sub="snap">'+
-        '<div class="hero"><div class="glow"></div><div class="row"><div><div class="k">Estimated incentive · Monthly · '+(e.period||'April')+'</div><div class="big"><small>₹</small><span class="cu" data-to="'+H.finalAmount+'" data-fmt="int">'+Math.round(H.finalAmount).toLocaleString('en-IN')+'</span></div><div class="pot">Potential <b>'+inr(H.baseline)+'</b> · <b>'+inr(H.onTheTable)+'</b> to claim</div></div>'+heroRing+'</div></div>'+
-        '<div class="grid2"><div class="c stat"><div class="k"><span>WFYP</span><small>premium credited</small></div><div class="v"><span class="cu" data-to="'+(A.wfypOthers+A.ulipGap)+'" data-fmt="lakh">'+lakh(A.wfypOthers+A.ulipGap)+'</span></div><div class="m up">'+pct(A.achievementPct)+' this month</div></div>'+
-        '<div class="c stat"><div class="k"><span>NOP</span><small>policies sold</small></div><div class="v"><span class="cu" data-to="'+A.nop+'" data-fmt="int">'+A.nop+'</span></div><div class="m '+(A.nopMult<1?'warn':'up')+'">'+Math.round(A.nopMult*100)+'% multiplier</div></div>'+
-        '<div class="c stat"><div class="k"><span>Persistency</span><small>renewals kept</small></div><div class="v">'+(A.persCM?pct(A.persCM):'—')+'</div><div class="m up">'+Math.round(A.persMult*100)+'% booster</div></div>'+
-        '<div class="c stat"><div class="k"><span>Payout rate</span><small>slab</small></div><div class="v">'+pct(A.payoutPct)+'</div><div class="m">achievement band</div></div></div>'+
-        extra+
-        '<div class="nudge tap" onclick="subTo(\'opt\',document.querySelectorAll(\'#earnseg button\')[3])"><div class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h7l-1 8 10-12h-7z"/></svg></div><div class="tx"><b>'+moveLabel(e.recommendations[0])+'</b> adds <b>'+inr(e.recommendations[0].deltaFinal)+'</b> this month.</div><span class="go">›</span></div>'+
-        '<div class="trust"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg><span>From the company payout sheet</span></div></div>'+
-      '<div class="sub" data-sub="stmt">'+
-        '<div class="c stmt-net"><div><div class="lbl" style="padding:0">Net incentive · so far</div><div class="v">'+inr(H.finalAmount)+'</div></div><span class="tagm">Live</span></div>'+
-        '<div class="sect"><span class="h cr">Earned · in the bank</span><span class="sum cr">+'+inr(H.baseline)+'</span></div><div class="c ledger">'+crRows+'</div>'+
-        '<div class="sect"><span class="h op">Still on the table</span><span class="sum op">'+inr(H.onTheTable)+'</span></div><div class="c ledger">'+opRows+'</div></div>'+
-      '<div class="sub" data-sub="jrn"><div class="c" style="padding:8px 16px 12px"><div class="steps"><div class="rail"></div>'+journey+'</div></div></div>'+
-      '<div class="sub" data-sub="opt">'+opt+'</div>';
+      // forecast placeholder (Phase 6 wires the real projection)
+      '<div class="fcast"><div class="fi"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 14l4-4 3 3 5-6"/></svg></div><div style="flex:1"><div class="ft">Month-end forecast</div><div class="fs">Coming soon — a projection needs a few months of history.</div></div><span class="soon">Soon</span></div>'+
+      // secured hero
+      '<div class="hero"><div class="glow"></div><div class="row"><div style="flex:1;min-width:0"><span class="mbadge"><span class="d"></span>Monthly · '+(e.period||'Apr ’26')+'</span><div class="k" style="margin-top:10px">Secured this month</div><div class="big"><small>₹</small><span class="cu" data-to="'+H.finalAmount+'" data-fmt="int">'+Math.round(H.finalAmount).toLocaleString('en-IN')+'</span></div><div class="pot">Potential <b>'+inr(H.baseline)+'</b> · <b>'+inr(H.onTheTable)+'</b> recoverable</div></div>'+heroRing+'</div></div>'+
+      // this-month stats
+      '<div class="grid2"><div class="c stat"><div class="k"><span>WFYP</span><small>premium credited</small></div><div class="v"><span class="cu" data-to="'+(A.wfypOthers+A.ulipGap)+'" data-fmt="lakh">'+lakh(A.wfypOthers+A.ulipGap)+'</span></div><div class="m up">'+pct(A.achievementPct)+' of target</div></div>'+
+      '<div class="c stat"><div class="k"><span>NOP</span><small>policies sold</small></div><div class="v"><span class="cu" data-to="'+A.nop+'" data-fmt="int">'+A.nop+'</span></div><div class="m '+(A.nopMult<1?'warn':'up')+'">'+Math.round(A.nopMult*100)+'% multiplier</div></div>'+
+      '<div class="c stat"><div class="k"><span>Persistency</span><small>renewals kept</small></div><div class="v">'+(A.persCM?pct(A.persCM):'—')+'</div><div class="m up">'+Math.round(A.persMult*100)+'% booster</div></div>'+
+      '<div class="c stat"><div class="k"><span>Payout rate</span><small>slab</small></div><div class="v">'+pct(A.payoutPct)+'</div><div class="m">achievement band</div></div></div>'+
+      // recoverable / lever cards
+      '<div class="sect"><span class="h op">On the table · recoverable</span><span class="sum op">'+inr(H.onTheTable)+'</span></div>'+levers+
+      // supporting
+      extra+
+      // collapsible waterfall
+      '<details class="mathwrap"><summary>Show the math · '+inr(H.finalAmount)+' <span class="chev">›</span></summary><div class="mbody"><div class="steps"><div class="rail"></div>'+journey+'</div></div></details>'+
+      // ranked moves live in Coach now (Optimize tab removed)
+      '<div class="coachlink tap" onclick="go(\'coach\')">See your ranked moves <span>›</span></div>'+
+      '<div class="trust"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg><span>From the company payout sheet</span></div>';
   }
 
   function renderCareer(){

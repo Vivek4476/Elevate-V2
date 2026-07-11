@@ -112,4 +112,11 @@ Coverage (from `api/admin`): **735 joined** (both SP + incentive), 156 incentive
 - **Flag now default ON** (`contractEnabled()` = true unless `ELEVATE_CONTRACT_V3` is `0/false/off`). Safe pre-seed: when on but no contract exists, `getContract` returns null → API falls back to the computed view. Verified: default → ₹5,356.34/2-of-4; `=0` kill-switch → ₹5,166/4-of-4.
 - **Parity test** `test/adapt.test.js` (wired into `npm test`): asserts the displayed field == contract `final` (AAA634 = ₹5,356.34), SP eligibility/gates from the contract (2/4, not eligible, nextGate WFYP), monthly-not-annual, no "Annual" in the journey, + a data-gated sweep over generated contracts. **59/59 node tests pass** (55 engine + 4 parity); pipeline check still 891/891 + 1020/1020.
 - **Prod note:** default-on ships, but production shows ₹5,166 until Supabase is seeded (graceful fallback) — enablement = run the `contract` table SQL → `cli.py build` → `npm run seed:contract` (Supabase env). No app breakage either way.
-- **Correctness core COMPLETE (Steps 0–4).** Next = Build-Plan-v2 Steps 5+ (redesign): Money (reshape Earnings, delete Optimize), Climb (Career on sp), Now (rebuild Today, fold Coach, kill ticker→Pulse), Admin console, Motion system, decision layer, multi-tenant.
+- **Correctness core COMPLETE (Steps 0–4).**
+
+---
+
+## Step 5 — Money surface reshaped (2026-07-12) ✅
+
+`renderEarnings` rebuilt as one contract-driven scroll (no tabs): **forecast placeholder** → **Secured hero** (Monthly · Apr '26 badge, ₹5,356.34 count-up, achievement ring, "Potential ₹10,203 · ₹4,846 recoverable") → this-month stats → **"On the table · recoverable ₹4,846"** with **lever cards** ("Lift your NOP multiplier +₹3,061 · Sell more policies" flag when nopMult<1; "Release the PIFA hold +₹1,785") → product-mix/monthly-target/persistency-trend → collapsible `<details>` **"Show the math"** waterfall → **Coach link**. **Optimize tab deleted** (moves live in Coach). Fixed a hero-ring clip via `flex:1;min-width:0`. Verified headless (no tabs, forecast, 2 levers, math+coachlink, ₹5,356, no errors); 59/59 node tests. Only `index.html` changed.
+- **Next: Step 6 — Climb** (Career on the `sp` block: gates ranked by margin/thinnest flagged, tier promotion/on-track/PIP/at-risk, ladder, WAS ring, binding-constraint headline). Build-Plan-v2 Phase 5 → Climb.
