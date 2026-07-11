@@ -1,3 +1,14 @@
 node_modules/
 .env
 .env.local
+
+# Python pipeline
+pipeline/.venv/
+__pycache__/
+*.pyc
+
+# Real monthly workbooks — NEVER commit to the public repo (contain per-DSE payout data).
+# Dropped per-month via the admin console (Phase 4); kept local for `cli.py check`.
+pipeline/data/*.xlsx
+pipeline/data/*.xlsb
+pipeline/data/out/

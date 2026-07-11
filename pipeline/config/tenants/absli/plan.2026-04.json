@@ -1,0 +1,53 @@
+{
+  "tenant": "absli",
+  "month": "2026-04",
+  "currency": "INR",
+  "incentive": {
+    "cadence": "monthly",
+    "wfyp_grid": [
+      { "from": 0.00, "pct": 0.000 },
+      { "from": 0.60, "pct": 0.005 },
+      { "from": 0.80, "pct": 0.010 },
+      { "from": 1.00, "pct": 0.020 },
+      { "from": 1.25, "pct": 0.030 },
+      { "from": 1.75, "pct": 0.040 },
+      { "from": 2.00, "pct": 0.050 },
+      { "from": 2.50, "pct": 0.100 }
+    ],
+    "ulip_slabs": [
+      { "from": 0, "pct": 0.000 },
+      { "from": 50000, "pct": 0.005 },
+      { "from": 500000, "pct": 0.015 },
+      { "from": 1000000, "pct": 0.020 },
+      { "from": 2500000, "pct": 0.040 },
+      { "from": 3500000, "pct": 0.060 }
+    ],
+    "ulip_gate_min_ach": 0.60,
+    "persistency": {
+      "level_bands": [
+        { "from": 0.00, "mult": 0.50 },
+        { "from": 0.60, "mult": "equal_cm" },
+        { "from": 0.86, "mult": 1.00 },
+        { "from": 0.89, "mult": 1.10 },
+        { "from": 0.92, "mult": 1.20 }
+      ],
+      "improvement": { "min_level": 0.80, "min_growth": 0.02, "mult": 1.00 },
+      "missing_default_mult": 1.00
+    },
+    "nop_bands": [
+      { "from": 0, "mult": 0.70 },
+      { "from": 2, "mult": 0.90 },
+      { "from": 4, "mult": 1.00 },
+      { "from": 8, "mult": 1.20 }
+    ],
+    "pifa_hold_pct": 0.25,
+    "pifa_hold_trigger": "Not Achieved"
+  },
+  "sp": {
+    "cadence": "rolling_12m",
+    "was_weights": { "wfyp": 0.75, "nop": 0.25 },
+    "gates": { "wfyp_ach_min": 0.75, "nop_ach_min": 0.50, "was_min": 1.00, "persistency_min": 0.87 }
+  },
+  "ladder": ["SDSE", "SWM", "DSM", "Sr.DSM", "ADSM", "EADSM", "PM", "SPMG", "CPM", "EPM"],
+  "_notes": "Ladder order is an editable placeholder (Phase 1 does not consume it). All percentages stored as fractions. Grids/slabs/bands transcribed from Incentive Design Apr'26, slides 3 & 6."
+}

@@ -1,0 +1,28 @@
+{
+  "dse_id": "AAA634",
+  "name": "Lakshya Jayesh Hingorani",
+  "inputs": {
+    "target_monthly": 300000,
+    "wfyp_others": 6303.03,
+    "wfyp_ulip_gap": 550000,
+    "ulip_fyp": 550000,
+    "persistency_cm": 0.95415092498964,
+    "persistency_lm": 0.948671902977258,
+    "nop_count": 1,
+    "pifa_ytd_met": false
+  },
+  "expected": {
+    "wfyp.ach_pct": 1.8543434333333335,
+    "non_ulip.grid_pct": 0.04,
+    "non_ulip.payout": 252.1212,
+    "ulip.slab_pct": 0.015,
+    "ulip.payout": 8250.0,
+    "base_payout": 8502.1212,
+    "persistency.multiplier": 1.2,
+    "post_persistency": 10202.54544,
+    "nop.multiplier": 0.7,
+    "nop.payout": 7141.781808,
+    "pifa.hold_amount": 1785.445452,
+    "final": 5356.336356
+  }
+}
