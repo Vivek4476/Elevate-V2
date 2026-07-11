@@ -7,6 +7,6 @@
   "scripts": {
     "seed": "node scripts/seed-supabase.mjs",
     "seed:contract": "node scripts/seed-contract.mjs",
-    "test": "node --test 'engine/*.test.js'"
+    "test": "node --test 'engine/*.test.js' 'test/*.test.js'"
   }
 }

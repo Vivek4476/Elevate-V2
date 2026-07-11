@@ -43,7 +43,7 @@ function applyIncentive(view, inc) {
   if (near(inc.pifa.hold_amount)) E.deductions.push({ key: 'pifaHold', label: 'PIFA hold (25%)', amount: -inc.pifa.hold_amount, recoverable: true });
 
   E.journey = [
-    { key: 'target', label: 'Annual target', value: inc.target_monthly },   // relabelled to Monthly in Step 4
+    { key: 'target', label: 'Monthly target', value: inc.target_monthly },
     { key: 'achievement', label: 'Achievement', value: inc.wfyp.ach_pct, running: inc.base_payout },
     { key: 'payoutBase', label: 'WFYP payout', amount: inc.non_ulip.payout, running: inc.non_ulip.payout },
     { key: 'payoutUlip', label: '+ ULIP slab', amount: inc.ulip.payout, running: inc.base_payout },
@@ -54,7 +54,7 @@ function applyIncentive(view, inc) {
   E.journey.push({ key: 'final', label: 'Final incentive', running: inc.final });
 
   if (view.profile) {
-    view.profile.annualTarget = inc.target_monthly;
+    view.profile.monthlyTarget = inc.target_monthly;
     const ulip = inc.ulip.fyp || 0, trad = inc.wfyp.non_ulip || 0;
     view.profile.productMix = { ulip, trad, ulipPct: (ulip + trad) ? ulip / (ulip + trad) : 0 };
     if (inc.persistency.cm != null && inc.persistency.lm != null) {

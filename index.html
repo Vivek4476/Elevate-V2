@@ -493,7 +493,7 @@
       rankTitle:'Where you stand',rankSub:'by rolling-12mo WFYP · promotion track',inZone:'in',zone:'zone',
       snapshot:'Snapshot',statement:'Statement',journey:'Journey',optimize:'Optimize',
       rankedReturn:'Ranked by return',rawBiz:'Raw business — the shared input to earnings & promotion',
-      wfypMo:'WFYP per month',nopMo:'Policies (NOP) per month',mix:'Product mix',target:'Annual target',
+      wfypMo:'WFYP per month',nopMo:'Policies (NOP) per month',mix:'Product mix',target:'Monthly target',
       persTrend:'Persistency trend',momentum:'Your last 12 months · momentum',fourGates:'The four gates · rolling 12 months',
       notLinked:'Sales-Progression not linked',notLinkedSub:'We have your incentive statement, but your rolling 12-month promotion data isn’t linked yet. Earnings are fully live below.',
       admin:'Manager console'},
@@ -508,7 +508,7 @@
       rankTitle:'आप कहाँ खड़े हैं',rankSub:'रोलिंग-12माह WFYP से · प्रमोशन ट्रैक',inZone:'—',zone:'ज़ोन',
       snapshot:'झलक',statement:'विवरण',journey:'सफ़र',optimize:'सुधारें',
       rankedReturn:'रिटर्न के अनुसार',rawBiz:'कच्चा कारोबार — कमाई और प्रमोशन दोनों का साझा इनपुट',
-      wfypMo:'WFYP प्रति माह',nopMo:'पॉलिसी (NOP) प्रति माह',mix:'उत्पाद मिश्रण',target:'वार्षिक लक्ष्य',
+      wfypMo:'WFYP प्रति माह',nopMo:'पॉलिसी (NOP) प्रति माह',mix:'उत्पाद मिश्रण',target:'मासिक लक्ष्य',
       persTrend:'पर्सिस्टेंसी रुझान',momentum:'पिछले 12 महीने · गति',fourGates:'चार गेट · रोलिंग 12 माह',
       notLinked:'सेल्स-प्रोग्रेशन लिंक नहीं',notLinkedSub:'आपका इंसेंटिव विवरण मौजूद है, पर रोलिंग 12-माह प्रमोशन डेटा अभी लिंक नहीं है। कमाई नीचे पूरी तरह लाइव है।',
       admin:'मैनेजर कंसोल'}
@@ -606,7 +606,8 @@
     document.querySelectorAll('.view').forEach(function(s){s.classList.toggle('on',s.dataset.view===v);});
     document.querySelectorAll('.tab').forEach(function(b){b.classList.toggle('on',b.dataset.tab===v);});
     var x=CTX[v];$('hTitle').textContent=t(x[0]);var h=$('hCtx');h.className='hc '+x[1];
-    var lead=v==='earnings'?(VM.earnings.period||'Apr ’26')+' · ':'';h.innerHTML='<span class="dot"></span>'+lead+t(x[2]);
+    if(v==='earnings'){h.innerHTML='<span class="dot"></span>Monthly · '+(VM.earnings.period||'Apr ’26');}
+    else{h.innerHTML='<span class="dot"></span>'+t(x[2]);}
     $('scroll').scrollTop=0;reveal($('v_'+v));
   }
   function subTo(s,btn){
@@ -715,8 +716,8 @@
     if(p&&p.productMix){var up=Math.round(p.productMix.ulipPct*100),tp=100-up;
       extra+='<div class="c mix"><div class="mh"><span class="mt">'+t('mix')+'</span><span class="ms">ULIP vs traditional</span></div><div class="mixbar"><i class="u" data-w="'+up+'%" style="width:0"></i><i class="t" data-w="'+tp+'%" style="width:0"></i></div><div class="mixleg"><span class="ml"><span class="sw u"></span>ULIP <b>'+up+'%</b></span><span class="ml"><span class="sw t"></span>Traditional <b>'+tp+'%</b></span></div></div>';
     }
-    if(p&&p.annualTarget){var tprog=Math.min(100,Math.round((A.wfypOthers+A.ulipGap)/p.annualTarget*100));
-      extra+='<div class="c targ"><div class="th"><span class="tt">'+t('target')+'</span><span class="tv">'+lakh(p.annualTarget)+'</span></div><div class="tprog"><i data-w="'+tprog+'%" style="width:0"></i></div><div class="tsub">'+lakh(A.wfypOthers+A.ulipGap)+' credited · '+tprog+'% of target</div></div>';
+    if(p&&p.monthlyTarget){var tpct=Math.round((A.wfypOthers+A.ulipGap)/p.monthlyTarget*100),tbar=Math.min(100,tpct);
+      extra+='<div class="c targ"><div class="th"><span class="tt">'+t('target')+'</span><span class="tv">'+lakh(p.monthlyTarget)+'</span></div><div class="tprog"><i data-w="'+tbar+'%" style="width:0"></i></div><div class="tsub">'+lakh(A.wfypOthers+A.ulipGap)+' credited · '+tpct+'% of monthly target</div></div>';
     }
     if(p&&p.persTrend){var d=p.persTrend.delta;
       extra+='<div class="c stat" style="padding:14px 16px"><div class="k"><span>'+t('persTrend')+'</span><small>13-month renewals kept</small></div><div class="v">'+pct(p.persTrend.lm)+' → '+pct(p.persTrend.cm)+'</div><div class="m '+(d>=0?'up':'warn')+'">'+(d>=0?'▲ +':'▼ ')+(d*100).toFixed(1)+'pt vs last month</div></div>';
@@ -724,7 +725,7 @@
     $('v_earnings').innerHTML=
       '<div class="seg" id="earnseg"><button class="on" onclick="subTo(\'snap\',this)">'+t('snapshot')+'</button><button onclick="subTo(\'stmt\',this)">'+t('statement')+'</button><button onclick="subTo(\'jrn\',this)">'+t('journey')+'</button><button onclick="subTo(\'opt\',this)">'+t('optimize')+'</button></div>'+
       '<div class="sub on" data-sub="snap">'+
-        '<div class="hero"><div class="glow"></div><div class="row"><div><div class="k">Estimated incentive · '+(e.period||'April')+'</div><div class="big"><small>₹</small><span class="cu" data-to="'+H.finalAmount+'" data-fmt="int">'+Math.round(H.finalAmount).toLocaleString('en-IN')+'</span></div><div class="pot">Potential <b>'+inr(H.baseline)+'</b> · <b>'+inr(H.onTheTable)+'</b> to claim</div></div>'+heroRing+'</div></div>'+
+        '<div class="hero"><div class="glow"></div><div class="row"><div><div class="k">Estimated incentive · Monthly · '+(e.period||'April')+'</div><div class="big"><small>₹</small><span class="cu" data-to="'+H.finalAmount+'" data-fmt="int">'+Math.round(H.finalAmount).toLocaleString('en-IN')+'</span></div><div class="pot">Potential <b>'+inr(H.baseline)+'</b> · <b>'+inr(H.onTheTable)+'</b> to claim</div></div>'+heroRing+'</div></div>'+
         '<div class="grid2"><div class="c stat"><div class="k"><span>WFYP</span><small>premium credited</small></div><div class="v"><span class="cu" data-to="'+(A.wfypOthers+A.ulipGap)+'" data-fmt="lakh">'+lakh(A.wfypOthers+A.ulipGap)+'</span></div><div class="m up">'+pct(A.achievementPct)+' this month</div></div>'+
         '<div class="c stat"><div class="k"><span>NOP</span><small>policies sold</small></div><div class="v"><span class="cu" data-to="'+A.nop+'" data-fmt="int">'+A.nop+'</span></div><div class="m '+(A.nopMult<1?'warn':'up')+'">'+Math.round(A.nopMult*100)+'% multiplier</div></div>'+
         '<div class="c stat"><div class="k"><span>Persistency</span><small>renewals kept</small></div><div class="v">'+(A.persCM?pct(A.persCM):'—')+'</div><div class="m up">'+Math.round(A.persMult*100)+'% booster</div></div>'+

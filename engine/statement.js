@@ -48,7 +48,7 @@ export function buildEarningsStatement(design, inputs, dse = {}) {
   const onTheTable = e.postPersistency > e.finalAmount ? e.postPersistency - e.finalAmount : 0;
 
   const journey = [
-    { key: 'target',        label: 'Annual target',    value: inputs.target },
+    { key: 'target',        label: 'Monthly target',   value: inputs.target },
     { key: 'achievement',   label: 'Achievement',      value: e.achievement, running: e.total },
     { key: 'payoutBase',    label: 'WFYP payout',      amount: e.payoutBase, running: e.payoutBase },
     { key: 'payoutUlip',    label: '+ ULIP slab',      amount: e.payoutUlip, running: e.total },

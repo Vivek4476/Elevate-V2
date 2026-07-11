@@ -36,7 +36,7 @@ function buildProfile(code, data) {
     joined,
     fullDesig: (boMeta[code] && boMeta[code].full) || null,
     zone: (boMeta[code] && boMeta[code].zone) || null,
-    annualTarget: +row.target || 0,
+    monthlyTarget: +row.target || 0,
     productMix: { ulip, trad, ulipPct: (ulip + trad) ? ulip / (ulip + trad) : 0 },
     persTrend: (persCM != null && persLM != null)
       ? { cm: persCM, lm: persLM, delta: persCM - persLM } : null,

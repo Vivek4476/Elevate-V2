@@ -11,8 +11,11 @@ let cache = null;
 // ── contract source (migration Step 3), behind the ELEVATE_CONTRACT_V3 flag ──
 const CONTRACT_DIR = join(dirname(fileURLToPath(import.meta.url)), '../../pipeline/data/out/dse');
 
+// Default ON (migration Step 4). Explicit 0/false/off disables. When on but no contract exists
+// (e.g. Supabase not yet seeded), getContract returns null and the API falls back to the computed
+// view — so this is safe to default before production is seeded.
 export const contractEnabled = () =>
-  ['1', 'true', 'on', 'yes'].includes(String(process.env.ELEVATE_CONTRACT_V3 || '').toLowerCase());
+  !['0', 'false', 'off', 'no'].includes(String(process.env.ELEVATE_CONTRACT_V3 ?? '').toLowerCase());
 
 // Per-DSE reconciled contract. Supabase table `contract(dse_id, data jsonb)` when configured;
 // otherwise the local files emitted by `pipeline/cli.py build` (works in local dev). Null if absent.
