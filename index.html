@@ -18,7 +18,7 @@
     --gold:#B87410; --gold-bg:#FBEFD7; --gold-line:#F0DBAE;
     /* 8-pt spacing */
     --s1:4px; --s2:8px; --s3:12px; --s4:16px; --s5:20px; --s6:24px; --s8:32px; --s12:48px;
-    --ui:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Noto Sans","Noto Sans Devanagari",Helvetica,Arial,sans-serif;
+    --ui:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,"Helvetica Neue",Arial,"Kohinoor Devanagari","Noto Sans Devanagari","Nirmala UI",sans-serif;
     --mono:ui-monospace,"SF Mono",SFMono-Regular,Menlo,Consolas,monospace;
     --r-card:20px; --r-lg:24px; --r-chip:12px;
     /* soft, warm, maroon-tinted shadows (research: never gray/harsh) */
@@ -30,8 +30,9 @@
     --ease-back:cubic-bezier(.34,1.56,.64,1);
   }
   *{box-sizing:border-box}
-  html{-webkit-text-size-adjust:100%}
-  body{margin:0;font-family:var(--ui);color:var(--ink);
+  /* lock the page horizontally: no sideways drift, no rubber-band white gutters */
+  html{-webkit-text-size-adjust:100%;overflow-x:hidden;overscroll-behavior:none}
+  body{margin:0;font-family:var(--ui);color:var(--ink);width:100%;max-width:100%;overflow-x:hidden;overscroll-behavior:none;position:relative;
     background:radial-gradient(120% 60% at 100% -10%,rgba(253,185,19,.10),transparent 55%),radial-gradient(120% 60% at -10% 0%,rgba(150,23,46,.05),transparent 50%),var(--paper);
     -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
   .hide{display:none !important}
@@ -53,13 +54,17 @@
   .av{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--maroon),var(--sun2));color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;cursor:pointer;box-shadow:var(--sh1)}
 
   /* ticker */
-  .tickwrap{flex:0 0 auto;overflow:hidden;border-top:1px solid rgba(150,23,46,.07);border-bottom:1px solid rgba(150,23,46,.07);background:linear-gradient(90deg,#fff,#fdf9f6)}
-  .tick{display:inline-flex;align-items:center;gap:0;white-space:nowrap;padding:9px 0;animation:tickmove 34s linear infinite;will-change:transform}
-  .tickwrap:active .tick{animation-play-state:paused}
-  .tk{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:700;padding:0 16px;position:relative}
-  .tk::after{content:"";position:absolute;right:0;top:50%;transform:translateY(-50%);width:4px;height:4px;border-radius:50%;background:rgba(184,116,16,.4)}
-  .tk .tl{font-size:8px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;opacity:.6}
-  .tk.money{color:var(--gold)} .tk.sp{color:var(--maroon)} .tk.neutral{color:var(--ink2)}
+  /* live ticker — "maroon-ink instrument" strip (dark, warm; cream values, taupe labels) */
+  .tickwrap{flex:0 0 auto;overflow:hidden;background:#2A1418;border-top:1px solid #4A2A30;box-shadow:0 1px 2px rgba(42,20,24,.18),inset 0 1px 0 rgba(241,228,214,.05);
+    -webkit-mask-image:linear-gradient(to right,transparent 0,#000 9%,#000 91%,transparent 100%);mask-image:linear-gradient(to right,transparent 0,#000 9%,#000 91%,transparent 100%)}
+  .tick{display:inline-flex;align-items:baseline;white-space:nowrap;padding:8px 0;animation:tickmove var(--tdur,32s) linear infinite;will-change:transform}
+  .tickwrap:active .tick,.tick:hover{animation-play-state:paused}
+  .tk{display:inline-flex;align-items:baseline;gap:7px;padding:0 18px;position:relative;font-variant-numeric:tabular-nums}
+  .tk::after{content:"";position:absolute;right:0;top:50%;transform:translateY(-50%);width:3px;height:3px;border-radius:50%;background:#7A5A5F;opacity:.5}
+  .tk .tl{font-size:8.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#C9AE9C}
+  .tk .tv{font-size:12px;font-weight:700;color:#F1E4D6}
+  .tk .tv.op{color:#FDB913;text-shadow:0 0 8px rgba(253,185,19,.28)}
+  .tk .tv.pos{color:#2FBE86}
   @keyframes tickmove{from{transform:translateX(0)}to{transform:translateX(-50%)}}
 
   .body{flex:1;overflow-y:auto;overflow-x:hidden;padding:10px 16px 24px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
@@ -310,40 +315,63 @@
 
   /* ---------- login / landing ---------- */
   .sun{position:fixed;inset:0;overflow:hidden;z-index:0;pointer-events:none}
-  .sun i{position:absolute;border-radius:50%;filter:blur(46px);opacity:.5;will-change:transform}
-  .sun .s1{width:280px;height:280px;left:-60px;top:-40px;background:radial-gradient(circle,rgba(253,185,19,.85),transparent 70%);animation:drift1 24s var(--ease-out) infinite alternate}
-  .sun .s2{width:240px;height:240px;right:-70px;top:120px;background:radial-gradient(circle,rgba(245,130,32,.6),transparent 70%);animation:drift2 28s var(--ease-out) infinite alternate}
-  .sun .s3{width:220px;height:220px;left:40px;bottom:-60px;background:radial-gradient(circle,rgba(150,23,46,.28),transparent 70%);animation:drift1 30s var(--ease-out) infinite alternate-reverse}
-  @keyframes drift1{to{transform:translate(30px,26px) scale(1.12)}}
-  @keyframes drift2{to{transform:translate(-26px,-20px) scale(1.1)}}
-  .loginwrap{position:relative;z-index:1;min-height:100dvh;display:flex;flex-direction:column;max-width:480px;margin:0 auto;padding:calc(env(safe-area-inset-top) + 14px) 22px calc(env(safe-area-inset-bottom) + 20px)}
-  .ltop{display:flex;align-items:center;justify-content:space-between}
-  .ltop img{height:34px}
-  .langtog{display:flex;background:rgba(255,255,255,.7);border:1px solid var(--hair);border-radius:999px;padding:3px;backdrop-filter:blur(6px)}
-  .langtog button{border:none;background:none;font-family:inherit;font-size:11.5px;font-weight:800;color:var(--muted);padding:6px 12px;border-radius:999px;cursor:pointer;min-height:32px}
+  .sun i{position:absolute;border-radius:50%;filter:blur(60px);will-change:transform}
+  .sun .s1{width:320px;height:320px;left:6%;top:4%;background:radial-gradient(circle,rgba(253,185,19,.5),transparent 70%);animation:drift 22s ease-in-out infinite alternate}
+  .sun .s2{width:280px;height:280px;right:-6%;top:24%;background:radial-gradient(circle,rgba(245,130,32,.34),transparent 72%);animation:drift2 26s ease-in-out infinite alternate}
+  .sun .s3{width:260px;height:260px;left:18%;bottom:4%;background:radial-gradient(circle,rgba(150,23,46,.15),transparent 70%);animation:drift 30s ease-in-out infinite alternate-reverse}
+  @keyframes drift{to{transform:translate3d(-3%,-2%,0) scale(1.06)}}
+  @keyframes drift2{to{transform:translate3d(3%,2%,0) scale(1.05)}}
+  @keyframes lrise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+  @keyframes lriseblur{from{opacity:0;transform:translateY(14px);filter:blur(4px)}to{opacity:1;transform:none;filter:blur(0)}}
+  @keyframes floatA{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+  @keyframes floatB{0%,100%{transform:translateY(0)}50%{transform:translateY(6px)}}
+  /* three-zone hero: top pinned, middle absorbs slack, bottom in thumb zone */
+  .loginwrap{position:relative;z-index:1;min-height:100vh;min-height:100svh;display:flex;flex-direction:column;justify-content:space-between;max-width:480px;margin:0 auto;padding:calc(env(safe-area-inset-top) + 16px) 22px calc(env(safe-area-inset-bottom) + 16px)}
+  .ltop{flex:0 0 auto;display:flex;align-items:center;justify-content:space-between}
+  .ltop img{height:32px}
+  .langtog{display:flex;background:rgba(255,255,255,.72);border:1px solid var(--hair);border-radius:999px;padding:3px;backdrop-filter:blur(8px)}
+  .langtog button{border:none;background:none;font-family:inherit;font-size:12px;font-weight:800;color:var(--muted);padding:7px 14px;border-radius:999px;cursor:pointer;min-height:36px;transition:color .14s}
   .langtog button.on{background:var(--maroon);color:#fff;box-shadow:var(--sh1)}
-  .lhero{flex:1;display:flex;flex-direction:column;justify-content:center;padding:16px 0}
-  .lhero .badge{display:inline-flex;align-items:center;gap:6px;align-self:flex-start;font-size:10.5px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:var(--maroon);background:rgba(255,255,255,.72);border:1px solid var(--maroon-line);padding:6px 12px;border-radius:999px;backdrop-filter:blur(6px);animation:rise .5s var(--ease-out) both}
-  .lhero h1{font-size:38px;font-weight:800;letter-spacing:-.03em;line-height:1.05;margin:16px 0 0;animation:rise .5s .06s var(--ease-out) both}
+  /* MIDDLE — grows to eat any dead space */
+  .lhero{flex:1;display:flex;flex-direction:column;justify-content:center;position:relative;padding:12px 0}
+  .leyebrow{align-self:flex-start;font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--maroon);animation:lrise .5s .08s var(--ease-out) both}
+  .lhero h1{font-size:44px;font-weight:800;letter-spacing:-.02em;line-height:1.05;margin:12px 0 0;color:#1A1410;text-wrap:balance;animation:lriseblur .56s .18s var(--ease-out) both}
   .lhero h1 b{color:var(--maroon)}
-  .lhero .sub{font-size:14.5px;color:var(--ink2);font-weight:600;margin-top:12px;line-height:1.45;max-width:20em;animation:rise .5s .12s var(--ease-out) both}
-  .lteaser{display:flex;gap:8px;margin-top:22px;animation:rise .5s .18s var(--ease-out) both}
-  .lteaser .tz{flex:1;background:rgba(255,255,255,.66);border:1px solid var(--hair);border-radius:14px;padding:11px 12px;backdrop-filter:blur(6px)}
-  .lteaser .tz .tzv{font-family:var(--mono);font-size:18px;font-weight:800;letter-spacing:-.02em}
-  .lteaser .tz.money .tzv{color:var(--maroon)} .lteaser .tz.sp .tzv{color:var(--gold)}
-  .lteaser .tz .tzk{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.03em;color:var(--muted);margin-top:4px}
-  .logincard{background:var(--card);border:1px solid var(--hair);border-radius:var(--r-lg);box-shadow:var(--sh2);padding:20px;animation:rise .5s .24s var(--ease-out) both}
-  .logincard .le{font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;font-weight:800;color:var(--muted);text-align:left}
-  .logincard input{width:100%;margin-top:9px;padding:14px;border:1.5px solid var(--hair);border-radius:14px;font-size:16px;font-weight:800;font-family:var(--mono);background:#fbfbfd;color:var(--ink);outline:none;text-align:center;letter-spacing:.1em;text-transform:uppercase;transition:border-color .15s,box-shadow .15s}
-  .logincard input:focus{border-color:var(--maroon);background:#fff;box-shadow:0 0 0 3px rgba(150,23,46,.1)}
-  .signbtn{width:100%;margin-top:12px;border:none;font-family:inherit;font-size:15px;font-weight:800;color:#fff;cursor:pointer;padding:15px;border-radius:15px;background:linear-gradient(135deg,var(--maroon),var(--maroon2));box-shadow:0 8px 20px rgba(150,23,46,.25);transition:transform .2s var(--ease-back)}
-  .signbtn:active{transform:scale(.98)} .signbtn:disabled{opacity:.6}
-  .loginerr{color:var(--sun1);font-size:12.5px;font-weight:800;min-height:16px;margin-top:10px;text-align:center}
-  .demohint{font-size:11.5px;color:var(--muted);margin-top:13px;text-align:center;font-weight:600}
+  html[lang="hi"] .lhero h1{letter-spacing:0;line-height:1.18}
+  html[lang="hi"] .leyebrow{letter-spacing:.05em}
+  .lhero .sub{font-size:18px;color:var(--ink2);font-weight:500;margin-top:20px;line-height:1.45;max-width:34ch;text-wrap:pretty;animation:lrise .52s .36s var(--ease-out) both}
+  /* orbiting scope chips (replace the placeholder ₹/% tiles with real content) */
+  .lchips{position:relative;margin-top:26px;height:138px;animation:lrise .5s .5s var(--ease-out) both}
+  .lchip{position:absolute;display:flex;align-items:center;gap:11px;background:rgba(255,255,255,.85);border:1px solid rgba(150,23,46,.1);border-radius:16px;padding:11px 14px 11px 12px;box-shadow:0 12px 28px -12px rgba(90,20,32,.3);backdrop-filter:blur(10px)}
+  .lchip .ci{width:36px;height:36px;border-radius:11px;flex:0 0 auto;display:flex;align-items:center;justify-content:center}
+  .lchip .ci svg{width:19px;height:19px;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+  .lchip.money .ci{background:var(--gold-bg);border:1px solid var(--gold-line)} .lchip.money .ci svg{stroke:var(--gold)}
+  .lchip.sp .ci{background:var(--maroon-tint);border:1px solid var(--maroon-line)} .lchip.sp .ci svg{stroke:var(--maroon)}
+  .lchip .cv{font-size:14px;font-weight:800;letter-spacing:-.01em;color:var(--ink);line-height:1.1}
+  .lchip .ck{font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);margin-top:3px}
+  .lchip.c1{left:0;top:2px;animation:floatA 6s ease-in-out infinite}
+  .lchip.c2{right:0;top:52px;animation:floatB 7s ease-in-out infinite}
+  .lchip.c3{left:26px;bottom:0;animation:floatA 6.6s ease-in-out .3s infinite}
+  /* BOTTOM — thumb zone */
+  .lbottom{flex:0 0 auto;animation:lrise .5s .56s var(--ease-out) both}
+  .lsoc{display:flex;align-items:center;justify-content:center;gap:7px;margin-bottom:12px;font-size:12px;font-weight:650;color:var(--ink2)}
+  .lsoc b{color:var(--maroon);font-weight:800}
+  .lsoc .dotr{display:inline-flex;gap:2px}
+  .lsoc .dotr i{width:16px;height:16px;border-radius:50%;border:2px solid var(--paper);background:linear-gradient(135deg,var(--maroon),var(--sun2));display:inline-block;margin-left:-6px}
+  .logincard{background:var(--card);border:1px solid var(--hair);border-radius:var(--r-lg);box-shadow:0 24px 48px -8px rgba(90,20,32,.16);padding:20px}
+  .logincard .le{font-size:11px;letter-spacing:.08em;text-transform:uppercase;font-weight:800;color:var(--muted);text-align:left}
+  .logincard input{width:100%;margin-top:10px;height:54px;padding:0 16px;border:1.5px solid var(--hair);border-radius:14px;font-size:17px;font-weight:800;font-family:var(--mono);background:#fbfbfd;color:var(--ink);outline:none;text-align:center;letter-spacing:.14em;text-transform:uppercase;transition:border-color .15s,box-shadow .15s,transform .15s}
+  .logincard input:focus{border-color:var(--maroon);background:#fff;box-shadow:0 0 0 3px rgba(150,23,46,.12);transform:translateY(-1px)}
+  .signbtn{width:100%;margin-top:12px;height:54px;border:none;font-family:inherit;font-size:16px;font-weight:800;color:#fff;cursor:pointer;border-radius:15px;background:linear-gradient(135deg,var(--maroon),var(--maroon2));box-shadow:0 10px 24px -6px rgba(150,23,46,.4);transition:transform .14s var(--ease-out)}
+  .signbtn:active{transform:scale(.97)} .signbtn:disabled{opacity:.6}
+  .loginerr{color:var(--sun1);font-size:12.5px;font-weight:800;min-height:18px;margin-top:10px;text-align:center}
+  .demohint{font-size:12px;color:var(--muted);margin-top:12px;text-align:center;font-weight:600}
   .demohint b{color:var(--maroon);cursor:pointer}
-  .lfoot{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:16px;font-size:10.5px;color:var(--muted);font-weight:700}
-  .lfoot svg{width:12px;height:12px;stroke:var(--green);stroke-width:2;fill:none}
-  .lfoot .mgr{color:var(--faint);cursor:pointer;border-bottom:1px dotted var(--faint)}
+  /* footer — two-part vertical stack, never wraps on narrow screens */
+  .lfoot{display:flex;flex-direction:column;align-items:center;gap:6px;margin-top:14px}
+  .lfoot .lf1{display:inline-flex;align-items:center;gap:6px;font-size:11px;color:var(--muted);font-weight:700;white-space:nowrap}
+  .lfoot .lf1 svg{width:12px;height:12px;stroke:var(--green);stroke-width:2;fill:none;flex:0 0 auto}
+  .lfoot .mgr{font-size:11px;color:var(--faint);cursor:pointer;font-weight:700;border-bottom:1px dotted var(--faint)}
   .spin{width:18px;height:18px;border:2.5px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;display:inline-block;animation:sp .7s linear infinite;vertical-align:-3px}
   @keyframes sp{to{transform:rotate(360deg)}}
 
@@ -387,26 +415,28 @@
       </div>
     </div>
     <div class="lhero">
-      <span class="badge" id="lBadge">ABSLI · Direct Marketing</span>
+      <span class="leyebrow" id="lBadge">ABSLI · Direct Marketing</span>
       <h1 id="lTitle">Your day, <b>elevated.</b></h1>
-      <div class="sub" id="lSub">This month's earning and your climb to the next grade — one clear place, always honest.</div>
-      <div class="lteaser">
-        <div class="tz money"><div class="tzv">735</div><div class="tzk" id="lt1">advisors live</div></div>
-        <div class="tz money"><div class="tzv">₹</div><div class="tzk" id="lt2">this-month incentive</div></div>
-        <div class="tz sp"><div class="tzv">%</div><div class="tzk" id="lt3">rolling promotion</div></div>
+      <div class="sub" id="lSub">This month's earnings and your climb to the next grade — one honest place.</div>
+      <div class="lchips">
+        <div class="lchip money c1"><div class="ci"><svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="13" rx="2.5"/><path d="M3 10h18"/></svg></div><div class="ct"><div class="cv" id="lc1v">This month</div><div class="ck" id="lc1k">₹ Incentive</div></div></div>
+        <div class="lchip sp c2"><div class="ci"><svg viewBox="0 0 24 24"><path d="M5 21V4l13 4-13 4"/></svg></div><div class="ct"><div class="cv" id="lc2v">Rolling 12-mo</div><div class="ck" id="lc2k">Promotion</div></div></div>
+        <div class="lchip money c3"><div class="ci"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/></svg></div><div class="ct"><div class="cv" id="lc3v">735</div><div class="ck" id="lc3k">advisors live</div></div></div>
       </div>
     </div>
-    <div class="logincard">
-      <div class="le" id="lCodeLabel">Employee code (DSE ID)</div>
-      <input id="code" type="text" inputmode="text" placeholder="e.g. AAA634" autocomplete="off" autocapitalize="characters">
-      <button class="signbtn" id="signbtn" onclick="signIn()"><span id="signtxt">Open my day →</span></button>
-      <div class="loginerr" id="loginerr"></div>
-      <div class="demohint" id="lDemo">Demo: <b onclick="quick('AAA634')">AAA634</b> · <b onclick="quick('AAL759')">AAL759</b> · <b onclick="quick('AAD931')">AAD931</b></div>
-    </div>
-    <div class="lfoot">
-      <svg viewBox="0 0 24 24"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
-      <span id="lTrust">Company-authorized · figures from the payout sheet</span>
-      <span class="mgr" onclick="quick('ADMIN')" id="lMgr">Manager console</span>
+    <div class="lbottom">
+      <div class="lsoc" id="lSoc"><span class="dotr"><i></i><i></i><i></i></span><span><b>735</b> advisors on Elevate</span></div>
+      <div class="logincard">
+        <div class="le" id="lCodeLabel">Employee code (DSE ID)</div>
+        <input id="code" type="text" inputmode="text" placeholder="e.g. AAA634" autocomplete="off" autocapitalize="characters">
+        <button class="signbtn" id="signbtn" onclick="signIn()"><span id="signtxt">Open my day →</span></button>
+        <div class="loginerr" id="loginerr"></div>
+        <div class="demohint" id="lDemo">Demo: <b onclick="quick('AAA634')">AAA634</b> · <b onclick="quick('AAL759')">AAL759</b> · <b onclick="quick('AAD931')">AAD931</b></div>
+      </div>
+      <div class="lfoot">
+        <span class="lf1"><svg viewBox="0 0 24 24"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg><span id="lTrust">Company-authorized · from the payout sheet</span></span>
+        <span class="mgr" onclick="quick('ADMIN')" id="lMgr">Manager console</span>
+      </div>
     </div>
   </div>
 </div>
@@ -454,9 +484,9 @@
   var T={
     en:{today:'Today',perform:'Perform',earnings:'Earnings',career:'Career',coach:'Coach',
       badge:'ABSLI · Direct Marketing',title:'Your day, <b>elevated.</b>',
-      sub:"This month's earning and your climb to the next grade — one clear place, always honest.",
-      t1:'advisors live',t2:'this-month incentive',t3:'rolling promotion',codeLabel:'Employee code (DSE ID)',
-      cta:'Open my day →',trust:'Company-authorized · figures from the payout sheet',mgr:'Manager console',
+      sub:"This month's earnings and your climb to the next grade — one honest place.",
+      c1v:'This month',c1k:'₹ Incentive',c2v:'Rolling 12-mo',c2k:'Promotion',c3k:'advisors live',soc:'advisors on Elevate',
+      codeLabel:'Employee code (DSE ID)',cta:'Open my day →',trust:'Company-authorized · from the payout sheet',mgr:'Manager console',
       ctxToday:'Good day',ctxPerform:'This month · business pace',ctxEarn:'incentive',ctxCareer:'Rolling 12-mo · promotion',ctxCoach:'Your best moves',
       oneMove:'Your one move today',earnMonth:'Earn this month',promo:'Promotion',towardPromo:'Toward promotion',whyMove:'Why this move',
       glance:'This month at a glance',readiness:'Promotion readiness',ready:'ready',ofGates:'of 4 gates',ofWay:'of the way',
@@ -469,9 +499,9 @@
       admin:'Manager console'},
     hi:{today:'आज',perform:'प्रदर्शन',earnings:'कमाई',career:'करियर',coach:'कोच',
       badge:'ABSLI · डायरेक्ट मार्केटिंग',title:'आपका दिन, <b>और बेहतर।</b>',
-      sub:'इस महीने की कमाई और अगली ग्रेड तक की चढ़ाई — एक साफ़ जगह, हमेशा सच।',
-      t1:'सक्रिय सलाहकार',t2:'इस महीने इंसेंटिव',t3:'रोलिंग प्रमोशन',codeLabel:'कर्मचारी कोड (DSE ID)',
-      cta:'मेरा दिन खोलें →',trust:'कंपनी-अधिकृत · भुगतान शीट से आँकड़े',mgr:'मैनेजर कंसोल',
+      sub:'इस महीने की कमाई और अगली ग्रेड तक की चढ़ाई — एक साफ़, ईमानदार जगह।',
+      c1v:'इस महीने',c1k:'₹ इंसेंटिव',c2v:'रोलिंग 12-माह',c2k:'प्रमोशन',c3k:'सक्रिय सलाहकार',soc:'सलाहकार Elevate पर',
+      codeLabel:'कर्मचारी कोड (DSE ID)',cta:'मेरा दिन खोलें →',trust:'कंपनी-अधिकृत · भुगतान शीट से',mgr:'मैनेजर कंसोल',
       ctxToday:'शुभ दिन',ctxPerform:'इस महीने · कारोबार गति',ctxEarn:'इंसेंटिव',ctxCareer:'रोलिंग 12-माह · प्रमोशन',ctxCoach:'आपके बेहतरीन कदम',
       oneMove:'आज का आपका एक कदम',earnMonth:'इस महीने कमाएँ',promo:'प्रमोशन',towardPromo:'प्रमोशन की ओर',whyMove:'यह कदम क्यों',
       glance:'इस महीने एक नज़र में',readiness:'प्रमोशन तैयारी',ready:'तैयार',ofGates:'में से 4 गेट',ofWay:'रास्ता पूरा',
@@ -493,7 +523,8 @@
   }
   function paintLanding(){
     $('lBadge').textContent=t('badge');$('lTitle').innerHTML=t('title');$('lSub').textContent=t('sub');
-    $('lt1').textContent=t('t1');$('lt2').textContent=t('t2');$('lt3').textContent=t('t3');
+    $('lc1v').textContent=t('c1v');$('lc1k').textContent=t('c1k');$('lc2v').textContent=t('c2v');$('lc2k').textContent=t('c2k');$('lc3k').textContent=t('c3k');
+    $('lSoc').innerHTML='<span class="dotr"><i></i><i></i><i></i></span><span><b>735</b> '+t('soc')+'</span>';
     $('lCodeLabel').textContent=t('codeLabel');$('signtxt').textContent=t('cta');$('lTrust').textContent=t('trust');$('lMgr').textContent=t('mgr');
   }
 
@@ -586,16 +617,18 @@
 
   /* ---------- ticker ---------- */
   function buildTicker(){
+    // maroon-ink strip: values cream by default; accent (gold/green) on ≤2 chips only (state, not category)
     var p=VM.profile,e=VM.earnings,c=VM.career,chips=[];
-    chips.push(['money','ON THE TABLE',inr(e.headline.onTheTable)]);
-    if(p&&p.productMix)chips.push(['money','ULIP MIX',Math.round(p.productMix.ulipPct*100)+'%']);
-    if(p&&p.persTrend)chips.push(['money','PERSISTENCY',pct(p.persTrend.cm)+' ('+(p.persTrend.delta>=0?'+':'')+(p.persTrend.delta*100).toFixed(1)+'pt)']);
-    if(c&&p&&p.rank){chips.push(['sp','RANK',' #'+p.rank.wfyp+' of '+p.rank.total]);chips.push(['sp','GATES',c.gatesCleared+'/4'+(c.eligible?' · eligible':'')]);}
-    if(p&&p.rank&&p.rank.zone)chips.push(['sp',p.rank.zone.toUpperCase()+' ZONE','#'+p.rank.zoneRank]);
-    if(p&&p.rolling&&p.rolling.streak>0)chips.push(['neutral','STREAK',p.rolling.streak+' mo']);
-    var one=chips.map(function(x){return '<span class="tk '+x[0]+'"><span class="tl">'+x[1]+'</span>'+x[2]+'</span>';}).join('');
+    chips.push(['ON THE TABLE',inr(e.headline.onTheTable),'op']);
+    if(c&&p&&p.rank){chips.push(['RANK','#'+p.rank.wfyp+' of '+p.rank.total,'']);chips.push(['GATES',c.gatesCleared+'/4'+(c.eligible?' · eligible':''),c.eligible?'pos':'']);}
+    if(p&&p.productMix)chips.push(['ULIP MIX',Math.round(p.productMix.ulipPct*100)+'%','']);
+    if(p&&p.persTrend)chips.push(['PERSISTENCY',pct(p.persTrend.cm)+' ('+(p.persTrend.delta>=0?'+':'')+(p.persTrend.delta*100).toFixed(1)+'pt)','']);
+    if(p&&p.rank&&p.rank.zone)chips.push([p.rank.zone.toUpperCase()+' ZONE','#'+p.rank.zoneRank,'']);
+    if(p&&p.rolling&&p.rolling.streak>0)chips.push(['STREAK',p.rolling.streak+' mo','']);
+    var one=chips.map(function(x){return '<span class="tk"><span class="tl">'+x[0]+'</span><span class="tv '+x[2]+'">'+x[1]+'</span></span>';}).join('');
     $('tick').innerHTML=one+one;
-    if(REDUCE)$('tick').style.animation='none';
+    if(REDUCE){$('tick').style.animation='none';return;}
+    requestAnimationFrame(function(){var w=$('tick').scrollWidth/2;if(w>0)$('tick').style.setProperty('--tdur',Math.max(18,Math.round(w/50))+'s');});
   }
 
   /* ---------- render ---------- */
