@@ -120,7 +120,8 @@ def compute_sp(inputs: dict, config: dict) -> dict:
         "persistency": (persistency if persistency is not None else 0.0) - g["persistency_min"],
     }
     unmet = {k: v for k, v in margins.items() if v < 0}
-    thinnest_gate = min(unmet, key=unmet.get) if unmet else None
+    # "thinnest" = the unmet gate CLOSEST to clearing (largest, i.e. least-negative, margin)
+    thinnest_gate = max(unmet, key=unmet.get) if unmet else None
 
     return {
         "cadence": "rolling_12m",

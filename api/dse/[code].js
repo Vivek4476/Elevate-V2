@@ -1,7 +1,8 @@
 // GET /api/dse/:code  ->  { dse, earnings, career, bridge, perform, profile } computed server-side.
 // Vercel Serverless Function (Node.js). Auth (SSO) attaches at the top — deferred for now.
 
-import { getData, dataSource } from '../_lib/data.js';
+import { getData, dataSource, contractEnabled, getContract } from '../_lib/data.js';
+import { applyContract } from '../_lib/adapt.js';
 import { transformDse, parseIncentiveDseRow, trailingWindow } from '../../engine/transform.js';
 import { buildDseView } from '../../engine/view.js';
 import { buildEarningsStatement } from '../../engine/statement.js';
@@ -86,18 +87,28 @@ export default async function handler(req, res) {
     const win = trailingWindow(data.sp.meta.maxMonth);
     const m = data.sp.monthly[code] || {};
     const perform = { months: win.map((k) => ({ m: k, w: (m[k] || {}).w || 0, n: (m[k] || {}).n || 0 })) };
+    let view;
     if (rec.joined) {
-      const view = buildDseView({ designs: APR26, spRules: SP_RULES, ...rec });
+      view = buildDseView({ designs: APR26, spRules: SP_RULES, ...rec });
       view.perform = perform;
       view.profile = profile;
-      return res.status(200).json(view);
+    } else {
+      const { incentiveInputs } = parseIncentiveDseRow(row);
+      view = {
+        dse: rec.dse, earnings: buildEarningsStatement(APR26, incentiveInputs, rec.dse),
+        career: null, bridge: null, perform: null, profile,
+        note: 'DSE not in the promotion dataset',
+      };
     }
-    const { incentiveInputs } = parseIncentiveDseRow(row);
-    return res.status(200).json({
-      dse: rec.dse, earnings: buildEarningsStatement(APR26, incentiveInputs, rec.dse),
-      career: null, bridge: null, perform: null, profile,
-      note: 'DSE not in the promotion dataset',
-    });
+    // Step 3: behind the flag, override the computed numbers with the reconciled contract.
+    // Missing/erroring contract → keep the computed view (graceful, still deployable).
+    if (contractEnabled()) {
+      try {
+        const contract = await getContract(code);
+        if (contract) applyContract(view, contract);
+      } catch (_) { /* fall back to the computed view */ }
+    }
+    return res.status(200).json(view);
   } catch (e) {
     return res.status(500).json({ error: e.message });
   }
