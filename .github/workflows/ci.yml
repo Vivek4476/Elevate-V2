@@ -1,0 +1,30 @@
+name: pipeline-ci
+
+# The reconciliation gate. Runs the correctness core on every change to the pipeline.
+# The real monthly workbooks are git-ignored (per-DSE payout data → not in a public repo), so CI
+# runs the data-free proofs: golden AAA634 (incentive ₹5,356.34 + SP WAS 0.6271), the incentive↔SP
+# field-disjointness invariant, and plan validity. The full-sheet 891/1020 reconcile runs locally
+# and pre-publish in the admin console, where the sheets are present.
+
+on:
+  push:
+    paths:
+      - 'pipeline/**'
+      - '.github/workflows/ci.yml'
+  pull_request:
+    paths:
+      - 'pipeline/**'
+      - '.github/workflows/ci.yml'
+
+jobs:
+  reconcile:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install pipeline deps
+        run: python -m pip install --upgrade pip && pip install -r pipeline/requirements.txt
+      - name: Golden + reconcile + disjointness tests
+        run: python -m pytest pipeline/pipeline/tests -q

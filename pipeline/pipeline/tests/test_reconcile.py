@@ -4,6 +4,7 @@ import sys
 from pathlib import Path
 
 import pandas as pd
+import pytest
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
@@ -30,6 +31,7 @@ def reconcile(df) -> list[tuple]:
     return mismatches
 
 
+@pytest.mark.skipif(not WORKBOOK.exists(), reason="incentive workbook not present (data is git-ignored)")
 def test_reconcile_all():
     df = load_incentive(WORKBOOK)
     mismatches = reconcile(df)

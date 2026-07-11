@@ -27,7 +27,9 @@ sys.path.insert(0, str(ROOT))
 from pipeline.ingest.incentive import load_incentive           # noqa: E402
 from pipeline.ingest.sp import load_sp                          # noqa: E402
 from pipeline.engines.incentive_calc import compute_incentive  # noqa: E402
+from pipeline.engines.sp_calc import compute_sp                # noqa: E402
 from pipeline.engines.addons import apply_addons               # noqa: E402
+from pipeline.contract.build import build_contracts            # noqa: E402
 from pipeline.schemas.incentive_schema import IncentiveInput   # noqa: E402
 from pipeline.schemas.sp_schema import SPInput, validate       # noqa: E402
 from pipeline.templates.build_templates import build_all       # noqa: E402
@@ -38,10 +40,21 @@ INC_WB = ROOT / "data/Incentive_Sheet_Apr.xlsx"   # month-specific in production
 SP_WB = ROOT / "data/Final_SP_Summary_Apr_26_Field.xlsb"
 OUT = ROOT / "data/out"
 GOLDEN = json.loads((ROOT / "pipeline/tests/golden/aaa634.json").read_text())
+SP_GOLDEN = json.loads((ROOT / "pipeline/tests/golden/aaa634_sp.json").read_text())
 
 
 def _rupee(x) -> str:
     return f"₹{x:,.2f}"
+
+
+def _yn(v):
+    """Sheet 'Yes'/'No' gate cell → bool (None if blank/unknown)."""
+    s = "" if v is None else str(v).strip().lower()
+    if s in {"yes", "y", "true", "1"}:
+        return True
+    if s in {"no", "n", "false", "0"}:
+        return False
+    return None
 
 
 def _plan(args) -> dict:
@@ -184,8 +197,58 @@ def cmd_check(args):
     for mm in mismatches[:10]:
         print(f"      mismatch {mm[0]}: engine {mm[1]} vs sheet {mm[2]}")
 
+    # ── SP golden (independent engine) ──
+    spres = compute_sp(SP_GOLDEN["inputs"], plan)
+    print("\n── Golden · AAA634 SP (fixture) ──")
+    for path, exp in SP_GOLDEN["expected"].items():
+        val = _get(spres, path)
+        if isinstance(exp, (bool, str)):
+            good = val == exp
+        else:
+            good = abs(float(val) - float(exp)) <= 0.001
+        ok &= good
+        print(f"  {'✓' if good else '✗'} {path:<22} {val!s:<18} exp {exp}")
+
+    # ── SP reconcile: overall_was + gate flags vs the sheet's own columns ──
+    sp = load_sp(SP_WB)
+    sp_mm, sp_checked = [], 0
+    for _, r in sp.iterrows():
+        d = r.to_dict()
+        sw = d.get("sheet_overall_was")
+        if sw is None or (isinstance(sw, float) and pd.isna(sw)):
+            continue
+        sp_checked += 1
+        res = compute_sp(d, plan)
+        was_ok = abs(res["overall_was"] - float(sw)) <= 0.001
+        wg, ng = _yn(d.get("sheet_wfyp_gate")), _yn(d.get("sheet_nop_gate"))
+        gate_ok = (wg is None or wg == res["gates"]["wfyp_75"]) and (ng is None or ng == res["gates"]["nop_50"])
+        if not (was_ok and gate_ok):
+            sp_mm.append((d.get("dse_bo_code") or d.get("dse_id"), round(res["overall_was"], 4), round(float(sw), 4)))
+    good = not sp_mm
+    ok &= good
+    print(f"\n── Reconcile · SP WAS + gates vs sheet (±0.001) ──\n  {'✓' if good else '✗'} {sp_checked - len(sp_mm)}/{sp_checked} DSEs reconcile")
+    for mm in sp_mm[:10]:
+        print(f"      mismatch {mm[0]}: was {mm[1]} vs sheet {mm[2]}")
+
+    # ── structural: the two blocks never share a field ──
+    inc_keys = set(compute_incentive(GOLDEN["inputs"], plan).keys())
+    sp_only_keys = {"overall_was", "gates", "eligible", "tier", "binding_constraint", "ladder", "thinnest_gate"}
+    disjoint = inc_keys.isdisjoint(sp_only_keys)
+    ok &= disjoint
+    print(f"\n── Structural · incentive ∩ SP keys ──\n  {'✓' if disjoint else '✗'} disjoint (overlap: {inc_keys & sp_only_keys or '∅'})")
+
     print("\n" + ("ALL CHECKS GREEN ✓" if ok else "CHECKS FAILED ✗ — a plan that doesn't match the data month will fail here (by design)"))
     sys.exit(0 if ok else 1)
+
+
+def cmd_build(args):
+    plan = _plan(args)
+    man = build_contracts(INC_WB, SP_WB, plan, OUT, args.month)
+    print(f"Built {man['totals']['contracts']} contracts → {OUT / 'dse'}")
+    print("Coverage:", json.dumps(man["coverage"], indent=2))
+    a = json.loads((OUT / "dse" / "AAA634.json").read_text())
+    print(f"AAA634: incentive.final={_rupee(a['incentive']['final'])} · "
+          f"sp.eligible={a['sp']['eligible']} · sp.tier={a['sp']['tier']}")
 
 
 def _add_ctx(p):
@@ -211,6 +274,7 @@ def main():
     _add_ctx(sub.add_parser("validate")).set_defaults(func=cmd_validate)
     c = _add_ctx(sub.add_parser("calc")); c.add_argument("--dse", default="AAA634"); c.set_defaults(func=cmd_calc)
     _add_ctx(sub.add_parser("templates")).set_defaults(func=cmd_templates)
+    _add_ctx(sub.add_parser("build")).set_defaults(func=cmd_build)
     _add_ctx(sub.add_parser("check")).set_defaults(func=cmd_check)
 
     args = ap.parse_args()

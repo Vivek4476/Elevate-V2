@@ -3,6 +3,8 @@ import json
 import sys
 from pathlib import Path
 
+import pytest
+
 ROOT = Path(__file__).resolve().parents[2]        # elevate/
 sys.path.insert(0, str(ROOT))
 
@@ -38,6 +40,7 @@ def test_golden_from_fixture():
         assert abs(got - exp) <= 0.01, f"{path}: got {got}, expected {exp}"
 
 
+@pytest.mark.skipif(not WORKBOOK.exists(), reason="incentive workbook not present (data is git-ignored)")
 def test_golden_from_workbook():
     df = load_incentive(WORKBOOK)
     row = df[df["agent_code"] == "AAA634"].iloc[0].to_dict()
@@ -45,6 +48,7 @@ def test_golden_from_workbook():
     assert abs(res["final"] - 5356.336356) <= 0.01
 
 
+@pytest.mark.skipif(not WORKBOOK.exists(), reason="incentive workbook not present (data is git-ignored)")
 def test_schema_valid():
     df = load_incentive(WORKBOOK)
     IncentiveInput.validate(df, lazy=True)   # raises SchemaErrors if invalid

@@ -1,0 +1,29 @@
+{
+  "dse_id": "AAA634",
+  "name": "Lakshya Jayesh Hingorani",
+  "inputs": {
+    "wfyp_ytd_target": 10000000,
+    "wfyp_ytd_ach": 5495002.226,
+    "nop_ytd_target": 50,
+    "nop_ytd_ach": 43,
+    "persistency_overall": 0.95415092498964,
+    "grade": "SPMG",
+    "zone": "West",
+    "reason_for_promotion": "Final WAS Score",
+    "pip_remarks": "Not Eligible for PIP",
+    "pip_wfyp_target": 8000000,
+    "termination_target": null
+  },
+  "expected": {
+    "wfyp.ach_pct": 0.5495002226,
+    "nop.ach_pct": 0.86,
+    "overall_was": 0.6271251670,
+    "eligible": false,
+    "tier": "on_track",
+    "binding_constraint": "Final WAS Score",
+    "gates.wfyp_75": false,
+    "gates.nop_50": true,
+    "gates.was_100": false,
+    "gates.persistency_87": true
+  }
+}

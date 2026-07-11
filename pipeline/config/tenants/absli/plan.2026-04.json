@@ -46,6 +46,8 @@
   "sp": {
     "cadence": "rolling_12m",
     "was_weights": { "wfyp": 0.75, "nop": 0.25 },
+    "ach_cap": 1.50,
+    "was_cap": 1.50,
     "gates": { "wfyp_ach_min": 0.75, "nop_ach_min": 0.50, "was_min": 1.00, "persistency_min": 0.87 }
   },
   "ladder": ["SDSE", "SWM", "DSM", "Sr.DSM", "ADSM", "EADSM", "PM", "SPMG", "CPM", "EPM"],
