@@ -146,6 +146,15 @@
   .mathwrap .mbody{padding:0 16px 10px}
   .coachlink{display:flex;align-items:center;justify-content:center;gap:7px;padding:13px;border-radius:var(--r-card);background:var(--card);border:1px solid var(--hair);box-shadow:var(--sh1);font-size:13px;font-weight:800;color:var(--maroon);cursor:pointer}
 
+  /* Climb surface (Step 6) */
+  .mbadge.sp{color:var(--maroon);background:var(--maroon-tint);border-color:var(--maroon-line)}
+  .mbadge.sp .d{background:var(--maroon)}
+  .eta.warn{color:var(--gold);background:var(--gold-bg);border:1px solid var(--gold-line)}
+  .eta.danger{color:var(--sun1);background:#fdecea;border:1px solid #f6c9c4}
+  .chero .cbind{font-size:11.5px;color:var(--ink2);font-weight:600;margin-top:9px;line-height:1.45} .chero .cbind b{color:var(--maroon)}
+  .gate.thin{background:linear-gradient(100deg,#fff7ec,#fffdf8);box-shadow:inset 0 0 0 1.5px var(--gold-line);border-radius:12px}
+  .gthin{display:inline-block;margin-left:7px;font-size:8px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;color:var(--gold);background:var(--gold-bg);border:1px solid var(--gold-line);padding:2px 7px;border-radius:9px;vertical-align:middle}
+
   .nudge{display:flex;align-items:center;gap:12px;padding:14px 15px;border-radius:var(--r-card);background:linear-gradient(100deg,#fff7ec,#fffdf8);border:1px solid var(--gold-line);cursor:pointer}
   .nudge .ic{width:36px;height:36px;border-radius:12px;flex:0 0 auto;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--sun2),var(--sun3));box-shadow:0 5px 12px rgba(245,130,32,.3)}
   .nudge .tx{font-size:12.5px;line-height:1.4;color:var(--ink2);font-weight:550} .nudge .tx b{color:var(--ink);font-weight:800}
@@ -779,25 +788,54 @@
     var c=VM.career,d=VM.dse,p=VM.profile;
     if(!c){$('v_career').innerHTML='<div class="c empty"><div class="ei">🧭</div><div class="et">'+t('notLinked')+'</div><div class="es">'+t('notLinkedSub')+'</div></div>';return;}
     var idx=GRADE_LADDER.indexOf(d.grade),next=(idx>=0&&idx<GRADE_LADDER.length-1)?GRADE_LADDER[idx+1]:null;
-    var cring='<div class="cring" style="width:104px;height:104px">'+ring(c.progress,104,9,'#F58220','#f2e6d6')+'<div class="rc"><div class="rn"><span class="cu" data-to="'+Math.round(c.progress*100)+'" data-fmt="pct">'+pct(c.progress)+'</span></div><div class="ru">'+t('ofWay')+'</div></div></div>';
-    var gate=function(nm,val,need,ok){return '<div class="gate '+(ok?'ok':'no')+'"><div class="gi">'+(ok?'✓':'!')+'</div><div class="gt"><div class="gn">'+nm+'</div><div class="gs">'+val+' · needs '+need+'</div></div><div class="gv">'+val+'</div></div>';};
-    var gates=gate('WFYP achievement',pct(c.wfypAch),'≥ 75%',c.gates.wfyp)+gate('NOP achievement',pct(c.nopAch),'≥ 50%',c.gates.nop)+gate('Overall WAS',pct(c.was),'> 100%',c.gates.was)+gate('Persistency',c.persistencyExempt?'Exempt':(c.persistencyValue*100).toFixed(1)+'%','≥ 87%',c.gates.persistency);
+
+    // WAS ring — overall WAS toward the 100% gate
+    var wasFrac=Math.min(1,c.was||0),wasCol=c.gates.was?'#0E9A66':'#F58220';
+    var cring='<div class="cring" style="width:104px;height:104px">'+ring(wasFrac,104,9,wasCol,'#f2e6d6')+'<div class="rc"><div class="rn"><span class="cu" data-to="'+Math.round((c.was||0)*100)+'" data-fmt="pct">'+pct(c.was||0)+'</span></div><div class="ru">WAS score</div></div></div>';
+
+    // four gates ranked by margin (closest-to-clearing first), thinnest flagged
+    var G=[
+      {key:'wfyp',nm:'WFYP achievement',val:c.wfypAch,thr:0.75,need:'≥ 75%',ok:c.gates.wfyp,exempt:false},
+      {key:'nop',nm:'NOP achievement',val:c.nopAch,thr:0.50,need:'≥ 50%',ok:c.gates.nop,exempt:false},
+      {key:'was',nm:'Overall WAS',val:c.was,thr:1.00,need:'> 100%',ok:c.gates.was,exempt:false},
+      {key:'persistency',nm:'Persistency',val:c.persistencyValue,thr:0.87,need:'≥ 87%',ok:c.gates.persistency,exempt:c.persistencyExempt}
+    ];
+    G.forEach(function(g){g.margin=(g.exempt?1:(g.val||0))-g.thr;});
+    var unmet=G.filter(function(g){return !g.ok;}).sort(function(a,b){return b.margin-a.margin;});
+    var met=G.filter(function(g){return g.ok;}).sort(function(a,b){return b.margin-a.margin;});
+    var ordered=unmet.concat(met),thinKey=unmet.length?unmet[0].key:null;
+    var gcard=function(g){
+      var v=g.exempt?'Exempt':pct(g.val),thin=(g.key===thinKey);
+      var sub=g.exempt?'exempt for your vintage':(g.ok?'cleared · target '+g.need:'now '+v+' · needs '+g.need+' · +'+Math.round((g.thr-g.val)*100)+'% to go');
+      return '<div class="gate '+(g.ok?'ok':'no')+(thin?' thin':'')+'"><div class="gi">'+(g.ok?'✓':'!')+'</div><div class="gt"><div class="gn">'+g.nm+(thin?'<span class="gthin">Closest</span>':'')+'</div><div class="gs">'+sub+'</div></div><div class="gv">'+v+'</div></div>';
+    };
+    var gates=ordered.map(gcard).join('');
+
+    // tier state + binding-constraint headline
+    var tier=c.tier||(c.eligible?'promotion':'on_track');
+    var TIER={promotion:['✓ Promotion-ready','ok'],on_track:['On track','roll'],pip:['On a PIP','warn'],termination_risk:['At risk','danger']};
+    var ti=TIER[tier]||TIER.on_track;
+    var thinName={wfyp:'WFYP achievement',nop:'NOP achievement',was:'your WAS score',persistency:'Persistency'}[thinKey]||'the last gate';
+    var bindHeadline=c.eligible?'All four gates cleared — hold it to lock in '+(next||'promotion')+'.'
+      :((c.bindingConstraint?'<b>'+c.bindingConstraint+'</b> is the binding constraint. ':'')+'Lift <b>'+thinName+'</b> to move up.');
+
     var rungs=[[GRADE_LADDER[idx-1],'done','Cleared'],[d.grade,'you','You'],[next,'next','Next'],[GRADE_LADDER[idx+2],'lock','Later']].filter(function(r){return r[0];}).map(function(r){var cl=r[1];return '<div class="rung '+cl+'"><div class="rdot">'+(cl==='done'?'✓':cl==='you'?'●':cl==='next'?'◆':'·')+'</div><div class="gl">'+r[0]+'</div><div class="rl">'+r[2]+'</div></div>';}).join('');
-    var ngName={wfyp:'WFYP',nop:'NOP',was:'Overall WAS',persistency:'Persistency'}[c.nextGate]||'the last gate';
-    var remain=c.eligible?'<div class="remain ok"><div class="ic">🏆</div><div class="tx"><b>All four gates cleared</b> — you\'re eligible for '+(next||'promotion')+'. Keep the momentum to lock it in.</div></div>':'<div class="remain"><div class="ic">⚑</div><div class="tx"><b>'+(4-c.gatesCleared)+' gate'+(4-c.gatesCleared>1?'s':'')+' to go</b> — <b>'+ngName+'</b> is next. Clear it to reach <b>'+(next||'the next grade')+'</b>.</div></div>';
+    var remain=c.eligible?'<div class="remain ok"><div class="ic">🏆</div><div class="tx"><b>Hold it.</b> All four gates cleared — you\'re eligible for '+(next||'promotion')+'. Keep the rolling numbers up to lock it in.</div></div>'
+      :'<div class="remain"><div class="ic">⚑</div><div class="tx"><b>'+thinName.charAt(0).toUpperCase()+thinName.slice(1)+'</b> is the closest gate — '+(unmet.length?'lift it +'+Math.round((unmet[0].thr-unmet[0].val)*100)+'% to clear':'almost there')+'. '+(4-c.gatesCleared)+' of 4 to reach <b>'+(next||'the next grade')+'</b>.</div></div>';
     var rank=(p&&p.rank)?'<div class="c rankc"><div class="rl"><div class="rp">#'+p.rank.wfyp+'</div><div class="rt">of '+p.rank.total+'</div></div><div class="rx"><div class="rn"><b>Top '+p.rank.pct+'%</b> on the promotion track</div><div class="rs">'+(p.rank.zone?'#'+p.rank.zoneRank+' of '+p.rank.zoneTotal+' in '+p.rank.zone+' zone · ':'')+'rolling-12mo WFYP</div></div></div>':'';
     var mom='';
     if(VM.perform&&VM.perform.months){var mw=VM.perform.months.map(function(m){return m.w;});var mx=Math.max.apply(null,mw.map(Math.abs).concat([1]));mom='<div class="lbl">'+t('momentum')+'</div><div class="c"><div class="momrow">'+VM.perform.months.map(function(m,i){var f=Math.abs(m.w)/mx;var lv=m.w<=0?0:f<.25?1:f<.5?2:f<.8?3:4;return '<div class="mcell '+(lv?'l'+lv:'')+'" style="animation-delay:'+(i*30)+'ms"></div>';}).join('')+'</div><div class="momlabels"><span>'+mLabel(VM.perform.months[0].m)+'</span><span>'+mLabel(VM.perform.months[11].m)+'</span></div></div>';}
     var tgtBand={CPM:'₹1.2 Cr',EPM:'₹1.6 Cr',SPMG:'₹1 Cr',PM:'₹80 L',CPMG:'₹1.4 Cr'}[next]||'a higher';
     var desig=(p&&p.fullDesig)?'<span class="nl">'+p.fullDesig+'</span>':'<span class="nl">next grade</span>';
     $('v_career').innerHTML=
-      '<div class="chero"><div class="glow"></div><div class="climbline"><span class="now">'+d.grade+'</span><span class="arr">→</span><b>'+(next||'—')+'</b>'+desig+'</div>'+
-        '<div class="mid">'+cring+'<div class="msg"><div class="big">You\'ve cleared <b>'+c.gatesCleared+' '+t('ofGates')+'</b>'+(next?' for '+next:'')+'.</div><div class="eta '+(c.eligible?'ok':'roll')+'">'+(c.eligible?'✓ Eligible now':'Rolling · never resets')+'</div></div></div></div>'+
+      '<div class="chero"><div class="glow"></div><span class="mbadge sp"><span class="d"></span>Rolling · 12-mo</span>'+
+        '<div class="climbline" style="margin-top:11px"><span class="now">'+d.grade+'</span><span class="arr">→</span><b>'+(next||'—')+'</b>'+desig+'</div>'+
+        '<div class="mid">'+cring+'<div class="msg"><div class="eta '+ti[1]+'">'+ti[0]+'</div><div class="big" style="margin-top:9px">'+c.gatesCleared+' of 4 gates cleared</div><div class="cbind">'+bindHeadline+'</div></div></div></div>'+
       rank+
       '<div class="c"><div class="ladder">'+rungs+'</div></div>'+
       '<div class="lbl">'+t('fourGates')+'</div><div class="c">'+gates+'</div>'+
       remain+mom+
-      '<div class="c benefits"><div class="lbl" style="padding:0 0 6px">When you reach '+(next||'the next grade')+'</div><div class="brow"><span class="bi">◆</span><div class="bt">Higher incentive grid — <b>'+tgtBand+'</b> annual band</div></div><div class="brow"><span class="bi">◆</span><div class="bt">New designation &amp; team</div></div><div class="brow"><span class="bi">◆</span><div class="bt">Bigger per-policy credit ceiling</div></div></div>';
+      '<div class="c benefits"><div class="lbl" style="padding:0 0 6px">When you reach '+(next||'the next grade')+'</div><div class="brow"><span class="bi">◆</span><div class="bt">Higher incentive grid — <b>'+tgtBand+'</b> target band</div></div><div class="brow"><span class="bi">◆</span><div class="bt">New designation &amp; team</div></div><div class="brow"><span class="bi">◆</span><div class="bt">Bigger per-policy credit ceiling</div></div></div>';
   }
 
   function renderCoach(){

@@ -78,6 +78,7 @@ function applySp(view, sp) {
     C.persistencyExempt = false;
     C.nextGate = sp.thinnest_gate;   // 'wfyp' | 'nop' | 'was' | 'persistency' | null
     C.tier = sp.tier;
+    C.bindingConstraint = sp.binding_constraint;
   }
   // keep Today / bridge consistent with the corrected eligibility (no fused numbers)
   if (view.bridge && view.bridge.promotionImpact) {
