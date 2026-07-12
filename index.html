@@ -20,6 +20,7 @@
     --s1:4px; --s2:8px; --s3:12px; --s4:16px; --s5:20px; --s6:24px; --s8:32px; --s12:48px;
     --ui:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,"Helvetica Neue",Arial,"Kohinoor Devanagari","Noto Sans Devanagari","Nirmala UI",sans-serif;
     --mono:ui-monospace,"SF Mono",SFMono-Regular,Menlo,Consolas,monospace;
+    --serif:ui-serif,"New York",Charter,"Iowan Old Style",Georgia,"Noto Serif",serif;
     --r-card:20px; --r-lg:24px; --r-chip:12px;
     /* soft, warm, maroon-tinted shadows (research: never gray/harsh) */
     --sh1:0 1px 2px rgba(90,20,32,.05);
@@ -357,65 +358,64 @@
   .tab svg{width:22px;height:22px;stroke:var(--faint);stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round;transition:transform .22s var(--ease-back)}
   .tab.on{color:var(--maroon)} .tab.on svg{stroke:var(--maroon);transform:translateY(-2px)}
 
-  /* ---------- login / landing ---------- */
-  .sun{position:fixed;inset:0;overflow:hidden;z-index:0;pointer-events:none}
-  .sun i{position:absolute;border-radius:50%;filter:blur(60px);will-change:transform}
-  .sun .s1{width:320px;height:320px;left:6%;top:4%;background:radial-gradient(circle,rgba(253,185,19,.5),transparent 70%);animation:drift 22s ease-in-out infinite alternate}
-  .sun .s2{width:280px;height:280px;right:-6%;top:24%;background:radial-gradient(circle,rgba(245,130,32,.34),transparent 72%);animation:drift2 26s ease-in-out infinite alternate}
-  .sun .s3{width:260px;height:260px;left:18%;bottom:4%;background:radial-gradient(circle,rgba(150,23,46,.15),transparent 70%);animation:drift 30s ease-in-out infinite alternate-reverse}
-  @keyframes drift{to{transform:translate3d(-3%,-2%,0) scale(1.06)}}
-  @keyframes drift2{to{transform:translate3d(3%,2%,0) scale(1.05)}}
-  @keyframes lrise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
-  @keyframes lriseblur{from{opacity:0;transform:translateY(14px);filter:blur(4px)}to{opacity:1;transform:none;filter:blur(0)}}
-  @keyframes floatA{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
-  @keyframes floatB{0%,100%{transform:translateY(0)}50%{transform:translateY(6px)}}
-  /* three-zone hero: top pinned, middle absorbs slack, bottom in thumb zone */
-  .loginwrap{position:relative;z-index:1;min-height:100vh;min-height:100svh;display:flex;flex-direction:column;justify-content:space-between;max-width:480px;margin:0 auto;padding:calc(env(safe-area-inset-top) + 16px) 22px calc(env(safe-area-inset-bottom) + 16px)}
-  .ltop{flex:0 0 auto;display:flex;align-items:center;justify-content:space-between}
-  .ltop img{height:32px}
-  .langtog{display:flex;background:rgba(255,255,255,.72);border:1px solid var(--hair);border-radius:999px;padding:3px;backdrop-filter:blur(8px)}
+  /* ---------- login (editorial hero + Employee-ID → phone → OTP) ---------- */
+  #login{min-height:100vh;min-height:100svh;background:radial-gradient(120% 55% at 50% 4%,rgba(253,185,19,.10),transparent 60%),var(--paper)}
+  .lwrap{position:relative;z-index:1;min-height:100svh;display:flex;flex-direction:column;max-width:460px;margin:0 auto;padding:calc(env(safe-area-inset-top) + 18px) 24px calc(env(safe-area-inset-bottom) + 18px)}
+  .ltop{flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+  .ltop img{height:30px}
+  .langtog{display:flex;background:rgba(255,255,255,.7);border:1px solid var(--hair);border-radius:999px;padding:3px;backdrop-filter:blur(8px)}
   .langtog button{border:none;background:none;font-family:inherit;font-size:12px;font-weight:800;color:var(--muted);padding:7px 14px;border-radius:999px;cursor:pointer;min-height:36px;transition:color .14s}
   .langtog button.on{background:var(--maroon);color:#fff;box-shadow:var(--sh1)}
-  /* MIDDLE — grows to eat any dead space */
-  .lhero{flex:1;display:flex;flex-direction:column;justify-content:center;position:relative;padding:12px 0}
-  .leyebrow{align-self:flex-start;font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--maroon);animation:lrise .5s .08s var(--ease-out) both}
-  .lhero h1{font-size:44px;font-weight:800;letter-spacing:-.02em;line-height:1.05;margin:12px 0 0;color:#1A1410;text-wrap:balance;animation:lriseblur .56s .18s var(--ease-out) both}
-  .lhero h1 b{color:var(--maroon)}
-  html[lang="hi"] .lhero h1{letter-spacing:0;line-height:1.18}
-  html[lang="hi"] .leyebrow{letter-spacing:.05em}
-  .lhero .sub{font-size:18px;color:var(--ink2);font-weight:500;margin-top:20px;line-height:1.45;max-width:34ch;text-wrap:pretty;animation:lrise .52s .36s var(--ease-out) both}
-  /* orbiting scope chips (replace the placeholder ₹/% tiles with real content) */
-  .lchips{position:relative;margin-top:26px;height:138px;animation:lrise .5s .5s var(--ease-out) both}
-  .lchip{position:absolute;display:flex;align-items:center;gap:11px;background:rgba(255,255,255,.85);border:1px solid rgba(150,23,46,.1);border-radius:16px;padding:11px 14px 11px 12px;box-shadow:0 12px 28px -12px rgba(90,20,32,.3);backdrop-filter:blur(10px)}
-  .lchip .ci{width:36px;height:36px;border-radius:11px;flex:0 0 auto;display:flex;align-items:center;justify-content:center}
-  .lchip .ci svg{width:19px;height:19px;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-  .lchip.money .ci{background:var(--gold-bg);border:1px solid var(--gold-line)} .lchip.money .ci svg{stroke:var(--gold)}
-  .lchip.sp .ci{background:var(--maroon-tint);border:1px solid var(--maroon-line)} .lchip.sp .ci svg{stroke:var(--maroon)}
-  .lchip .cv{font-size:14px;font-weight:800;letter-spacing:-.01em;color:var(--ink);line-height:1.1}
-  .lchip .ck{font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);margin-top:3px}
-  .lchip.c1{left:0;top:2px;animation:floatA 6s ease-in-out infinite}
-  .lchip.c2{right:0;top:52px;animation:floatB 7s ease-in-out infinite}
-  .lchip.c3{left:26px;bottom:0;animation:floatA 6.6s ease-in-out .3s infinite}
+  @keyframes lrise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+  @keyframes fadeUp{to{opacity:1;transform:none}}
+  .lscreen{display:none;flex:1;flex-direction:column}
+  .lscreen.on{display:flex;animation:lrise .4s var(--ease-out) both}
+  .lback{align-self:flex-start;background:none;border:none;font-family:inherit;font-size:14px;font-weight:700;color:var(--muted);cursor:pointer;padding:4px 0 0}
+  .lhero{flex:1;display:flex;flex-direction:column;justify-content:center;padding:8px 0}
+  .lhero.sm{flex:0 0 auto;justify-content:flex-start;padding-top:20px}
+  .leyebrow{font-size:12px;font-weight:700;letter-spacing:.11em;text-transform:uppercase;color:var(--maroon);opacity:0;transform:translateY(16px);animation:fadeUp .6s .05s var(--ease-out) forwards}
+  .leyebrow b{color:var(--ink)} .ledit{color:var(--maroon);font-weight:800;cursor:pointer;border-bottom:1px solid var(--maroon-line)}
+  .lserif{font-family:var(--serif);font-size:44px;font-weight:600;letter-spacing:-.02em;line-height:1.06;margin:14px 0 0;color:#1A1410;text-wrap:balance;opacity:0;transform:translateY(16px);animation:fadeUp .6s .13s var(--ease-out) forwards}
+  .lserif em{font-style:italic;color:var(--maroon)}
+  .lserif.sm{font-size:30px;margin-top:10px}
+  html[lang="hi"] .lserif{font-family:var(--ui);font-weight:800;letter-spacing:0;line-height:1.2}
+  .lsub{font-size:16.5px;color:var(--ink2);font-weight:450;margin-top:16px;line-height:1.5;max-width:32ch;text-wrap:pretty;opacity:0;transform:translateY(16px);animation:fadeUp .6s .22s var(--ease-out) forwards}
+  .lsub b{color:var(--ink);font-weight:700}
+  @media(prefers-reduced-motion:reduce){.leyebrow,.lserif,.lsub,.laction,.lscreen.on{animation:none;opacity:1;transform:none}}
+  .laction{flex:0 0 auto;opacity:0;transform:translateY(16px);animation:fadeUp .6s .3s var(--ease-out) forwards}
+  .lhero.sm+.laction{animation-delay:.15s}
+  .lflab{display:block;font-size:11px;letter-spacing:.08em;text-transform:uppercase;font-weight:800;color:var(--muted);margin-bottom:9px}
+  .lfhint{display:block;font-size:11.5px;color:var(--faint);font-weight:600;margin-top:8px}
+  .lin{width:100%;height:56px;padding:0 16px;border:1.5px solid var(--hair);border-radius:14px;font-size:17px;font-weight:700;font-family:var(--mono);background:#fbfbfd;color:var(--ink);outline:none;transition:border-color .15s,box-shadow .15s}
+  #empId{text-align:center;letter-spacing:.16em;text-transform:uppercase}
+  .lin:focus{border-color:var(--maroon);background:#fff;box-shadow:0 0 0 3px rgba(150,23,46,.1)}
+  .lphone{display:flex;align-items:center;gap:10px;height:56px;padding:0 8px 0 14px;border:1.5px solid var(--hair);border-radius:14px;background:#fbfbfd;transition:border-color .15s,box-shadow .15s}
+  .lphone:focus-within{border-color:var(--maroon);background:#fff;box-shadow:0 0 0 3px rgba(150,23,46,.1)}
+  .lcc{font-size:16px;font-weight:800;color:var(--ink2);padding-right:10px;border-right:1px solid var(--hair)}
+  .lphone input{flex:1;height:100%;border:none;background:none;outline:none;font-size:18px;font-weight:700;font-family:var(--mono);letter-spacing:.06em;color:var(--ink)}
+  .lbtn{width:100%;margin-top:14px;height:54px;border:none;font-family:inherit;font-size:16px;font-weight:800;color:#fff;cursor:pointer;border-radius:15px;background:linear-gradient(135deg,var(--maroon),var(--maroon2));box-shadow:0 10px 24px -8px rgba(150,23,46,.42);transition:transform .14s var(--ease-out)}
+  .lbtn:active{transform:scale(.98)} .lbtn:disabled{opacity:.5}
+  .lerr{color:var(--sun1);font-size:12.5px;font-weight:700;min-height:16px;margin-top:9px;text-align:center}
+  .ltrust{display:flex;align-items:center;justify-content:center;gap:7px;margin-top:16px;font-size:11px;color:var(--muted);font-weight:650}
+  .ltrust svg{width:12px;height:12px;stroke:var(--green);stroke-width:2;fill:none}
+  .ldemo{font-size:11.5px;color:var(--muted);margin-top:14px;text-align:center;font-weight:600}
+  .ldemo b{color:var(--maroon);cursor:pointer}
+  .otpwrap{position:relative;margin-top:6px}
+  .otphidden{position:absolute;inset:0;width:100%;height:56px;opacity:0;border:0;background:none;font-size:16px}
+  .otpboxes{display:flex;gap:8px;justify-content:center}
+  .otpboxes .gap{width:8px}
+  .otpbox{width:44px;height:56px;border:1.5px solid var(--hair);border-radius:12px;background:#fbfbfd;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:24px;font-weight:800;color:var(--ink);transition:border-color .12s,transform .12s,background .12s}
+  .otpbox.fill{border-color:var(--maroon);transform:scale(1.06);background:#fff}
+  .otpbox.cur{border-color:var(--maroon);box-shadow:0 0 0 3px rgba(150,23,46,.1)}
+  .otpbox.ok{border-color:var(--gold);background:var(--gold-bg);color:var(--gold)}
+  .otpbox.bad{border-color:var(--sun1);background:#fdecea}
+  .otpboxes.shake{animation:oshake .4s cubic-bezier(.36,.07,.19,.97)}
+  @keyframes oshake{10%,90%{transform:translateX(-8px)}20%,80%{transform:translateX(8px)}30%,50%,70%{transform:translateX(-6px)}40%,60%{transform:translateX(6px)}}
+  @media(prefers-reduced-motion:reduce){.otpboxes.shake{animation:none}.otpbox.fill{transform:none}}
+  .lresend{text-align:center;margin-top:16px;font-size:12.5px;color:var(--muted);font-weight:650}
+  .lresend b{color:var(--maroon);cursor:pointer;font-weight:800;border-bottom:1px solid var(--maroon-line)}
+  .lresend b.off{color:var(--faint);cursor:default;border:none}
   /* BOTTOM — thumb zone */
-  .lbottom{flex:0 0 auto;animation:lrise .5s .56s var(--ease-out) both}
-  .lsoc{display:flex;align-items:center;justify-content:center;gap:7px;margin-bottom:12px;font-size:12px;font-weight:650;color:var(--ink2)}
-  .lsoc b{color:var(--maroon);font-weight:800}
-  .lsoc .dotr{display:inline-flex;gap:2px}
-  .lsoc .dotr i{width:16px;height:16px;border-radius:50%;border:2px solid var(--paper);background:linear-gradient(135deg,var(--maroon),var(--sun2));display:inline-block;margin-left:-6px}
-  .logincard{background:var(--card);border:1px solid var(--hair);border-radius:var(--r-lg);box-shadow:0 24px 48px -8px rgba(90,20,32,.16);padding:20px}
-  .logincard .le{font-size:11px;letter-spacing:.08em;text-transform:uppercase;font-weight:800;color:var(--muted);text-align:left}
-  .logincard input{width:100%;margin-top:10px;height:54px;padding:0 16px;border:1.5px solid var(--hair);border-radius:14px;font-size:17px;font-weight:800;font-family:var(--mono);background:#fbfbfd;color:var(--ink);outline:none;text-align:center;letter-spacing:.14em;text-transform:uppercase;transition:border-color .15s,box-shadow .15s,transform .15s}
-  .logincard input:focus{border-color:var(--maroon);background:#fff;box-shadow:0 0 0 3px rgba(150,23,46,.12);transform:translateY(-1px)}
-  .signbtn{width:100%;margin-top:12px;height:54px;border:none;font-family:inherit;font-size:16px;font-weight:800;color:#fff;cursor:pointer;border-radius:15px;background:linear-gradient(135deg,var(--maroon),var(--maroon2));box-shadow:0 10px 24px -6px rgba(150,23,46,.4);transition:transform .14s var(--ease-out)}
-  .signbtn:active{transform:scale(.97)} .signbtn:disabled{opacity:.6}
-  .loginerr{color:var(--sun1);font-size:12.5px;font-weight:800;min-height:18px;margin-top:10px;text-align:center}
-  .demohint{font-size:12px;color:var(--muted);margin-top:12px;text-align:center;font-weight:600}
-  .demohint b{color:var(--maroon);cursor:pointer}
-  /* footer — two-part vertical stack, never wraps on narrow screens */
-  .lfoot{display:flex;flex-direction:column;align-items:center;gap:6px;margin-top:14px}
-  .lfoot .lf1{display:inline-flex;align-items:center;gap:6px;font-size:11px;color:var(--muted);font-weight:700;white-space:nowrap}
-  .lfoot .lf1 svg{width:12px;height:12px;stroke:var(--green);stroke-width:2;fill:none;flex:0 0 auto}
-  .lfoot .mgr{font-size:11px;color:var(--faint);cursor:pointer;font-weight:700;border-bottom:1px dotted var(--faint)}
   .spin{width:18px;height:18px;border:2.5px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;display:inline-block;animation:sp .7s linear infinite;vertical-align:-3px}
   @keyframes sp{to{transform:rotate(360deg)}}
 
@@ -455,9 +455,106 @@
   .alive{font-size:8px;font-weight:800;color:var(--green);background:var(--green-bg);border:1px solid var(--green-line);padding:2px 6px;border-radius:8px;vertical-align:middle;margin-left:4px}
   .aroll{margin-left:auto;flex:0 0 auto;border:1px solid var(--hair);background:var(--card);color:var(--maroon);font-family:inherit;font-weight:800;font-size:11px;padding:6px 11px;border-radius:10px;cursor:pointer}
 
+  /* ================= welcome (point 8) ================= */
+  .welcome{padding:2px 2px 10px}
+  .welcome .wk{font-size:13px;font-weight:700;color:var(--muted);letter-spacing:.01em}
+  .welcome .wn{font-family:var(--serif);font-size:27px;font-weight:600;color:var(--ink);line-height:1.05;margin-top:1px;letter-spacing:-.01em}
+  .welcome .ws{font-size:12.5px;font-weight:600;color:var(--ink2);margin-top:4px}
+
+  /* ================= live ticker (point 3) ================= */
+  .ticker{position:relative;margin:0 -16px 14px;padding:9px 0;overflow:hidden;
+    background:linear-gradient(90deg,var(--maroon2),var(--maroon));border-top:1px solid rgba(255,255,255,.08);border-bottom:1px solid rgba(0,0,0,.12)}
+  .ticker::before,.ticker::after{content:"";position:absolute;top:0;bottom:0;width:34px;z-index:2;pointer-events:none}
+  .ticker::before{left:0;background:linear-gradient(90deg,var(--maroon2),transparent)}
+  .ticker::after{right:0;background:linear-gradient(270deg,var(--maroon2),transparent)}
+  .ttrack{display:inline-flex;align-items:center;gap:14px;white-space:nowrap;padding-left:16px;will-change:transform;
+    animation:tick 40s linear infinite}
+  .ticker:hover .ttrack{animation-play-state:paused}
+  /* two identical runs; sliding by half the track loops seamlessly with content always on-screen */
+  @keyframes tick{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+  .tik{display:inline-flex;align-items:center;gap:7px}
+  .ttag{font-size:8.5px;font-weight:800;letter-spacing:.06em;padding:2px 6px;border-radius:6px;color:#fff;background:rgba(255,255,255,.16)}
+  .ttag.money{background:var(--sun3);color:#4a2c00}
+  .ttag.op{background:rgba(253,185,19,.22);color:#FDE9B8}
+  .ttag.sp{background:rgba(255,255,255,.14);color:#fff}
+  .ttag.good{background:var(--green);color:#fff}
+  .ttx{font-size:12px;font-weight:700;color:#fff;font-variant-numeric:tabular-nums}
+  .tdot{color:rgba(255,255,255,.34);font-size:12px;padding:0 2px}
+
+  /* ================= promo tone (point 2) ================= */
+  .imp.promo.up{background:var(--green-bg);border-color:var(--green-line)}
+  .imp.promo.up .iv{color:var(--green)}
+  .imp.promo.up .ik,.imp.promo.up .isub{color:#2f7a5b}
+  .imp.promo.na{opacity:.72}
+
+  /* ================= balance sheet (point 5) ================= */
+  .balancesheet{padding:0;overflow:hidden}
+  .balancesheet .bstitle{display:flex;align-items:flex-start;gap:10px;padding:15px 16px 12px;background:linear-gradient(180deg,var(--gold-bg),transparent)}
+  .balancesheet .bt2{font-family:var(--serif);font-size:17px;font-weight:600;color:var(--ink);letter-spacing:-.01em}
+  .balancesheet .bs2{font-size:11.5px;font-weight:600;color:var(--ink2);margin-top:3px;line-height:1.45}
+  .bshead{display:grid;grid-template-columns:1fr auto auto;gap:12px;padding:7px 16px;font-size:9.5px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:var(--faint);border-bottom:1px solid var(--hair2)}
+  .bshead span:nth-child(2){text-align:right}.bshead span:nth-child(3){text-align:right;min-width:78px}
+  .bsrow{display:grid;grid-template-columns:1fr auto auto;gap:12px;align-items:center;padding:11px 16px;border-bottom:1px solid var(--hair2)}
+  .bsrow:last-child{border-bottom:0}
+  .bsl{display:flex;align-items:center;gap:10px;min-width:0}
+  .bsn{flex:0 0 auto;width:19px;height:19px;border-radius:6px;background:var(--card2);border:1px solid var(--hair);color:var(--muted);font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center}
+  .bslab{font-size:12.5px;font-weight:700;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .bse{text-align:right}
+  .bsx{font-size:11px;font-weight:800;color:var(--ink2);font-variant-numeric:tabular-nums}
+  .bsx.pos{color:var(--green)}.bsx.neg{color:var(--maroon)}
+  .bsr{text-align:right;min-width:78px;font-family:var(--mono);font-size:12.5px;font-weight:700;color:var(--ink);font-variant-numeric:tabular-nums}
+  .bsrow.drag{background:var(--maroon-tint)}
+  .bsrow.drag .bsn{background:#fff;border-color:var(--maroon-line);color:var(--maroon)}
+  .bsrow.total{background:linear-gradient(180deg,transparent,var(--gold-bg))}
+  .bsrow.total .bsn{background:var(--sun3);border-color:var(--gold-line);color:#4a2c00}
+  .bsrow.total .bslab{font-weight:800}
+  .bsrow.total .bsr{font-size:15px;font-weight:800;color:var(--maroon)}
+  .bsfoot{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:11px 16px;border-top:1px solid var(--hair);font-size:11px;font-weight:700;color:var(--muted)}
+  .bsfoot .op{color:var(--gold)}.bsfoot .ok{color:var(--green)}
+
+  /* ================= career benefits (point 6) ================= */
+  .benefits .brow{align-items:flex-start;gap:11px}
+  .benefits .bi{font-size:17px;line-height:1.2;flex:0 0 auto}
+  .benefits .bth{font-size:13px;font-weight:700;color:var(--ink);line-height:1.35}
+  .benefits .bts{font-size:11.5px;font-weight:600;color:var(--ink2);margin-top:2px;line-height:1.4}
+
+  /* ================= profile (point 7) ================= */
+  #profile{max-width:480px;margin:0 auto;min-height:100dvh;background:var(--paper);display:flex;flex-direction:column;
+    box-shadow:0 0 50px rgba(90,20,32,.07)}
+  #profile .phead{display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--hair);position:sticky;top:0;background:rgba(250,246,242,.92);backdrop-filter:blur(10px);z-index:5}
+  #profile .pback{width:36px;height:36px;flex:0 0 auto;border:1px solid var(--hair);background:var(--card);border-radius:11px;display:flex;align-items:center;justify-content:center;cursor:pointer}
+  #profile .pback svg{width:19px;height:19px;fill:none;stroke:var(--ink);stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+  #profile .ptl{font-size:15px;font-weight:800;color:var(--ink)}
+  .pbody{flex:1;overflow-y:auto;padding:16px;-webkit-overflow-scrolling:touch}
+  .pbody .lbl{margin:16px 2px 8px}
+  .pcard{display:flex;flex-direction:column;align-items:center;text-align:center;padding:24px 18px 20px;border-radius:var(--r-lg);
+    background:radial-gradient(120% 90% at 50% -10%,rgba(253,185,19,.14),transparent 60%),linear-gradient(180deg,#fff,var(--card2));border:1px solid var(--hair);box-shadow:var(--sh2)}
+  .pav{width:74px;height:74px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:800;color:#fff;
+    background:linear-gradient(140deg,var(--maroon),var(--maroon2));box-shadow:0 8px 22px rgba(150,23,46,.32);letter-spacing:.02em}
+  .pname{font-family:var(--serif);font-size:22px;font-weight:600;color:var(--ink);margin-top:13px;letter-spacing:-.01em}
+  .pdesig{font-size:12.5px;font-weight:700;color:var(--maroon);margin-top:3px}
+  .pstats{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:12px}
+  .pstat{background:var(--card);border:1px solid var(--hair);border-radius:14px;padding:12px 8px;text-align:center;box-shadow:var(--sh1)}
+  .pstat .pv{font-size:16px;font-weight:800;color:var(--ink);font-variant-numeric:tabular-nums}
+  .pstat .pk{font-size:9.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-top:3px}
+  .pinfo{padding:4px 14px}
+  .prow2{display:flex;align-items:center;gap:11px;padding:12px 0;border-bottom:1px solid var(--hair2)}
+  .prow2:last-child{border-bottom:0}
+  .pic2{font-size:16px;flex:0 0 auto;width:20px;text-align:center}
+  .pk2{font-size:12.5px;font-weight:700;color:var(--ink2)}
+  .pv2{margin-left:auto;font-size:12.5px;font-weight:700;color:var(--ink);text-align:right}
+  .plang{margin-left:auto;display:inline-flex;background:var(--card2);border:1px solid var(--hair);border-radius:10px;padding:2px}
+  .plang button{border:0;background:transparent;font-family:inherit;font-weight:800;font-size:11px;color:var(--muted);padding:5px 11px;border-radius:8px;cursor:pointer}
+  .plang button.on{background:var(--maroon);color:#fff}
+  .psignout{width:100%;margin-top:20px;padding:14px;border:1px solid var(--maroon-line);background:var(--maroon-tint);color:var(--maroon);
+    font-family:inherit;font-weight:800;font-size:14px;border-radius:14px;cursor:pointer}
+  .psignout:active{transform:scale(.99)}
+  .pfoot{text-align:center;font-size:11px;font-weight:600;color:var(--faint);margin:16px 0 8px}
+
   @media(prefers-reduced-motion:reduce){
     *{animation-duration:.001s !important;animation-iteration-count:1 !important;transition-duration:.001s !important}
     .sun i{animation:none !important}
+    .ttrack{animation:none !important;padding-left:0 !important}
   }
 </style>
 </head>
@@ -465,8 +562,7 @@
 
 <!-- ===================== LANDING / LOGIN ===================== -->
 <div id="login">
-  <div class="sun"><i class="s1"></i><i class="s2"></i><i class="s3"></i></div>
-  <div class="loginwrap">
+  <div class="lwrap">
     <div class="ltop">
       <img src="assets/img/absli-logo.png" alt="Aditya Birla Sun Life Insurance">
       <div class="langtog">
@@ -474,30 +570,60 @@
         <button id="langHi" onclick="setLang('hi')">हिंदी</button>
       </div>
     </div>
-    <div class="lhero">
-      <span class="leyebrow" id="lBadge">ABSLI · Direct Marketing</span>
-      <h1 id="lTitle">Your day, <b>elevated.</b></h1>
-      <div class="sub" id="lSub">This month's earnings and your climb to the next grade — one honest place.</div>
-      <div class="lchips">
-        <div class="lchip money c1"><div class="ci"><svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="13" rx="2.5"/><path d="M3 10h18"/></svg></div><div class="ct"><div class="cv" id="lc1v">This month</div><div class="ck" id="lc1k">₹ Incentive</div></div></div>
-        <div class="lchip sp c2"><div class="ci"><svg viewBox="0 0 24 24"><path d="M5 21V4l13 4-13 4"/></svg></div><div class="ct"><div class="cv" id="lc2v">Rolling 12-mo</div><div class="ck" id="lc2k">Promotion</div></div></div>
-        <div class="lchip money c3"><div class="ci"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/></svg></div><div class="ct"><div class="cv" id="lc3v">735</div><div class="ck" id="lc3k">advisors live</div></div></div>
+
+    <!-- Screen 1 · Employee ID -->
+    <div class="lscreen on" data-screen="id">
+      <div class="lhero">
+        <div class="leyebrow" id="lBadge">Aditya Birla Sun Life · Direct Marketing</div>
+        <h1 class="lserif" id="lTitle">Your day,<br><em>elevated.</em></h1>
+        <p class="lsub" id="lSub">This month's earnings and your climb to the next grade — one honest place.</p>
+      </div>
+      <div class="laction">
+        <label><span class="lflab" id="lIdLab">Employee ID</span>
+          <input class="lin" id="empId" type="text" inputmode="text" autocomplete="username" autocapitalize="characters" spellcheck="false" maxlength="8" placeholder="IN471672" onkeydown="if(event.key==='Enter'){event.preventDefault();idContinue();}"></label>
+        <span class="lfhint" id="lIdHint">Starts with IN, then 6 digits.</span>
+        <button class="lbtn" id="idBtn" onclick="idContinue()"><span id="idTxt">Continue →</span></button>
+        <div class="lerr" id="idErr"></div>
+        <div class="ltrust"><svg viewBox="0 0 24 24"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg><span id="lTrust">Secure sign-in · Company-authorized</span></div>
+        <div class="ldemo">Demo: <b onclick="demoId('IN471672')">IN471672</b> · <b onclick="demoId('IN559210')">IN559210</b> · <a href="/admin" id="lMgr" style="color:var(--maroon);text-decoration:none">Ops console ↗</a></div>
       </div>
     </div>
-    <div class="lbottom">
-      <div class="lsoc" id="lSoc"><span class="dotr"><i></i><i></i><i></i></span><span><b>735</b> advisors on Elevate</span></div>
-      <div class="logincard">
-        <div class="le" id="lCodeLabel">Employee code (DSE ID)</div>
-        <input id="code" type="text" inputmode="text" placeholder="e.g. AAA634" autocomplete="off" autocapitalize="characters">
-        <button class="signbtn" id="signbtn" onclick="signIn()"><span id="signtxt">Open my day →</span></button>
-        <div class="loginerr" id="loginerr"></div>
-        <div class="demohint" id="lDemo">Demo: <b onclick="quick('AAA634')">AAA634</b> · <b onclick="quick('AAL759')">AAL759</b> · <b onclick="quick('AAD931')">AAD931</b></div>
+
+    <!-- Screen 2 · Phone -->
+    <div class="lscreen" data-screen="phone">
+      <button class="lback" onclick="toScreen('id')">‹ Back</button>
+      <div class="lhero sm">
+        <div class="leyebrow">Signing in as <b id="phWho">IN471672</b> · <span class="ledit" onclick="toScreen('id')">Change</span></div>
+        <h1 class="lserif sm">Verify it's you</h1>
+        <p class="lsub">We'll text a one-time code to your registered mobile.</p>
       </div>
-      <div class="lfoot">
-        <span class="lf1"><svg viewBox="0 0 24 24"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg><span id="lTrust">Company-authorized · from the payout sheet</span></span>
-        <span class="mgr" onclick="quick('ADMIN')" id="lMgr">Manager console</span>
+      <div class="laction">
+        <span class="lflab">Mobile number</span>
+        <div class="lphone"><span class="lcc">+91</span><input id="phone" type="tel" inputmode="numeric" autocomplete="tel" maxlength="11" placeholder="98765 43210" onkeydown="if(event.key==='Enter'){event.preventDefault();sendOtp();}"></div>
+        <button class="lbtn" id="phBtn" onclick="sendOtp()"><span id="phTxt">Send OTP →</span></button>
+        <div class="lerr" id="phErr"></div>
       </div>
     </div>
+
+    <!-- Screen 3 · OTP -->
+    <div class="lscreen" data-screen="otp">
+      <button class="lback" onclick="toScreen('phone')">‹ Back</button>
+      <div class="lhero sm">
+        <h1 class="lserif sm">Enter the code</h1>
+        <p class="lsub">We sent a 6-digit code to <b id="otpDest">+91 …</b>. <span class="ledit" onclick="toScreen('phone')">Edit</span></p>
+      </div>
+      <div class="laction">
+        <form class="otpwrap" id="otpForm" onsubmit="return false">
+          <input class="otphidden" id="otpInput" type="text" inputmode="numeric" autocomplete="one-time-code" pattern="\d{6}" maxlength="6" oninput="paintOtp()" onfocus="paintOtp()" onblur="paintOtp()">
+          <div class="otpboxes" id="otpBoxes"></div>
+        </form>
+        <div class="lerr" id="otpErr"></div>
+        <div class="lresend" id="resend"></div>
+        <div class="ldemo" id="otpDemo"></div>
+        <div class="ltrust"><svg viewBox="0 0 24 24"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg><span>This step keeps ABSLI data secure</span></div>
+      </div>
+    </div>
+
   </div>
 </div>
 
@@ -505,7 +631,7 @@
 <div id="main" class="hide">
   <div class="apphead">
     <div><div class="ht" id="hTitle">Today</div><div class="hc neutral" id="hCtx"><span class="dot"></span>Today</div></div>
-    <div class="who"><span class="streak hide" id="hStreak"></span><div class="av" id="av" onclick="signOut()">–</div></div>
+    <div class="who"><span class="streak hide" id="hStreak"></span><div class="av" id="av" onclick="openProfile()">–</div></div>
   </div>
   <div class="body" id="scroll">
     <section class="view on" data-view="today" id="v_today"></section>
@@ -516,17 +642,20 @@
   </div>
   <nav class="tabbar">
     <button class="tab on" data-tab="today" onclick="go('today')"><svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg><span data-nav="today">Today</span></button>
-    <button class="tab" data-tab="perform" onclick="go('perform')"><svg viewBox="0 0 24 24"><path d="M4 20V10"/><path d="M10 20V4"/><path d="M16 20v-7"/><path d="M22 20H2"/></svg><span data-nav="perform">Perform</span></button>
     <button class="tab" data-tab="earnings" onclick="go('earnings')"><svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="13" rx="2.5"/><path d="M3 10h18"/><path d="M16 14h2"/></svg><span data-nav="earnings">Earnings</span></button>
+    <button class="tab" data-tab="perform" onclick="go('perform')"><svg viewBox="0 0 24 24"><path d="M4 20V10"/><path d="M10 20V4"/><path d="M16 20v-7"/><path d="M22 20H2"/></svg><span data-nav="perform">Perform</span></button>
     <button class="tab" data-tab="career" onclick="go('career')"><svg viewBox="0 0 24 24"><path d="M5 21V4l13 4-13 4"/></svg><span data-nav="career">Career</span></button>
   </nav>
 </div>
 
-<!-- ===================== ADMIN CONSOLE ===================== -->
-<div id="admin" class="hide">
-  <div class="ahead"><div class="at">Manager console<small id="aSrc">data health</small></div><button class="aback" onclick="signOut()">Exit</button></div>
-  <div class="abody" id="aBody"></div>
+<!-- ===================== PROFILE ===================== -->
+<div id="profile" class="hide">
+  <div class="phead"><button class="pback" onclick="closeProfile()"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></button><div class="ptl">Your profile</div></div>
+  <div class="pbody" id="pBody"></div>
 </div>
+
+<!-- The ops/admin console now lives as its own desktop-first app at /admin (separate route,
+     separate passphrase auth). It is intentionally NOT reachable from inside this consumer app. -->
 
 <script>
   var VM=null, LANG=(localStorage.getItem('elang')||'en');
@@ -541,10 +670,11 @@
   /* ---------- i18n (chrome only; jargon WFYP/NOP stays Latin; engine sentences EN v1) ---------- */
   var T={
     en:{today:'Today',perform:'Perform',earnings:'Earnings',career:'Career',coach:'Coach',
-      badge:'ABSLI · Direct Marketing',title:'Your day, <b>elevated.</b>',
+      badge:'Aditya Birla Sun Life · Direct Marketing',title:'Your day,<br><em>elevated.</em>',
       sub:"This month's earnings and your climb to the next grade — one honest place.",
-      c1v:'This month',c1k:'₹ Incentive',c2v:'Rolling 12-mo',c2k:'Promotion',c3k:'advisors live',soc:'advisors on Elevate',
-      codeLabel:'Employee code (DSE ID)',cta:'Open my day →',trust:'Company-authorized · from the payout sheet',mgr:'Manager console',
+      idLab:'Employee ID',idHint:'Starts with IN, then 6 digits.',cta:'Continue →',
+      trust:'Secure sign-in · Company-authorized',mgr:'Manager console',
+      gm:'Good morning',ga:'Good afternoon',ge:'Good evening',standing:"Here's where you stand today.",
       ctxToday:'Good day',ctxPerform:'This month · business pace',ctxEarn:'incentive',ctxCareer:'Rolling 12-mo · promotion',ctxCoach:'Your best moves',
       oneMove:'Your one move today',earnMonth:'Earn this month',promo:'Promotion',towardPromo:'Toward promotion',whyMove:'Why this move',
       glance:'This month at a glance',readiness:'Promotion readiness',ready:'ready',ofGates:'of 4 gates',ofWay:'of the way',
@@ -580,10 +710,10 @@
     if(VM){document.querySelectorAll('[data-nav]').forEach(function(s){s.textContent=t(s.dataset.nav);});renderAll();var cur=document.querySelector('.tab.on');go(cur?cur.dataset.tab:'today');}
   }
   function paintLanding(){
-    $('lBadge').textContent=t('badge');$('lTitle').innerHTML=t('title');$('lSub').textContent=t('sub');
-    $('lc1v').textContent=t('c1v');$('lc1k').textContent=t('c1k');$('lc2v').textContent=t('c2v');$('lc2k').textContent=t('c2k');$('lc3k').textContent=t('c3k');
-    $('lSoc').innerHTML='<span class="dotr"><i></i><i></i><i></i></span><span><b>735</b> '+t('soc')+'</span>';
-    $('lCodeLabel').textContent=t('codeLabel');$('signtxt').textContent=t('cta');$('lTrust').textContent=t('trust');$('lMgr').textContent=t('mgr');
+    var s=$('lBadge');if(!s)return;
+    s.textContent=t('badge');$('lTitle').innerHTML=t('title');$('lSub').textContent=t('sub');
+    $('lIdLab').textContent=t('idLab');$('lIdHint').textContent=t('idHint');$('idTxt').textContent=t('cta');
+    $('lTrust').textContent=t('trust');$('lMgr').textContent=t('mgr');
   }
 
   /* ---------- animation helpers ---------- */
@@ -635,27 +765,176 @@
     return 'Your best move';
   }
 
-  /* ---------- login ---------- */
-  function quick(c){$('code').value=c;signIn();}
-  async function signIn(){
-    var code=($('code').value||'').trim().toUpperCase();
-    if(!code){$('loginerr').textContent=t('codeLabel');return;}
-    var btn=$('signbtn');btn.disabled=true;btn.innerHTML='<span class="spin"></span>';$('loginerr').textContent='';
-    if(code==='ADMIN'||code==='MANAGER'){await openAdmin();btn.disabled=false;btn.innerHTML='<span id="signtxt">'+t('cta')+'</span>';return;}
+  /* ---------- login · 3-screen Employee-ID → phone → OTP flow ---------- */
+  // Known Employee-ID → DSE-code demo map. Unmapped valid IDs fall back to a live DSE so the
+  // demo always lands somewhere real. Raw DSE codes (AAA634…) are still accepted for testing.
+  var EMP2DSE={IN471672:'AAA634',IN559210:'AAL759',IN338845:'AAD931'};
+  var AUTH={emp:'',dse:'',phone:'',code:'',tries:0,lockUntil:0,resendAt:0,resendStep:0,timer:null,done:false};
+
+  function toScreen(name){
+    var scr=document.querySelectorAll('#login .lscreen'),i;
+    for(i=0;i<scr.length;i++)scr[i].classList.toggle('on',scr[i].dataset.screen===name);
+    var box=document.querySelector('#login .lscreen[data-screen="'+name+'"]');
+    var f=box&&box.querySelector('input:not(.otphidden)');
+    if(name==='otp')f=$('otpInput');
+    if(f&&!REDUCE)setTimeout(function(){try{f.focus();}catch(e){}},260);
+  }
+  function demoId(id){$('empId').value=id;idContinue();}
+
+  function idContinue(){
+    var raw=($('empId').value||'').trim().toUpperCase();
+    $('idErr').textContent='';
+    // ops/admin is a separate route (/admin) with its own auth — no magic-string entry here.
+    var dse;
+    if(/^IN\d{6}$/.test(raw))dse=EMP2DSE[raw]||'AAA634';
+    else if(/^[A-Z]{2,4}\d{3,4}$/.test(raw))dse=raw;   // raw DSE code (testing)
+    else{$('idErr').textContent='Enter your Employee ID — IN followed by 6 digits.';shake($('empId'));return;}
+    AUTH.emp=raw;AUTH.dse=dse;
+    $('phWho').textContent=raw;
+    toScreen('phone');
+  }
+
+  function sendOtp(){
+    var p=($('phone').value||'').replace(/\D/g,'');
+    $('phErr').textContent='';
+    if(!/^[6-9]\d{9}$/.test(p)){$('phErr').textContent='Enter a valid 10-digit Indian mobile number.';shake($('phone'));return;}
+    AUTH.phone=p;
+    // Mocked OTP (live SMS deferred). Deterministic-ish 6-digit code shown as a demo hint.
+    AUTH.code=String(((parseInt(p.slice(-6),10)%900000)+100000));
+    var btn=$('phBtn');btn.disabled=true;$('phTxt').textContent='Sending…';
+    setTimeout(function(){
+      btn.disabled=false;$('phTxt').textContent='Send OTP →';
+      $('otpDest').textContent='+91 '+p.slice(0,5)+' '+p.slice(5,8)+'XX';
+      $('otpDemo').innerHTML='Demo code: <b>'+AUTH.code+'</b> · live SMS coming soon';
+      AUTH.tries=0;AUTH.lockUntil=0;AUTH.resendStep=0;AUTH.done=false;
+      buildOtp();clearOtp();startResend(30);
+      toScreen('otp');
+    },520);
+  }
+
+  /* --- OTP boxes: one hidden input drives 6 presentational cells --- */
+  function buildOtp(){
+    var w=$('otpBoxes');w.innerHTML='';
+    for(var i=0;i<6;i++){var b=document.createElement('div');b.className='otpbox';w.appendChild(b);}
+    w.onclick=function(){$('otpInput').focus();};
+  }
+  function paintOtp(){
+    if(AUTH.done)return;   // already verified — don't re-trigger on focus/blur re-paints
+    var v=($('otpInput').value||'').replace(/\D/g,'').slice(0,6);
+    if(v!==$('otpInput').value)$('otpInput').value=v;
+    var cells=$('otpBoxes').children,focused=document.activeElement===$('otpInput');
+    for(var i=0;i<cells.length;i++){
+      cells[i].textContent=v[i]||'';
+      cells[i].classList.toggle('fill',i<v.length);
+      cells[i].classList.toggle('cur',focused&&i===Math.min(v.length,5)&&v.length<6);
+      cells[i].classList.remove('bad');
+    }
+    if(v.length===6)setTimeout(verifyOtp,180);
+  }
+  function clearOtp(){$('otpInput').value='';paintOtp();}
+
+  function verifyOtp(){
+    if(AUTH.done)return;   // one-shot: never verify/enter twice
+    var v=($('otpInput').value||'').replace(/\D/g,'');
+    if(v.length!==6)return;
+    var cells=$('otpBoxes').children,i;
+    if(v===AUTH.code){
+      AUTH.done=true;
+      if(AUTH.timer){clearInterval(AUTH.timer);AUTH.timer=null;}
+      for(i=0;i<cells.length;i++){cells[i].classList.remove('cur','bad');cells[i].classList.add('ok');}
+      $('otpErr').textContent='';haptic(20);
+      setTimeout(function(){enterApp(AUTH.dse);},420);
+    }else{
+      AUTH.tries++;
+      var box=$('otpBoxes');box.classList.remove('shake');void box.offsetWidth;box.classList.add('shake');
+      for(i=0;i<cells.length;i++)cells[i].classList.add('bad');
+      haptic([10,50,10]);
+      if(AUTH.tries>=5){$('otpErr').textContent='Too many attempts. Try again in a minute.';AUTH.lockUntil=Date.now()+60000;$('otpInput').disabled=true;
+        setTimeout(function(){$('otpInput').disabled=false;AUTH.tries=0;$('otpErr').textContent='';clearOtp();},60000);
+      }else{$('otpErr').textContent='That code doesn’t match. '+(5-AUTH.tries)+' left.';}
+      setTimeout(clearOtp,520);
+    }
+  }
+
+  function startResend(secs){
+    if(AUTH.timer)clearInterval(AUTH.timer);
+    AUTH.resendAt=Date.now()+secs*1000;
+    tickResend();AUTH.timer=setInterval(tickResend,1000);
+  }
+  function tickResend(){
+    var left=Math.ceil((AUTH.resendAt-Date.now())/1000);
+    if(left>0){$('resend').innerHTML='Resend code in <b>'+left+'s</b>';}
+    else{clearInterval(AUTH.timer);AUTH.timer=null;$('resend').innerHTML='<span class="ledit" onclick="resend()">Resend code</span>';}
+  }
+  function resend(){
+    var backoff=[30,60,120,120];AUTH.resendStep=Math.min(AUTH.resendStep+1,backoff.length-1);
+    // regenerate & re-show demo code
+    AUTH.code=String(((parseInt(AUTH.phone.slice(-6),10)%900000)+100000));
+    $('otpDemo').innerHTML='Demo code: <b>'+AUTH.code+'</b> · live SMS coming soon';
+    clearOtp();startResend(backoff[AUTH.resendStep]);
+  }
+
+  function shake(el){if(!el)return;el.classList.remove('shake');void el.offsetWidth;el.classList.add('shake');}
+
+  async function enterApp(code){
     try{
       var r=await fetch('/api/dse/'+encodeURIComponent(code));
-      if(r.status===404){$('loginerr').textContent='No record for '+code+'. Check the code and try again.';return;}
-      if(!r.ok){$('loginerr').textContent='Something went wrong ('+r.status+'). Try again.';return;}
+      if(!r.ok){$('otpErr').textContent='Couldn’t load your day ('+r.status+'). Try again.';return;}
       VM=await r.json();
       document.querySelectorAll('[data-nav]').forEach(function(s){s.textContent=t(s.dataset.nav);});
       $('login').classList.add('hide');$('main').classList.remove('hide');
       var nm=(VM.dse.name||code).split(' ');$('av').textContent=(nm[0][0]+(nm[1]?nm[1][0]:'')).toUpperCase();
       renderAll();go('today');
       if(VM.career&&VM.career.eligible)setTimeout(celebrate,420);
-    }catch(e){$('loginerr').textContent='Network error — is the server up?';}
-    finally{btn.disabled=false;btn.innerHTML='<span id="signtxt">'+t('cta')+'</span>';}
+    }catch(e){$('otpErr').textContent='Network error — is the server up?';}
   }
-  function signOut(){VM=null;$('main').classList.add('hide');$('admin').classList.add('hide');$('login').classList.remove('hide');$('code').value='';}
+
+  /* ---------- profile (point 7): avatar → identity + stats + settings, NOT logout ---------- */
+  function openProfile(){
+    if(!VM){return;}
+    var d=VM.dse,p=VM.profile,c=VM.career,e=VM.earnings;
+    var nm=(d.name||AUTH.dse||'').split(' '),ini=((nm[0]||'?')[0]+(nm[1]?nm[1][0]:'')).toUpperCase();
+    var desig=(p&&p.fullDesig)?p.fullDesig:d.grade;
+    var phone=AUTH.phone?('+91 '+AUTH.phone.slice(0,5)+' '+AUTH.phone.slice(5,8)+'XX'):'—';
+    var emp=AUTH.emp||'—';
+    var stat=function(v,k){return '<div class="pstat"><div class="pv">'+v+'</div><div class="pk">'+k+'</div></div>';};
+    var stats='<div class="pstats">'+
+      stat(e&&e.headline?inr(e.headline.finalAmount):'—','₹ this month')+
+      stat(c?(c.eligible?'✓':c.gatesCleared+'/4'):'—','promo gates')+
+      stat(p&&p.rank?'#'+p.rank.wfyp:'—','rank')+'</div>';
+    var line=function(ic,k,v){return '<div class="prow2"><span class="pic2">'+ic+'</span><span class="pk2">'+k+'</span><span class="pv2">'+v+'</span></div>';};
+    var srcTag=VM.dataSource==='contract-v3'?'Reconciled · payout sheet':'Live';
+    $('pBody').innerHTML=
+      '<div class="pcard"><div class="pav">'+ini+'</div><div class="pname">'+(d.name||'DSE')+'</div>'+
+        '<div class="pdesig">'+desig+' · '+d.grade+'</div></div>'+
+      stats+
+      '<div class="lbl">Account</div><div class="c pinfo">'+
+        line('🆔','Employee ID','<b>'+emp+'</b>')+
+        line('📱','Mobile',phone)+
+        line('🏷️','Designation',desig)+
+        line('📄','Data',srcTag)+'</div>'+
+      '<div class="lbl">Preferences</div><div class="c pinfo">'+
+        '<div class="prow2"><span class="pic2">🌐</span><span class="pk2">Language</span>'+
+          '<span class="plang"><button id="pLangEn" onclick="setLangP(\'en\')">EN</button><button id="pLangHi" onclick="setLangP(\'hi\')">हिंदी</button></span></div>'+
+        line('🔔','Notifications','On')+'</div>'+
+      '<button class="psignout" onclick="signOut()">Sign out</button>'+
+      '<div class="pfoot">ABSLI Direct Marketing · Elevate</div>';
+    $('pLangEn').classList.toggle('on',LANG==='en');$('pLangHi').classList.toggle('on',LANG==='hi');
+    $('main').classList.add('hide');$('profile').classList.remove('hide');
+    $('pBody').scrollTop=0;
+  }
+  function closeProfile(){$('profile').classList.add('hide');if(VM)$('main').classList.remove('hide');}
+  // language change from inside the profile: set it, keep #main hidden, repaint the profile
+  function setLangP(l){setLang(l);openProfile();}
+
+  function signOut(){
+    closeProfile();
+    VM=null;if(AUTH.timer){clearInterval(AUTH.timer);AUTH.timer=null;}
+    AUTH={emp:'',dse:'',phone:'',code:'',tries:0,lockUntil:0,resendAt:0,resendStep:0,timer:null,done:false};
+    $('main').classList.add('hide');$('login').classList.remove('hide');
+    if($('empId'))$('empId').value='';if($('phone'))$('phone').value='';
+    toScreen('id');
+  }
 
   /* ---------- nav ---------- */
   var CTX={today:['today','neutral','ctxToday'],perform:['perform','neutral','ctxPerform'],
@@ -702,19 +981,21 @@
 
   var GATELABEL={wfyp:'WFYP',nop:'NOP',was:'WAS',persistency:'Persistency'};
   function promoDelta(r,c){
-    // the rolling-promotion effect of a move — kept SEPARATE from the ₹ incentive delta, never fused
-    if(!c) return {txt:'—',sub:'not linked'};
-    if(c.eligible) return {txt:'✓',sub:'already eligible'};
+    // the rolling-promotion effect of a move — kept SEPARATE from the ₹ incentive delta, never fused.
+    // A cleared gate is framed as BANKED progress (green), never a dead "—".
+    if(!c) return {txt:'—',sub:'not linked',tone:'na'};
+    if(c.eligible) return {txt:'✓ Secured',sub:'promotion earned',tone:'good'};
     var gateFor={nop:'nop',ulipGrid:'wfyp',achievement:'wfyp',persistency:'persistency'}[r&&r.lever];
-    if(!gateFor) return {txt:'—',sub:'rolling'};
-    if(gateFor===c.nextGate) return {txt:'Lifts '+GATELABEL[gateFor],sub:'closest gate'};
-    if(c.gates&&c.gates[gateFor]) return {txt:'—',sub:'gate cleared'};
-    return {txt:'Lifts '+GATELABEL[gateFor],sub:'rolling gate'};
+    if(!gateFor) return {txt:'Pure upside',sub:'₹ only — gates safe',tone:'good'};
+    if(gateFor===c.nextGate) return {txt:'Lifts '+GATELABEL[gateFor],sub:'your closest gate',tone:'lift'};
+    if(c.gates&&c.gates[gateFor]) return {txt:'✓ Banked',sub:GATELABEL[gateFor]+' gate secured',tone:'good'};
+    return {txt:'Lifts '+GATELABEL[gateFor],sub:'rolling gate',tone:'lift'};
   }
   function moveImpact(r,c){
     var pd=promoDelta(r,c);
+    var toneCls=pd.tone==='good'?' up':(pd.tone==='na'?' na':'');
     return '<div class="impact"><div class="imp money"><span class="ik">Earn now</span><span class="iv">+'+inr(r.deltaFinal)+'</span><span class="isub">this month</span></div>'+
-      '<div class="imp promo"><span class="ik">Promotion</span><span class="iv txt">'+pd.txt+'</span><span class="isub">'+pd.sub+'</span></div></div>';
+      '<div class="imp promo'+toneCls+'"><span class="ik">Promotion</span><span class="iv txt">'+pd.txt+'</span><span class="isub">'+pd.sub+'</span></div></div>';
   }
 
   function pulseEvents(){
@@ -734,6 +1015,32 @@
     return out.slice(0,6);
   }
 
+  // Live ticker (point 3): each chip is ONE real fact, tagged by its time window — SP (rolling)
+  // and incentive (this month) facts never share a chip. Warm rail; gold=money, green=banked.
+  function tickerChips(){
+    var e=VM.earnings,c=VM.career,p=VM.profile,out=[];
+    if(e&&e.headline){
+      out.push(['MONTH','money','₹ '+Math.round(e.headline.finalAmount).toLocaleString('en-IN')+' secured']);
+      if(e.headline.onTheTable>0)out.push(['MONTH','op','₹ '+Math.round(e.headline.onTheTable).toLocaleString('en-IN')+' still on the table']);
+      if(e.achievement)out.push(['MONTH','money',pct(e.achievement.achievementPct)+' of monthly target']);
+    }
+    if(p&&p.rank){out.push(['12-MO','sp','#'+p.rank.wfyp+' of '+p.rank.total+' on the promotion track']);
+      if(p.rank.pct)out.push(['12-MO','sp','Top '+p.rank.pct+'% by rolling WFYP']);}
+    if(c){out.push(['12-MO','sp',c.gatesCleared+' of 4 promotion gates cleared']);
+      if(c.eligible)out.push(['12-MO','good','Promotion-ready ✓']);
+      else if(c.nextGate)out.push(['12-MO','sp',GATELABEL[c.nextGate]+' is your closest gate']);}
+    if(p&&p.rolling&&p.rolling.streak>0)out.push(['12-MO','good',p.rolling.streak+'-month WFYP streak']);
+    if(VM.perform&&VM.perform.months){var best=VM.perform.months.slice().sort(function(a,b){return b.w-a.w;})[0];
+      if(best&&best.w>0)out.push(['MOMENTUM','sp','Best month '+mLabel(best.m)+' · '+lakh(best.w)]);}
+    return out;
+  }
+  function tickerHtml(){
+    var ch=tickerChips();if(!ch.length)return '';
+    // each chip carries a trailing separator so the two runs are byte-identical → -50% loops seamlessly
+    var one=ch.map(function(x){return '<span class="tik"><span class="ttag '+x[1]+'">'+x[0]+'</span><span class="ttx">'+x[2]+'</span></span><span class="tdot">•</span>';}).join('');
+    return '<div class="ticker"><div class="ttrack">'+one+one+'</div></div>';
+  }
+
   function renderToday(){
     var e=VM.earnings,c=VM.career,p=VM.profile,A=e.achievement;
     // header streak chip
@@ -744,6 +1051,12 @@
     var thin=GATELABEL[c&&c.nextGate]||'';
 
     var html='';
+    // ── welcome the DSE by name (point 8) ──
+    var hr=new Date().getHours(),greet=hr<12?t('gm'):(hr<17?t('ga'):t('ge'));
+    var first=((VM.dse.name||'').trim().split(' ')[0])||'there';
+    html+='<div class="welcome"><div class="wk">'+greet+',</div><div class="wn">'+first+'</div><div class="ws">'+t('standing')+'</div></div>';
+    // ── live ticker tape (point 3): real, window-tagged facts scrolling as a strip ──
+    html+=tickerHtml();
     // ── two-statement verdict: this-month money + rolling promotion, never fused ──
     html+='<div class="bridge"><div class="glow"></div><div class="k">Where you stand today</div>'+
       '<div class="dual"><div class="d money tap" onclick="go(\'earnings\')"><div class="dk">This month · ₹ incentive</div><div class="dv">'+inr(e.headline.finalAmount)+'</div><div class="dsub">secured · '+inr(e.headline.onTheTable)+' to claim ›</div></div>'+
@@ -795,6 +1108,23 @@
       '<div class="c" style="padding:14px 15px;font-size:12px;color:var(--ink2);line-height:1.5;font-weight:600">Your rolling 12-month totals feed both your <b style="color:var(--ink)">incentive</b> (this month) and your <b style="color:var(--ink)">promotion</b> gates.</div>';
   }
 
+  // Point 5: the ₹ balance sheet — the payout waterfall as a ledger (component · effect · balance).
+  function balanceSheet(e){
+    var rows=e.journey.map(function(s,i){
+      var fin=(s.key==='final'),drag=(s.key==='nopMultiplier'||s.key==='hold');
+      var effect;
+      if(s.mult!=null)effect='<span class="bsx '+(s.mult<1?'neg':'pos')+'">× '+Math.round(s.mult*100)+'%</span>';
+      else if(s.key==='achievement')effect='<span class="bsx">'+pct(s.value)+' of target</span>';
+      else if(s.value!=null)effect='<span class="bsx">'+inr(s.value)+'</span>';
+      else effect='';
+      var run=(s.running!=null?inr(s.running):(s.value!=null?inr(s.value):''));
+      return '<div class="bsrow'+(fin?' total':'')+(drag?' drag':'')+'">'+
+        '<div class="bsl"><span class="bsn">'+(fin?'=':(i+1))+'</span><span class="bslab">'+s.label+'</span></div>'+
+        '<div class="bse">'+effect+'</div><div class="bsr">'+run+'</div></div>';
+    }).join('');
+    return '<div class="bshead"><span>Step</span><span>Effect</span><span>Running ₹</span></div>'+rows;
+  }
+
   function renderEarnings(){
     var e=VM.earnings,H=e.headline,A=e.achievement,p=VM.profile;
     var achFrac=Math.min(1,A.achievementPct||0);
@@ -844,8 +1174,11 @@
       '<div class="sect"><span class="h op">On the table · recoverable</span><span class="sum op">'+inr(H.onTheTable)+'</span></div>'+levers+
       // supporting
       extra+
-      // collapsible waterfall
-      '<details class="mathwrap"><summary>Show the math · '+inr(H.finalAmount)+' <span class="chev">›</span></summary><div class="mbody"><div class="steps"><div class="rail"></div>'+journey+'</div></div></details>'+
+      // ── Show the Math · a proper ₹ balance sheet, highlighted (point 5) ──
+      '<div class="sect"><span class="h">Show the math</span><span class="sum">₹ balance sheet</span></div>'+
+      '<div class="c balancesheet"><div class="bstitle"><div><div class="bt2">How '+inr(H.finalAmount)+' is built</div><div class="bs2">Every credit, multiplier and hold — the exact payout-sheet math, line by line.</div></div></div>'+
+        balanceSheet(e)+
+        '<div class="bsfoot"><span>Started from '+inr(H.baseline)+' potential</span><span class="'+(H.onTheTable>0?'op':'ok')+'">'+(H.onTheTable>0?inr(H.onTheTable)+' still recoverable':'fully optimised ✓')+'</span></div></div>'+
       // ranked moves live in Coach now (Optimize tab removed)
       '<div class="coachlink tap" onclick="go(\'today\')">See your ranked moves <span>›</span></div>'+
       '<div class="trust"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg><span>From the company payout sheet</span></div>';
@@ -902,7 +1235,20 @@
       '<div class="c"><div class="ladder">'+rungs+'</div></div>'+
       '<div class="lbl">'+t('fourGates')+'</div><div class="c">'+gates+'</div>'+
       remain+mom+
-      '<div class="c benefits"><div class="lbl" style="padding:0 0 6px">When you reach '+(next||'the next grade')+'</div><div class="brow"><span class="bi">◆</span><div class="bt">Higher incentive grid — <b>'+tgtBand+'</b> target band</div></div><div class="brow"><span class="bi">◆</span><div class="bt">New designation &amp; team</div></div><div class="brow"><span class="bi">◆</span><div class="bt">Bigger per-policy credit ceiling</div></div></div>';
+      benefitsBlock(next,p);
+  }
+
+  // Point 6: what a promotion actually unlocks — framed as rewards you gain, not harder targets.
+  function benefitsBlock(next,p){
+    var desigName=(p&&p.fullDesig)?p.fullDesig:(next||'the next grade');
+    var rows=[
+      ['👑','A new designation — <b>'+desigName+'</b>','the title, the badge, the recognition'],
+      ['🤝','A team of your own to build &amp; lead','from selling to leading DSEs'],
+      ['💸','Every policy earns you more','a richer incentive grid works in your favour'],
+      ['🏆','A seat at the leaders\' table','convention &amp; club qualification opens up']
+    ];
+    return '<div class="c benefits"><div class="lbl" style="padding:0 0 8px">What '+(next||'the next grade')+' unlocks for you</div>'+
+      rows.map(function(r){return '<div class="brow"><span class="bi">'+r[0]+'</span><div class="bt"><div class="bth">'+r[1]+'</div><div class="bts">'+r[2]+'</div></div></div>';}).join('')+'</div>';
   }
 
   function renderCoach(){
@@ -918,101 +1264,21 @@
     $('v_coach').innerHTML=lead+'<div class="lbl">'+t('rankedReturn')+'</div>'+cards+'<div class="etrust">'+(VM.dse.name||'')+' · '+VM.dse.grade+(VM.profile&&VM.profile.fullDesig?' · '+VM.profile.fullDesig:'')+' · engine-ranked</div>';
   }
 
-  /* ---------- admin ---------- */
-  var ADMIN_BASE=(localStorage.getItem('elevate_admin')||'').replace(/\/$/,'');
-  function adminApi(path,opts){return fetch(ADMIN_BASE+path,opts).then(function(r){return r.json().then(function(j){return {ok:r.ok,body:j};}).catch(function(){return {ok:r.ok,body:{}};});});}
-  function openAdmin(){$('login').classList.add('hide');$('main').classList.add('hide');$('admin').classList.remove('hide');adminBoot();}
-  async function adminBoot(){
-    if(!ADMIN_BASE){adminConfig();return;}
-    try{var r=await adminApi('/admin/health');if(!r.ok)throw 0;adminRender(r.body);}catch(e){adminConfig(true);}
-  }
-  function adminConfig(err){
-    $('aSrc').textContent='not connected';
-    $('aBody').innerHTML='<div class="c apub"><div class="pt">Connect the admin service</div>'+
-      '<div class="ps">The publishing pipeline runs as a Python service (validate + reconcile + publish). Enter its URL.</div>'+
-      (err?'<div class="aerr">Could not reach '+(ADMIN_BASE||'')+'. Is it running?</div>':'')+
-      '<input id="aBaseInput" class="abaseinput" placeholder="http://localhost:8099" value="'+(ADMIN_BASE||'')+'">'+
-      '<button class="signbtn" style="margin-top:10px" onclick="adminSaveBase()">Connect</button></div>';
-  }
-  function adminSaveBase(){ADMIN_BASE=(($('aBaseInput').value)||'').trim().replace(/\/$/,'');localStorage.setItem('elevate_admin',ADMIN_BASE);adminBoot();}
+  // Ops/admin console moved out to its own desktop app at /admin (admin.html) with a separate
+  // server-verified passphrase gate. Nothing admin-related ships in this consumer bundle anymore.
 
-  function adminRender(h){
-    $('aSrc').textContent='pipeline · live '+(h.live_publish?h.live_publish.slice(0,8):'none');
-    var cov=(h.manifest&&h.manifest.coverage)||{both:0,incentive_only:0,sp_only:0};
-    var incTot=cov.both+cov.incentive_only,cpct=Math.round(cov.both/(incTot||1)*100);
-    $('aBody').innerHTML=
-      '<div class="astat3"><div class="c abig"><div class="v">'+incTot+'</div><div class="k">Incentive</div></div>'+
-        '<div class="c abig"><div class="v">'+(cov.both+cov.sp_only)+'</div><div class="k">SP roster</div></div>'+
-        '<div class="c abig"><div class="v" style="color:var(--green)">'+cov.both+'</div><div class="k">Joined</div></div></div>'+
-      '<div class="c acov"><div class="ch"><span class="ct">Live coverage — both SP &amp; Incentive</span><span class="cv">'+cpct+'%</span></div><div class="acovbar"><i style="width:'+cpct+'%"></i></div><div class="cs">'+cov.both+' both · '+cov.incentive_only+' incentive-only · '+cov.sp_only+' sp-only · '+h.publishes+' publishes on record</div></div>'+
-      '<div class="c apub"><div class="pt">1 · Templates</div><div class="ps">Download the exact upload format (headers + data dictionary + rules).</div>'+
-        '<div class="atmpl"><a class="atbtn" href="'+ADMIN_BASE+'/admin/templates/incentive">⬇ Incentive .xlsx</a><a class="atbtn" href="'+ADMIN_BASE+'/admin/templates/sp">⬇ SP .xlsx</a></div></div>'+
-      '<div class="c apub"><div class="pt">2 · Upload this month\'s sheets</div>'+
-        '<label class="afile">Incentive .xlsx<input type="file" id="aInc" accept=".xlsx"></label>'+
-        '<label class="afile">SP .xlsb<input type="file" id="aSp" accept=".xlsb"></label>'+
-        '<button class="aactbtn" onclick="adminUpload()">Upload</button><div id="aUpRes" class="ps"></div></div>'+
-      '<div class="c apub"><div class="pt">3 · Validate &amp; reconcile</div>'+
-        '<div class="arow"><button class="aactbtn ghost" onclick="adminValidate()">Validate</button><button class="aactbtn ghost" onclick="adminPreview()">Preview &amp; reconcile</button></div>'+
-        '<div id="aValRes"></div><div id="aPrevRes"></div></div>'+
-      '<div class="c apub"><div class="pt">4 · Publish</div><div class="ps">Refused until validation passes AND every DSE reconciles to the sheet.</div>'+
-        '<button class="signbtn" id="aPubBtn" disabled onclick="adminPublish()">Publish this month</button><div id="aPubRes" class="ps"></div></div>'+
-      '<div class="c apub"><div class="pt">Audit &amp; rollback</div><div id="aAudit" class="ps">Loading…</div></div>';
-    adminAuditRefresh();
+  // WebOTP (Android Chrome): auto-fill the code from the SMS when the OTP screen is showing.
+  if('OTPCredential'in window){
+    try{
+      var ac=new AbortController();
+      navigator.credentials.get({otp:{transport:['sms']},signal:ac.signal}).then(function(o){
+        if(o&&o.code&&!$('otpBoxes').classList.contains('hide')){$('otpInput').value=o.code;paintOtp();}
+      }).catch(function(){});
+    }catch(e){}
   }
-  async function adminUpload(){
-    var inc=$('aInc').files[0],sp=$('aSp').files[0];
-    if(!inc||!sp){$('aUpRes').innerHTML='<span style="color:var(--sun1)">Choose both files.</span>';return;}
-    $('aUpRes').textContent='Uploading…';
-    var fd=new FormData();fd.append('incentive',inc);fd.append('sp',sp);
-    try{var r=await adminApi('/admin/upload',{method:'POST',body:fd});if(!r.ok)throw 0;
-      $('aUpRes').innerHTML='<span style="color:var(--green)">✓ Uploaded '+(r.body.ts||'').slice(0,8)+' — now validate.</span>';
-      $('aPubBtn').disabled=true;$('aValRes').innerHTML='';$('aPrevRes').innerHTML='';
-    }catch(e){$('aUpRes').innerHTML='<span style="color:var(--sun1)">Upload failed.</span>';}
-  }
-  async function adminValidate(){
-    $('aValRes').innerHTML='<div class="ps">Validating…</div>';
-    var r=await adminApi('/admin/validate',{method:'POST'});
-    if(!r.ok){$('aValRes').innerHTML='<div class="aerr">'+(r.body.detail||'Upload the sheets first.')+'</div>';return;}
-    var v=r.body,html='';
-    ['incentive','sp'].forEach(function(k){var s=v[k]||{};
-      if(s.structural_error){html+='<div class="aerr">✗ '+k+' · '+s.structural_error+'</div>';return;}
-      var errs=((s.missing_columns&&s.missing_columns.length)?'missing '+s.missing_columns.join(', ')+'; ':'')+
-        ((s.range_errors&&s.range_errors.length)?s.range_errors.length+' out-of-range; ':'')+
-        ((s.dtype_errors&&s.dtype_errors.length)?s.dtype_errors.length+' bad type; ':'');
-      html+='<div class="'+(s.ok?'aok':'aerr')+'">'+(s.ok?'✓ ':'✗ ')+k+' · '+(s.rows||0)+' rows'+(s.ok?' valid':' — '+errs)+'</div>';
-    });
-    if(v.coverage)html+='<div class="ps">Coverage: '+v.coverage.both+' both · '+v.coverage.incentive_only+' inc-only · '+v.coverage.sp_only+' sp-only</div>';
-    $('aValRes').innerHTML=html;
-  }
-  async function adminPreview(){
-    $('aPrevRes').innerHTML='<div class="ps">Building &amp; reconciling…</div>';
-    var r=await adminApi('/admin/preview',{method:'POST'});
-    if(!r.ok){$('aPrevRes').innerHTML='<div class="aerr">'+(r.body.detail||'Upload first.')+'</div>';return;}
-    var pv=r.body,rc=pv.reconcile,s=pv.sample||{};
-    $('aPrevRes').innerHTML='<div class="'+(rc.ok?'aok':'aerr')+'">'+(rc.ok?'✓ Reconcile GREEN':'✗ Reconcile FAILED')+' · incentive '+(rc.incentive.checked-rc.incentive.mismatches)+'/'+rc.incentive.checked+' · SP '+(rc.sp.checked-rc.sp.mismatches)+'/'+rc.sp.checked+'</div>'+
-      '<div class="asample"><div class="pt" style="font-size:11px">Sample · '+(s.dse_id||'')+' '+(s.name||'')+'</div><div class="ps">incentive final <b>₹'+(s.incentive_final?Math.round(s.incentive_final).toLocaleString('en-IN'):'—')+'</b> · SP '+(s.sp_eligible?'eligible':'not eligible')+' · tier '+(s.sp_tier||'—')+'</div></div>'+
-      '<div class="ps">'+pv.dse_count+' contracts · '+pv.coverage.both+' both / '+pv.coverage.incentive_only+' inc-only / '+pv.coverage.sp_only+' sp-only</div>';
-    $('aPubBtn').disabled=!rc.ok;
-  }
-  async function adminPublish(){
-    $('aPubRes').textContent='Publishing…';
-    var r=await adminApi('/admin/publish',{method:'POST'});
-    if(!r.ok){$('aPubRes').innerHTML='<span style="color:var(--sun1)">'+(r.body.detail||'Publish refused.')+'</span>';return;}
-    $('aPubRes').innerHTML='<span style="color:var(--green)">✓ Published '+(r.body.id||'').slice(0,8)+' · '+r.body.row_count+' contracts live.</span>';
-    $('aPubBtn').disabled=true;adminAuditRefresh();
-  }
-  async function adminAuditRefresh(){
-    var r=await adminApi('/admin/audit');var list=r.body||[];
-    if(!list.length){$('aAudit').innerHTML='<div class="ps">No publishes yet.</div>';return;}
-    $('aAudit').innerHTML=list.map(function(a){return '<div class="arowb"><div style="flex:1;min-width:0"><div class="dk" style="width:auto">'+a.id.slice(0,15)+(a.is_live?'<span class="alive">LIVE</span>':'')+'</div><div class="ps" style="margin:0">'+a.row_count+' contracts · '+a.user+' · '+((a.reconcile&&a.reconcile.incentive_ok&&a.reconcile.sp_ok)?'reconciled ✓':'—')+'</div></div>'+(a.is_live?'':'<button class="aroll" onclick="adminRollback(\''+a.id+'\')">Roll back</button>')+'</div>';}).join('');
-  }
-  async function adminRollback(id){
-    var r=await adminApi('/admin/rollback/'+id,{method:'POST'});
-    if(r.ok){adminAuditRefresh();$('aSrc').textContent='pipeline · live '+id.slice(0,8);}
-  }
-
-  document.addEventListener('keydown',function(e){if(e.key==='Enter'&&!$('login').classList.contains('hide'))signIn();});
-  setLang(LANG); // paints landing + toggle state on load
+  buildOtp();          // pre-build the 6 OTP cells
+  toScreen('id');      // start on the Employee-ID screen
+  setLang(LANG);       // paints landing + toggle state on load
 </script>
 </body>
 </html>
