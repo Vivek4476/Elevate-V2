@@ -50,7 +50,8 @@ export async function getData() {
     ]);
     if (inc.error) throw new Error('Supabase incentive: ' + inc.error.message);
     if (sp.error) throw new Error('Supabase sp_dataset: ' + sp.error.message);
-    cache = { inc: Object.fromEntries(inc.data.map(r => [r.code, r.row])), sp: sp.data };
+    // sp is the selected ROW { data: <blob> }; unwrap the `data` column to get {master,monthly,meta,...}
+    cache = { inc: Object.fromEntries(inc.data.map(r => [r.code, r.row])), sp: sp.data.data };
   } else {
     const [sp, inc] = await Promise.all([
       import('../../elevate_data.json', { with: { type: 'json' } }).then(m => m.default),
