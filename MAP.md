@@ -141,3 +141,10 @@ Build-Plan-v2 Phase 4. **Backend = FastAPI service** (`admin/`, reuses the Pytho
 - **Verified:** `admin/test_flow.py` 2/2 (malformed→blocked; clean→preview green(891/1020)+AAA634 ₹5,356.34→publish→audit→rollback restores). Full frontend e2e headless (connect→upload real sheets→validate→preview GREEN→publish "1098 contracts live"→audit+rollback, no console errors). All suites: node 59/59, pipeline check + 9/9, admin 2/2.
 - `pipeline/data/admin/` git-ignored (holds uploaded real sheets). Admin service runs separately (local or a Python host); the console needs its URL set.
 - **Next: Step 9 — Motion** (Pulse real-events feed replacing the old ticker, NumberFlow-style count-ups already present, canvas-confetti on real events, streak, gauges — all reduced-motion aware). Build-Plan-v2 Phase 5 → Motion System.
+
+---
+
+## Step 9 — Motion / the Pulse (2026-07-12) ✅
+
+Count-ups, ring sweeps, press-scale, confetti-on-eligible, reduced-motion guards already existed. Added **the Pulse** (`pulseEvents()` + a `.pulse` card on Today) — a real-wins activity feed replacing the retired ticker, built from the DSE's REAL contract facts (rank #5/735, #2 in West zone, gates cleared, streak, best month, recoverable), staggered fade-in, reduced-motion safe. Prefers `VM.events` (server-emitted, Step 10) when present. Verified headless (6 rows, no errors). index.html only.
+- **Next: Step 10 — Decision layer** (recommend.py two separate deltas, project.py placeholder, events.py) wired into the contract.

@@ -160,6 +160,14 @@
   .omcard .om-top{display:flex;align-items:center;gap:10px;margin-bottom:2px}
   .omcard .om-t{font-size:16px;font-weight:800;letter-spacing:-.01em;flex:1}
   .imp .iv.txt{font-family:var(--ui);font-size:13px;letter-spacing:0;line-height:1.15}
+  /* the Pulse — real-wins feed (Step 9) */
+  .pulse{overflow:hidden}
+  .prow{display:flex;align-items:center;gap:11px;padding:11px 14px;border-top:1px solid var(--hair2);animation:rise .4s var(--ease-out) both}
+  .prow:first-child{border-top:0}
+  .prow .pic{width:26px;height:26px;border-radius:9px;flex:0 0 auto;display:flex;align-items:center;justify-content:center;background:var(--card2);border:1px solid var(--hair);font-size:14px}
+  .prow .pt{flex:1;font-size:12.5px;font-weight:650;color:var(--ink2);line-height:1.35} .prow .pt b{color:var(--ink)}
+  .prow .pv{flex:0 0 auto;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.03em;color:var(--maroon);background:var(--maroon-tint);border:1px solid var(--maroon-line);padding:3px 8px;border-radius:10px}
+  .prow .pv.g{color:var(--green);background:var(--green-bg);border-color:var(--green-line)}
 
   .nudge{display:flex;align-items:center;gap:12px;padding:14px 15px;border-radius:var(--r-card);background:linear-gradient(100deg,#fff7ec,#fffdf8);border:1px solid var(--gold-line);cursor:pointer}
   .nudge .ic{width:36px;height:36px;border-radius:12px;flex:0 0 auto;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--sun2),var(--sun3));box-shadow:0 5px 12px rgba(245,130,32,.3)}
@@ -709,6 +717,23 @@
       '<div class="imp promo"><span class="ik">Promotion</span><span class="iv txt">'+pd.txt+'</span><span class="isub">'+pd.sub+'</span></div></div>';
   }
 
+  function pulseEvents(){
+    // real facts about THIS DSE, presented as an activity feed — never fabricated "live" numbers
+    var p=VM.profile,c=VM.career,e=VM.earnings,ev=VM.events,out=[];
+    if(ev&&ev.length){ // server-emitted real events (Step 10) take priority
+      var IC={gate_cleared:'✅',rank_up:'📈',milestone:'⭐',streak:'🔥',recoverable:'💰'};
+      return ev.slice(0,6).map(function(x){return [x.kind,IC[x.kind]||'•',x.text,x.tag||'',x.good];});
+    }
+    if(p&&p.rank){out.push(['rank','📈','You\'re <b>#'+p.rank.wfyp+' of '+p.rank.total+'</b> on the promotion track','top '+p.rank.pct+'%',true]);
+      if(p.rank.zone)out.push(['zone','📍','#'+p.rank.zoneRank+' of '+p.rank.zoneTotal+' in <b>'+p.rank.zone+'</b> zone','',false]);}
+    if(c&&c.gates){var GN={wfyp:'WFYP',nop:'NOP',was:'WAS',persistency:'Persistency'};
+      ['nop','persistency','wfyp','was'].forEach(function(k){if(c.gates[k])out.push(['gate','✅','<b>'+GN[k]+'</b> gate cleared','done',true]);});}
+    if(p&&p.rolling&&p.rolling.streak>0)out.push(['streak','🔥','<b>'+p.rolling.streak+'-month</b> WFYP streak going','',false]);
+    if(VM.perform&&VM.perform.months){var best=VM.perform.months.slice().sort(function(a,b){return b.w-a.w;})[0];if(best&&best.w>0)out.push(['peak','⭐','Best month <b>'+mLabel(best.m)+'</b> · '+lakh(best.w)+' WFYP','',false]);}
+    if(e&&e.headline&&e.headline.onTheTable>0)out.push(['money','💰','<b>'+inr(e.headline.onTheTable)+'</b> recoverable this month','claim',false]);
+    return out.slice(0,6);
+  }
+
   function renderToday(){
     var e=VM.earnings,c=VM.career,p=VM.profile,A=e.achievement;
     // header streak chip
@@ -737,6 +762,13 @@
       }
     }
 
+    // ── the Pulse: recent real wins (replaces the retired ticker) ──
+    var pev=pulseEvents();
+    if(pev.length){
+      html+='<div class="lbl">Your pulse · recent wins</div><div class="c pulse">'+pev.map(function(x,i){
+        return '<div class="prow" style="animation-delay:'+(i*45)+'ms"><span class="pic">'+x[1]+'</span><div class="pt">'+x[2]+'</div>'+(x[3]?'<span class="pv'+(x[4]?' g':'')+'">'+x[3]+'</span>':'')+'</div>';
+      }).join('')+'</div>';
+    }
     // ── readiness (stars) + this-month glance ──
     if(c){
       html+='<div class="c recog"><div style="flex:1"><div class="rg-k">'+t('readiness')+'</div><div class="stars">'+starRow(c.progress)+'</div><div class="rg-s"><b>'+c.gatesCleared+' '+t('ofGates')+'</b> · '+tierTxt+'</div></div><div class="rg-badge"><span class="n">'+(c.progress*5).toFixed(1)+'</span><small>'+t('ready')+'</small></div></div>';
