@@ -1,0 +1,6 @@
+# Admin & Publishing service (Step 8). Install into the pipeline venv (it reuses the pipeline).
+#   ./pipeline/.venv/bin/pip install -r admin/requirements.txt
+fastapi>=0.110
+uvicorn[standard]>=0.29
+python-multipart>=0.0.9
+httpx>=0.27

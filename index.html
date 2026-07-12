@@ -430,6 +430,22 @@
   .apub{padding:15px} .apub .pt{font-size:12px;font-weight:800;margin-bottom:4px} .apub .ps{font-size:11px;color:var(--muted);font-weight:600;line-height:1.5}
   .apub .drop{margin-top:12px;border:1.5px dashed var(--gold-line);border-radius:14px;background:var(--gold-bg);padding:16px;text-align:center;font-size:12px;font-weight:700;color:var(--gold)}
   .aback{border:none;background:var(--card);border:1px solid var(--hair);color:var(--maroon);font-family:inherit;font-weight:800;font-size:13px;padding:10px 16px;border-radius:12px;cursor:pointer}
+  /* admin publishing flow (Step 8) */
+  .abaseinput{width:100%;margin-top:10px;padding:11px 12px;border:1.5px solid var(--hair);border-radius:12px;font-size:14px;font-family:var(--mono);background:#fbfbfd;outline:none}
+  .atmpl{display:flex;gap:8px;margin-top:10px}
+  .atbtn{flex:1;text-align:center;padding:10px;border-radius:12px;background:var(--maroon-tint);border:1px solid var(--maroon-line);color:var(--maroon);font-weight:800;font-size:12px;text-decoration:none}
+  .afile{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:9px;font-size:12px;font-weight:700;color:var(--ink2)}
+  .afile input{font-size:10.5px;max-width:58%}
+  .aactbtn{margin-top:10px;padding:10px 14px;border:none;border-radius:12px;background:var(--maroon);color:#fff;font-family:inherit;font-weight:800;font-size:12.5px;cursor:pointer}
+  .aactbtn.ghost{background:var(--card);border:1px solid var(--hair);color:var(--maroon)}
+  .arow{display:flex;gap:8px}
+  .aerr{margin-top:8px;padding:9px 11px;border-radius:10px;background:#fdecea;border:1px solid #f6c9c4;color:#b3251a;font-size:11.5px;font-weight:650}
+  .aok{margin-top:8px;padding:9px 11px;border-radius:10px;background:var(--green-bg);border:1px solid var(--green-line);color:var(--green);font-size:11.5px;font-weight:700}
+  .asample{margin-top:8px;padding:10px 12px;border-radius:10px;background:var(--card2);border:1px solid var(--hair)}
+  .arowb{display:flex;align-items:center;gap:10px;padding:8px 0;border-top:1px solid var(--hair2)}
+  .arowb:first-child{border-top:0}
+  .alive{font-size:8px;font-weight:800;color:var(--green);background:var(--green-bg);border:1px solid var(--green-line);padding:2px 6px;border-radius:8px;vertical-align:middle;margin-left:4px}
+  .aroll{margin-left:auto;flex:0 0 auto;border:1px solid var(--hair);background:var(--card);color:var(--maroon);font-family:inherit;font-weight:800;font-size:11px;padding:6px 11px;border-radius:10px;cursor:pointer}
 
   @media(prefers-reduced-motion:reduce){
     *{animation-duration:.001s !important;animation-iteration-count:1 !important;transition-duration:.001s !important}
@@ -871,25 +887,96 @@
   }
 
   /* ---------- admin ---------- */
-  async function openAdmin(){
-    try{var r=await fetch('/api/admin');if(!r.ok)throw 0;var h=await r.json();renderAdmin(h);
-      $('login').classList.add('hide');$('main').classList.add('hide');$('admin').classList.remove('hide');
-    }catch(e){$('loginerr').textContent='Could not load admin data.';}
+  var ADMIN_BASE=(localStorage.getItem('elevate_admin')||'').replace(/\/$/,'');
+  function adminApi(path,opts){return fetch(ADMIN_BASE+path,opts).then(function(r){return r.json().then(function(j){return {ok:r.ok,body:j};}).catch(function(){return {ok:r.ok,body:{}};});});}
+  function openAdmin(){$('login').classList.add('hide');$('main').classList.add('hide');$('admin').classList.remove('hide');adminBoot();}
+  async function adminBoot(){
+    if(!ADMIN_BASE){adminConfig();return;}
+    try{var r=await adminApi('/admin/health');if(!r.ok)throw 0;adminRender(r.body);}catch(e){adminConfig(true);}
   }
-  function renderAdmin(h){
-    $('aSrc').textContent=(h.source||'')+' · '+(h.monthRange?h.monthRange.min+' → '+h.monthRange.max:'');
-    var bar=function(obj,total){var max=Math.max.apply(null,Object.values(obj));return Object.keys(obj).sort(function(a,b){return obj[b]-obj[a];}).map(function(k){return '<div class="drow"><span class="dk">'+k+'</span><span class="dbar"><i style="width:'+Math.round(obj[k]/max*100)+'%"></i></span><span class="dv">'+obj[k]+'</span></div>';}).join('');};
-    var hist=(h.history||[]).map(function(x){return '<div class="drow" style="font-size:11px"><span class="dk" style="width:auto;flex:1">'+(x.by||'—')+'</span><span class="dv" style="width:auto;color:var(--muted)">'+(x.rows||x.dse||'')+' rows</span></div>';}).join('')||'<div class="ps">No publish history.</div>';
+  function adminConfig(err){
+    $('aSrc').textContent='not connected';
+    $('aBody').innerHTML='<div class="c apub"><div class="pt">Connect the admin service</div>'+
+      '<div class="ps">The publishing pipeline runs as a Python service (validate + reconcile + publish). Enter its URL.</div>'+
+      (err?'<div class="aerr">Could not reach '+(ADMIN_BASE||'')+'. Is it running?</div>':'')+
+      '<input id="aBaseInput" class="abaseinput" placeholder="http://localhost:8099" value="'+(ADMIN_BASE||'')+'">'+
+      '<button class="signbtn" style="margin-top:10px" onclick="adminSaveBase()">Connect</button></div>';
+  }
+  function adminSaveBase(){ADMIN_BASE=(($('aBaseInput').value)||'').trim().replace(/\/$/,'');localStorage.setItem('elevate_admin',ADMIN_BASE);adminBoot();}
+
+  function adminRender(h){
+    $('aSrc').textContent='pipeline · live '+(h.live_publish?h.live_publish.slice(0,8):'none');
+    var cov=(h.manifest&&h.manifest.coverage)||{both:0,incentive_only:0,sp_only:0};
+    var incTot=cov.both+cov.incentive_only,cpct=Math.round(cov.both/(incTot||1)*100);
     $('aBody').innerHTML=
-      '<div class="astat3">'+
-        '<div class="c abig"><div class="v">'+h.incentive.rows+'</div><div class="k">Incentive</div></div>'+
-        '<div class="c abig"><div class="v">'+h.sp.rows+'</div><div class="k">SP roster</div></div>'+
-        '<div class="c abig"><div class="v" style="color:var(--green)">'+h.joined+'</div><div class="k">Joined</div></div></div>'+
-      '<div class="c acov"><div class="ch"><span class="ct">Data coverage — both SP &amp; Incentive</span><span class="cv">'+h.coverage+'%</span></div><div class="acovbar"><i style="width:'+h.coverage+'%"></i></div><div class="cs">'+h.joined+' of '+h.incentive.rows+' DSEs have both datasets · '+h.incentiveOnly+' incentive-only (shown a limited view) · '+h.activeThisWindow+' active in the last 12 months</div></div>'+
-      '<div class="c adist"><div class="dh">Joined DSEs by zone</div>'+bar(h.byZone)+'</div>'+
-      '<div class="c adist"><div class="dh">Joined DSEs by grade</div>'+bar(h.byGrade)+'</div>'+
-      '<div class="c apub"><div class="pt">Publish new sheets</div><div class="ps">Last published: '+(h.publishedBy||'—')+'. Uploading refreshes the incentive statement + Sales-Progression roster for everyone.</div><div class="drop">⇪ Drop incentive / SP files here<div style="font-size:10px;font-weight:600;margin-top:5px;color:var(--muted)">Wiring to the publish endpoint is the next step (auth-gated)</div></div></div>'+
-      '<div class="c apub"><div class="pt">Recent publishes</div>'+hist+'</div>';
+      '<div class="astat3"><div class="c abig"><div class="v">'+incTot+'</div><div class="k">Incentive</div></div>'+
+        '<div class="c abig"><div class="v">'+(cov.both+cov.sp_only)+'</div><div class="k">SP roster</div></div>'+
+        '<div class="c abig"><div class="v" style="color:var(--green)">'+cov.both+'</div><div class="k">Joined</div></div></div>'+
+      '<div class="c acov"><div class="ch"><span class="ct">Live coverage — both SP &amp; Incentive</span><span class="cv">'+cpct+'%</span></div><div class="acovbar"><i style="width:'+cpct+'%"></i></div><div class="cs">'+cov.both+' both · '+cov.incentive_only+' incentive-only · '+cov.sp_only+' sp-only · '+h.publishes+' publishes on record</div></div>'+
+      '<div class="c apub"><div class="pt">1 · Templates</div><div class="ps">Download the exact upload format (headers + data dictionary + rules).</div>'+
+        '<div class="atmpl"><a class="atbtn" href="'+ADMIN_BASE+'/admin/templates/incentive">⬇ Incentive .xlsx</a><a class="atbtn" href="'+ADMIN_BASE+'/admin/templates/sp">⬇ SP .xlsx</a></div></div>'+
+      '<div class="c apub"><div class="pt">2 · Upload this month\'s sheets</div>'+
+        '<label class="afile">Incentive .xlsx<input type="file" id="aInc" accept=".xlsx"></label>'+
+        '<label class="afile">SP .xlsb<input type="file" id="aSp" accept=".xlsb"></label>'+
+        '<button class="aactbtn" onclick="adminUpload()">Upload</button><div id="aUpRes" class="ps"></div></div>'+
+      '<div class="c apub"><div class="pt">3 · Validate &amp; reconcile</div>'+
+        '<div class="arow"><button class="aactbtn ghost" onclick="adminValidate()">Validate</button><button class="aactbtn ghost" onclick="adminPreview()">Preview &amp; reconcile</button></div>'+
+        '<div id="aValRes"></div><div id="aPrevRes"></div></div>'+
+      '<div class="c apub"><div class="pt">4 · Publish</div><div class="ps">Refused until validation passes AND every DSE reconciles to the sheet.</div>'+
+        '<button class="signbtn" id="aPubBtn" disabled onclick="adminPublish()">Publish this month</button><div id="aPubRes" class="ps"></div></div>'+
+      '<div class="c apub"><div class="pt">Audit &amp; rollback</div><div id="aAudit" class="ps">Loading…</div></div>';
+    adminAuditRefresh();
+  }
+  async function adminUpload(){
+    var inc=$('aInc').files[0],sp=$('aSp').files[0];
+    if(!inc||!sp){$('aUpRes').innerHTML='<span style="color:var(--sun1)">Choose both files.</span>';return;}
+    $('aUpRes').textContent='Uploading…';
+    var fd=new FormData();fd.append('incentive',inc);fd.append('sp',sp);
+    try{var r=await adminApi('/admin/upload',{method:'POST',body:fd});if(!r.ok)throw 0;
+      $('aUpRes').innerHTML='<span style="color:var(--green)">✓ Uploaded '+(r.body.ts||'').slice(0,8)+' — now validate.</span>';
+      $('aPubBtn').disabled=true;$('aValRes').innerHTML='';$('aPrevRes').innerHTML='';
+    }catch(e){$('aUpRes').innerHTML='<span style="color:var(--sun1)">Upload failed.</span>';}
+  }
+  async function adminValidate(){
+    $('aValRes').innerHTML='<div class="ps">Validating…</div>';
+    var r=await adminApi('/admin/validate',{method:'POST'});
+    if(!r.ok){$('aValRes').innerHTML='<div class="aerr">'+(r.body.detail||'Upload the sheets first.')+'</div>';return;}
+    var v=r.body,html='';
+    ['incentive','sp'].forEach(function(k){var s=v[k]||{};
+      if(s.structural_error){html+='<div class="aerr">✗ '+k+' · '+s.structural_error+'</div>';return;}
+      var errs=((s.missing_columns&&s.missing_columns.length)?'missing '+s.missing_columns.join(', ')+'; ':'')+
+        ((s.range_errors&&s.range_errors.length)?s.range_errors.length+' out-of-range; ':'')+
+        ((s.dtype_errors&&s.dtype_errors.length)?s.dtype_errors.length+' bad type; ':'');
+      html+='<div class="'+(s.ok?'aok':'aerr')+'">'+(s.ok?'✓ ':'✗ ')+k+' · '+(s.rows||0)+' rows'+(s.ok?' valid':' — '+errs)+'</div>';
+    });
+    if(v.coverage)html+='<div class="ps">Coverage: '+v.coverage.both+' both · '+v.coverage.incentive_only+' inc-only · '+v.coverage.sp_only+' sp-only</div>';
+    $('aValRes').innerHTML=html;
+  }
+  async function adminPreview(){
+    $('aPrevRes').innerHTML='<div class="ps">Building &amp; reconciling…</div>';
+    var r=await adminApi('/admin/preview',{method:'POST'});
+    if(!r.ok){$('aPrevRes').innerHTML='<div class="aerr">'+(r.body.detail||'Upload first.')+'</div>';return;}
+    var pv=r.body,rc=pv.reconcile,s=pv.sample||{};
+    $('aPrevRes').innerHTML='<div class="'+(rc.ok?'aok':'aerr')+'">'+(rc.ok?'✓ Reconcile GREEN':'✗ Reconcile FAILED')+' · incentive '+(rc.incentive.checked-rc.incentive.mismatches)+'/'+rc.incentive.checked+' · SP '+(rc.sp.checked-rc.sp.mismatches)+'/'+rc.sp.checked+'</div>'+
+      '<div class="asample"><div class="pt" style="font-size:11px">Sample · '+(s.dse_id||'')+' '+(s.name||'')+'</div><div class="ps">incentive final <b>₹'+(s.incentive_final?Math.round(s.incentive_final).toLocaleString('en-IN'):'—')+'</b> · SP '+(s.sp_eligible?'eligible':'not eligible')+' · tier '+(s.sp_tier||'—')+'</div></div>'+
+      '<div class="ps">'+pv.dse_count+' contracts · '+pv.coverage.both+' both / '+pv.coverage.incentive_only+' inc-only / '+pv.coverage.sp_only+' sp-only</div>';
+    $('aPubBtn').disabled=!rc.ok;
+  }
+  async function adminPublish(){
+    $('aPubRes').textContent='Publishing…';
+    var r=await adminApi('/admin/publish',{method:'POST'});
+    if(!r.ok){$('aPubRes').innerHTML='<span style="color:var(--sun1)">'+(r.body.detail||'Publish refused.')+'</span>';return;}
+    $('aPubRes').innerHTML='<span style="color:var(--green)">✓ Published '+(r.body.id||'').slice(0,8)+' · '+r.body.row_count+' contracts live.</span>';
+    $('aPubBtn').disabled=true;adminAuditRefresh();
+  }
+  async function adminAuditRefresh(){
+    var r=await adminApi('/admin/audit');var list=r.body||[];
+    if(!list.length){$('aAudit').innerHTML='<div class="ps">No publishes yet.</div>';return;}
+    $('aAudit').innerHTML=list.map(function(a){return '<div class="arowb"><div style="flex:1;min-width:0"><div class="dk" style="width:auto">'+a.id.slice(0,15)+(a.is_live?'<span class="alive">LIVE</span>':'')+'</div><div class="ps" style="margin:0">'+a.row_count+' contracts · '+a.user+' · '+((a.reconcile&&a.reconcile.incentive_ok&&a.reconcile.sp_ok)?'reconciled ✓':'—')+'</div></div>'+(a.is_live?'':'<button class="aroll" onclick="adminRollback(\''+a.id+'\')">Roll back</button>')+'</div>';}).join('');
+  }
+  async function adminRollback(id){
+    var r=await adminApi('/admin/rollback/'+id,{method:'POST'});
+    if(r.ok){adminAuditRefresh();$('aSrc').textContent='pipeline · live '+id.slice(0,8);}
   }
 
   document.addEventListener('keydown',function(e){if(e.key==='Enter'&&!$('login').classList.contains('hide'))signIn();});

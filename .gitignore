@@ -12,3 +12,5 @@ __pycache__/
 pipeline/data/*.xlsx
 pipeline/data/*.xlsb
 pipeline/data/out/
+pipeline/data/admin/
+admin/.venv/
