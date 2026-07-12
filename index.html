@@ -40,6 +40,28 @@
   .num{font-family:var(--mono);font-variant-numeric:lining-nums tabular-nums}
   .cu{font-variant-numeric:lining-nums tabular-nums}
 
+  /* ================= splash / launch screen ================= */
+  #splash{position:fixed;inset:0;z-index:9000;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    background:radial-gradient(120% 80% at 50% 22%,#B01D38 0%,var(--maroon) 45%,var(--maroon2) 100%);
+    transition:opacity .5s ease,visibility .5s ease}
+  #splash.gone{opacity:0;visibility:hidden;pointer-events:none}
+  .sp-inner{display:flex;flex-direction:column;align-items:center;text-align:center;animation:spRise .7s var(--ease-out) both}
+  .sp-mark{position:relative;width:76px;height:76px;display:flex;align-items:center;justify-content:center;margin-bottom:22px}
+  .sp-core{position:relative;z-index:2;width:60px;height:60px;border-radius:19px;display:flex;align-items:center;justify-content:center;
+    font-family:var(--serif);font-weight:700;font-size:32px;color:var(--maroon2);
+    background:linear-gradient(145deg,#FFE08A,var(--sun3) 55%,var(--sun2));box-shadow:0 10px 30px rgba(0,0,0,.28)}
+  .sp-ray{position:absolute;inset:-14px;border-radius:50%;background:radial-gradient(circle,rgba(253,185,19,.55),transparent 62%);animation:spPulse 1.6s ease-in-out infinite}
+  .sp-word{font-family:var(--serif);font-size:40px;font-weight:600;letter-spacing:.005em;color:#fff;line-height:1}
+  .sp-tag{margin-top:11px;font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.66)}
+  .sp-foot{position:absolute;bottom:calc(env(safe-area-inset-bottom) + 40px)}
+  .sp-dots{display:flex;gap:7px}
+  .sp-dots i{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.35);animation:spBlink 1.2s ease-in-out infinite}
+  .sp-dots i:nth-child(2){animation-delay:.18s}.sp-dots i:nth-child(3){animation-delay:.36s}
+  @keyframes spRise{from{opacity:0;transform:translateY(14px) scale(.97)}to{opacity:1;transform:none}}
+  @keyframes spPulse{0%,100%{transform:scale(.9);opacity:.7}50%{transform:scale(1.12);opacity:1}}
+  @keyframes spBlink{0%,100%{opacity:.3;transform:translateY(0)}50%{opacity:1;transform:translateY(-3px)}}
+  @media(prefers-reduced-motion:reduce){.sp-inner,.sp-ray,.sp-dots i{animation:none}}
+
   /* ---------- shell ---------- */
   #main{max-width:480px;margin:0 auto;height:100dvh;display:flex;flex-direction:column;background:var(--paper);box-shadow:0 0 50px rgba(90,20,32,.07)}
   .apphead{flex:0 0 auto;padding:calc(12px + env(safe-area-inset-top)) 18px 10px;display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
@@ -377,9 +399,9 @@
   @keyframes fadeUp{to{opacity:1;transform:none}}
   .lscreen{display:none;flex:1;flex-direction:column}
   .lscreen.on{display:flex;animation:lrise .4s var(--ease-out) both}
-  /* the ID screen centers hero+form as one balanced group; phone/OTP stay top-aligned under the back button */
-  .lscreen[data-screen="id"].on{justify-content:center;padding-bottom:5vh}
-  .lscreen[data-screen="phone"].on,.lscreen[data-screen="otp"].on{justify-content:flex-start}
+  /* every screen centers its hero+form as one balanced group; the back button is pinned top-left so it doesn't ride the group */
+  .lscreen.on{justify-content:center;padding-bottom:5vh;position:relative}
+  .lscreen[data-screen="phone"] .lback,.lscreen[data-screen="otp"] .lback{position:absolute;top:0;left:0;padding:0}
   .lback{align-self:flex-start;background:none;border:none;font-family:inherit;font-size:14px;font-weight:700;color:var(--muted);cursor:pointer;padding:4px 0 0}
   .lhero{flex:0 0 auto;display:flex;flex-direction:column;justify-content:center;padding:8px 0 22px}
   .lhero.sm{flex:0 0 auto;justify-content:flex-start;padding:0 0 8px}
@@ -412,9 +434,8 @@
   .ldemo b{color:var(--maroon);cursor:pointer}
   .otpwrap{position:relative;margin-top:6px}
   .otphidden{position:absolute;inset:0;width:100%;height:56px;opacity:0;border:0;background:none;font-size:16px}
-  .otpboxes{display:flex;gap:8px;justify-content:center}
-  .otpboxes .gap{width:8px}
-  .otpbox{width:44px;height:56px;border:1.5px solid var(--hair);border-radius:12px;background:#fbfbfd;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:24px;font-weight:800;color:var(--ink);transition:border-color .12s,transform .12s,background .12s}
+  .otpboxes{display:grid;grid-template-columns:repeat(6,1fr);gap:9px}
+  .otpbox{width:100%;height:60px;border:1.5px solid var(--hair);border-radius:13px;background:#fbfbfd;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:25px;font-weight:800;color:var(--ink);transition:border-color .12s,transform .12s,background .12s}
   .otpbox.fill{border-color:var(--maroon);transform:scale(1.06);background:#fff}
   .otpbox.cur{border-color:var(--maroon);box-shadow:0 0 0 3px rgba(150,23,46,.1)}
   .otpbox.ok{border-color:var(--gold);background:var(--gold-bg);color:var(--gold)}
@@ -466,9 +487,12 @@
   .aroll{margin-left:auto;flex:0 0 auto;border:1px solid var(--hair);background:var(--card);color:var(--maroon);font-family:inherit;font-weight:800;font-size:11px;padding:6px 11px;border-radius:10px;cursor:pointer}
 
   /* ================= welcome (point 8) ================= */
-  .welcome{padding:2px 2px 11px;display:flex;align-items:baseline;gap:7px;flex-wrap:wrap}
-  .welcome .wk{font-size:17px;font-weight:650;color:var(--ink2);letter-spacing:-.01em}
-  .welcome .wn{font-family:var(--serif);font-size:19px;font-weight:600;color:var(--ink);letter-spacing:-.01em}
+  .welcome{padding:2px 2px 13px}
+  .welcome .wtop{display:flex;align-items:baseline;gap:7px;flex-wrap:wrap}
+  .welcome .wk{font-size:18px;font-weight:650;color:var(--ink2);letter-spacing:-.01em}
+  .welcome .wn{font-family:var(--serif);font-size:20px;font-weight:600;color:var(--ink);letter-spacing:-.01em}
+  .welcome .wsub{font-size:12.5px;font-weight:600;color:var(--muted);margin-top:5px}
+  .welcome .wsub b{color:var(--maroon);font-weight:800}
 
   /* ================= live ticker (point 3) ================= */
   .ticker{position:relative;margin:0 -16px 14px;padding:9px 0;overflow:hidden;
@@ -570,6 +594,16 @@
 </head>
 <body>
 
+<!-- ===================== SPLASH / LAUNCH SCREEN ===================== -->
+<div id="splash" aria-hidden="true">
+  <div class="sp-inner">
+    <div class="sp-mark"><span class="sp-ray"></span><span class="sp-core">E</span></div>
+    <div class="sp-word">Elevate</div>
+    <div class="sp-tag">Aditya Birla Sun Life · Direct Marketing</div>
+  </div>
+  <div class="sp-foot"><span class="sp-dots"><i></i><i></i><i></i></span></div>
+</div>
+
 <!-- ===================== LANDING / LOGIN ===================== -->
 <div id="login">
   <div class="lwrap">
@@ -605,7 +639,7 @@
       <div class="lhero sm">
         <div class="leyebrow">Signing in as <b id="phWho">IN471672</b> · <span class="ledit" onclick="toScreen('id')">Change</span></div>
         <h1 class="lserif sm">Verify it's you</h1>
-        <p class="lsub">We'll text a one-time code to your registered mobile.</p>
+        <p class="lsub">A 6-digit code is on its way to your registered mobile.</p>
       </div>
       <div class="laction">
         <span class="lflab">Mobile number</span>
@@ -681,7 +715,7 @@
   var T={
     en:{today:'Today',perform:'Perform',earnings:'Earnings',career:'Career',coach:'Coach',
       badge:'Aditya Birla Sun Life · Direct Marketing',title:'Your day,<br><em>elevated.</em>',
-      sub:"This month's earnings and your climb to the next grade — one honest place.",
+      sub:"Know exactly what you've earned — and what's one move away.",
       idLab:'Employee ID',idHint:'Starts with IN, then 6 digits.',cta:'Continue →',
       trust:'Secure sign-in · Company-authorized',mgr:'Ops console ↗',
       gm:'Good morning',ga:'Good afternoon',ge:'Good evening',standing:"Here's where you stand today.",
@@ -697,7 +731,7 @@
       admin:'Manager console'},
     hi:{today:'आज',perform:'प्रदर्शन',earnings:'कमाई',career:'करियर',coach:'कोच',
       badge:'ABSLI · डायरेक्ट मार्केटिंग',title:'आपका दिन, <b>और बेहतर।</b>',
-      sub:'इस महीने की कमाई और अगली ग्रेड तक की चढ़ाई — एक साफ़, ईमानदार जगह।',
+      sub:'जानिए आपने कितना कमाया — और अगली छलांग कितनी पास है।',
       c1v:'इस महीने',c1k:'₹ इंसेंटिव',c2v:'रोलिंग 12-माह',c2k:'प्रमोशन',c3k:'सक्रिय सलाहकार',soc:'सलाहकार Elevate पर',
       codeLabel:'कर्मचारी कोड (DSE ID)',cta:'मेरा दिन खोलें →',trust:'कंपनी-अधिकृत · भुगतान शीट से',mgr:'ऑप्स कंसोल ↗',
       ctxToday:'शुभ दिन',ctxPerform:'इस महीने · कारोबार गति',ctxEarn:'इंसेंटिव',ctxCareer:'रोलिंग 12-माह · प्रमोशन',ctxCoach:'आपके बेहतरीन कदम',
@@ -1068,7 +1102,10 @@
     // ── welcome the DSE by name (point 8) ──
     var hr=new Date().getHours(),greet=hr<12?t('gm'):(hr<17?t('ga'):t('ge'));
     var first=((VM.dse.name||'').trim().split(' ')[0])||'there';
-    html+='<div class="welcome"><span class="wk">'+greet+',</span><span class="wn">'+first+'</span></div>';
+    var dsub='';
+    try{dsub=new Date().toLocaleDateString(LANG==='hi'?'hi-IN':'en-IN',{weekday:'long',day:'numeric',month:'long'});}catch(e){dsub='';}
+    if(p&&p.rolling&&p.rolling.streak>0)dsub+=' · <b>'+p.rolling.streak+'-month streak</b>';
+    html+='<div class="welcome"><div class="wtop"><span class="wk">'+greet+',</span><span class="wn">'+first+'</span></div>'+(dsub?'<div class="wsub">'+dsub+'</div>':'')+'</div>';
     // ── live ticker tape (point 3): real, window-tagged facts scrolling as a strip ──
     html+=tickerHtml();
     // ── two-statement verdict: this-month money + rolling promotion, never fused ──
@@ -1302,6 +1339,12 @@
   buildOtp();          // pre-build the 6 OTP cells
   toScreen('id');      // start on the Employee-ID screen
   setLang(LANG);       // paints landing + toggle state on load
+  // dismiss the branded splash once the app is painted (shorter when reduced-motion is on)
+  (function(){
+    var sp=$('splash');if(!sp)return;
+    var hold=REDUCE?300:1250;
+    setTimeout(function(){sp.classList.add('gone');setTimeout(function(){sp.parentNode&&sp.parentNode.removeChild(sp);},600);},hold);
+  })();
 </script>
 </body>
 </html>
