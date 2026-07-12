@@ -232,10 +232,17 @@
   .opt .rank{width:26px;height:26px;border-radius:9px;flex:0 0 auto;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:13px;font-weight:800;color:#fff;background:linear-gradient(135deg,var(--sun2),var(--sun3));box-shadow:0 4px 10px rgba(245,130,32,.28)}
   .opt.two .rank,.opt.three .rank,.opt.four .rank{background:var(--maroon-tint);color:var(--maroon);box-shadow:none}
   .opt .act{font-size:14px;font-weight:800;letter-spacing:-.01em;flex:1}
-  .opt .eff{font-size:9.5px;font-weight:800;letter-spacing:.03em;text-transform:uppercase;padding:4px 8px;border-radius:11px;white-space:nowrap}
-  .eff.easy,.eff.low{color:var(--green);background:var(--green-bg);border:1px solid var(--green-line)}
-  .eff.medium,.eff.med{color:var(--gold);background:var(--gold-bg);border:1px solid var(--gold-line)}
-  .eff.hard,.eff.high{color:var(--ink2);background:var(--hair2);border:1px solid var(--hair)}
+  /* effort chip: same treatment for all three — tinted pill + a 3-bar difficulty meter, level by shape (not colour alone) */
+  .eff{display:inline-flex;align-items:center;gap:6px;font-size:9.5px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;padding:4px 9px;border-radius:11px;white-space:nowrap;border:1px solid}
+  .eff .ebars{display:inline-flex;align-items:flex-end;gap:2px;height:9px}
+  .eff .ebars i{width:2.5px;border-radius:1px;background:currentColor;opacity:.26}
+  .eff .ebars i:nth-child(1){height:4px}.eff .ebars i:nth-child(2){height:6.5px}.eff .ebars i:nth-child(3){height:9px}
+  .eff.easy,.eff.low{color:var(--green);background:var(--green-bg);border-color:var(--green-line)}
+  .eff.easy .ebars i:nth-child(1),.eff.low .ebars i:nth-child(1){opacity:1}
+  .eff.medium,.eff.med{color:var(--gold);background:var(--gold-bg);border-color:var(--gold-line)}
+  .eff.medium .ebars i:nth-child(-n+2),.eff.med .ebars i:nth-child(-n+2){opacity:1}
+  .eff.hard,.eff.high{color:var(--maroon);background:var(--maroon-tint);border-color:var(--maroon-line)}
+  .eff.hard .ebars i,.eff.high .ebars i{opacity:1}
   .impact{display:flex;gap:8px;margin-top:13px}
   .imp{flex:1;display:flex;flex-direction:column;gap:3px;padding:9px 11px;border-radius:13px;border:1px solid}
   .imp.money{background:var(--green-bg);border-color:var(--green-line)} .imp.promo{background:var(--maroon-tint);border-color:var(--maroon-line)}
@@ -370,12 +377,15 @@
   @keyframes fadeUp{to{opacity:1;transform:none}}
   .lscreen{display:none;flex:1;flex-direction:column}
   .lscreen.on{display:flex;animation:lrise .4s var(--ease-out) both}
+  /* the ID screen centers hero+form as one balanced group; phone/OTP stay top-aligned under the back button */
+  .lscreen[data-screen="id"].on{justify-content:center;padding-bottom:5vh}
+  .lscreen[data-screen="phone"].on,.lscreen[data-screen="otp"].on{justify-content:flex-start}
   .lback{align-self:flex-start;background:none;border:none;font-family:inherit;font-size:14px;font-weight:700;color:var(--muted);cursor:pointer;padding:4px 0 0}
-  .lhero{flex:1;display:flex;flex-direction:column;justify-content:center;padding:8px 0}
-  .lhero.sm{flex:0 0 auto;justify-content:flex-start;padding-top:20px}
+  .lhero{flex:0 0 auto;display:flex;flex-direction:column;justify-content:center;padding:8px 0 22px}
+  .lhero.sm{flex:0 0 auto;justify-content:flex-start;padding:0 0 8px}
   .leyebrow{font-size:12px;font-weight:700;letter-spacing:.11em;text-transform:uppercase;color:var(--maroon);opacity:0;transform:translateY(16px);animation:fadeUp .6s .05s var(--ease-out) forwards}
   .leyebrow b{color:var(--ink)} .ledit{color:var(--maroon);font-weight:800;cursor:pointer;border-bottom:1px solid var(--maroon-line)}
-  .lserif{font-family:var(--serif);font-size:44px;font-weight:600;letter-spacing:-.02em;line-height:1.06;margin:14px 0 0;color:#1A1410;text-wrap:balance;opacity:0;transform:translateY(16px);animation:fadeUp .6s .13s var(--ease-out) forwards}
+  .lserif{font-family:var(--serif);font-size:40px;font-weight:600;letter-spacing:-.02em;line-height:1.08;margin:13px 0 0;color:#1A1410;text-wrap:balance;opacity:0;transform:translateY(16px);animation:fadeUp .6s .13s var(--ease-out) forwards}
   .lserif em{font-style:italic;color:var(--maroon)}
   .lserif.sm{font-size:30px;margin-top:10px}
   html[lang="hi"] .lserif{font-family:var(--ui);font-weight:800;letter-spacing:0;line-height:1.2}
@@ -456,10 +466,9 @@
   .aroll{margin-left:auto;flex:0 0 auto;border:1px solid var(--hair);background:var(--card);color:var(--maroon);font-family:inherit;font-weight:800;font-size:11px;padding:6px 11px;border-radius:10px;cursor:pointer}
 
   /* ================= welcome (point 8) ================= */
-  .welcome{padding:2px 2px 10px}
-  .welcome .wk{font-size:13px;font-weight:700;color:var(--muted);letter-spacing:.01em}
-  .welcome .wn{font-family:var(--serif);font-size:27px;font-weight:600;color:var(--ink);line-height:1.05;margin-top:1px;letter-spacing:-.01em}
-  .welcome .ws{font-size:12.5px;font-weight:600;color:var(--ink2);margin-top:4px}
+  .welcome{padding:2px 2px 11px;display:flex;align-items:baseline;gap:7px;flex-wrap:wrap}
+  .welcome .wk{font-size:17px;font-weight:650;color:var(--ink2);letter-spacing:-.01em}
+  .welcome .wn{font-family:var(--serif);font-size:19px;font-weight:600;color:var(--ink);letter-spacing:-.01em}
 
   /* ================= live ticker (point 3) ================= */
   .ticker{position:relative;margin:0 -16px 14px;padding:9px 0;overflow:hidden;
@@ -492,17 +501,18 @@
   .balancesheet .bstitle{display:flex;align-items:flex-start;gap:10px;padding:15px 16px 12px;background:linear-gradient(180deg,var(--gold-bg),transparent)}
   .balancesheet .bt2{font-family:var(--serif);font-size:17px;font-weight:600;color:var(--ink);letter-spacing:-.01em}
   .balancesheet .bs2{font-size:11.5px;font-weight:600;color:var(--ink2);margin-top:3px;line-height:1.45}
-  .bshead{display:grid;grid-template-columns:1fr auto auto;gap:12px;padding:7px 16px;font-size:9.5px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:var(--faint);border-bottom:1px solid var(--hair2)}
-  .bshead span:nth-child(2){text-align:right}.bshead span:nth-child(3){text-align:right;min-width:78px}
-  .bsrow{display:grid;grid-template-columns:1fr auto auto;gap:12px;align-items:center;padding:11px 16px;border-bottom:1px solid var(--hair2)}
+  .bshead{display:flex;justify-content:space-between;padding:8px 16px;font-size:9.5px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:var(--faint);border-bottom:1px solid var(--hair2)}
+  .bsrow{display:flex;align-items:flex-start;gap:12px;padding:12px 16px;border-bottom:1px solid var(--hair2)}
   .bsrow:last-child{border-bottom:0}
-  .bsl{display:flex;align-items:center;gap:10px;min-width:0}
-  .bsn{flex:0 0 auto;width:19px;height:19px;border-radius:6px;background:var(--card2);border:1px solid var(--hair);color:var(--muted);font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center}
-  .bslab{font-size:12.5px;font-weight:700;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .bse{text-align:right}
-  .bsx{font-size:11px;font-weight:800;color:var(--ink2);font-variant-numeric:tabular-nums}
-  .bsx.pos{color:var(--green)}.bsx.neg{color:var(--maroon)}
-  .bsr{text-align:right;min-width:78px;font-family:var(--mono);font-size:12.5px;font-weight:700;color:var(--ink);font-variant-numeric:tabular-nums}
+  .bsl{display:flex;align-items:flex-start;gap:10px;min-width:0;flex:1}
+  .bsn{flex:0 0 auto;width:20px;height:20px;border-radius:6px;background:var(--card2);border:1px solid var(--hair);color:var(--muted);font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center;margin-top:1px}
+  .bsl-t{min-width:0}
+  .bslab{font-size:12.5px;font-weight:700;color:var(--ink);line-height:1.3}
+  .bsform{display:block;font-size:11px;font-weight:600;color:var(--muted);font-variant-numeric:tabular-nums;margin-top:3px;line-height:1.4}
+  .bsright{flex:0 0 auto;text-align:right;min-width:84px}
+  .bsdelta{display:block;font-size:11px;font-weight:800;font-variant-numeric:tabular-nums;white-space:nowrap}
+  .bsdelta.pos{color:var(--green)}.bsdelta.neg{color:var(--maroon)}
+  .bsr{display:block;font-family:var(--mono);font-size:12.5px;font-weight:700;color:var(--ink);font-variant-numeric:tabular-nums;margin-top:3px}
   .bsrow.drag{background:var(--maroon-tint)}
   .bsrow.drag .bsn{background:#fff;border-color:var(--maroon-line);color:var(--maroon)}
   .bsrow.total{background:linear-gradient(180deg,transparent,var(--gold-bg))}
@@ -673,7 +683,7 @@
       badge:'Aditya Birla Sun Life · Direct Marketing',title:'Your day,<br><em>elevated.</em>',
       sub:"This month's earnings and your climb to the next grade — one honest place.",
       idLab:'Employee ID',idHint:'Starts with IN, then 6 digits.',cta:'Continue →',
-      trust:'Secure sign-in · Company-authorized',mgr:'Manager console',
+      trust:'Secure sign-in · Company-authorized',mgr:'Ops console ↗',
       gm:'Good morning',ga:'Good afternoon',ge:'Good evening',standing:"Here's where you stand today.",
       ctxToday:'Good day',ctxPerform:'This month · business pace',ctxEarn:'incentive',ctxCareer:'Rolling 12-mo · promotion',ctxCoach:'Your best moves',
       oneMove:'Your one move today',earnMonth:'Earn this month',promo:'Promotion',towardPromo:'Toward promotion',whyMove:'Why this move',
@@ -689,7 +699,7 @@
       badge:'ABSLI · डायरेक्ट मार्केटिंग',title:'आपका दिन, <b>और बेहतर।</b>',
       sub:'इस महीने की कमाई और अगली ग्रेड तक की चढ़ाई — एक साफ़, ईमानदार जगह।',
       c1v:'इस महीने',c1k:'₹ इंसेंटिव',c2v:'रोलिंग 12-माह',c2k:'प्रमोशन',c3k:'सक्रिय सलाहकार',soc:'सलाहकार Elevate पर',
-      codeLabel:'कर्मचारी कोड (DSE ID)',cta:'मेरा दिन खोलें →',trust:'कंपनी-अधिकृत · भुगतान शीट से',mgr:'मैनेजर कंसोल',
+      codeLabel:'कर्मचारी कोड (DSE ID)',cta:'मेरा दिन खोलें →',trust:'कंपनी-अधिकृत · भुगतान शीट से',mgr:'ऑप्स कंसोल ↗',
       ctxToday:'शुभ दिन',ctxPerform:'इस महीने · कारोबार गति',ctxEarn:'इंसेंटिव',ctxCareer:'रोलिंग 12-माह · प्रमोशन',ctxCoach:'आपके बेहतरीन कदम',
       oneMove:'आज का आपका एक कदम',earnMonth:'इस महीने कमाएँ',promo:'प्रमोशन',towardPromo:'प्रमोशन की ओर',whyMove:'यह कदम क्यों',
       glance:'इस महीने एक नज़र में',readiness:'प्रमोशन तैयारी',ready:'तैयार',ofGates:'में से 4 गेट',ofWay:'रास्ता पूरा',
@@ -991,6 +1001,10 @@
     if(c.gates&&c.gates[gateFor]) return {txt:'✓ Banked',sub:GATELABEL[gateFor]+' gate secured',tone:'good'};
     return {txt:'Lifts '+GATELABEL[gateFor],sub:'rolling gate',tone:'lift'};
   }
+  function effChip(eff){
+    var lab={easy:'Easy',low:'Easy',medium:'Medium',med:'Medium',hard:'Hard',high:'Hard'}[eff]||eff;
+    return '<span class="eff '+eff+'"><span class="ebars"><i></i><i></i><i></i></span>'+lab+'</span>';
+  }
   function moveImpact(r,c){
     var pd=promoDelta(r,c);
     var toneCls=pd.tone==='good'?' up':(pd.tone==='na'?' na':'');
@@ -1054,7 +1068,7 @@
     // ── welcome the DSE by name (point 8) ──
     var hr=new Date().getHours(),greet=hr<12?t('gm'):(hr<17?t('ga'):t('ge'));
     var first=((VM.dse.name||'').trim().split(' ')[0])||'there';
-    html+='<div class="welcome"><div class="wk">'+greet+',</div><div class="wn">'+first+'</div><div class="ws">'+t('standing')+'</div></div>';
+    html+='<div class="welcome"><span class="wk">'+greet+',</span><span class="wn">'+first+'</span></div>';
     // ── live ticker tape (point 3): real, window-tagged facts scrolling as a strip ──
     html+=tickerHtml();
     // ── two-statement verdict: this-month money + rolling promotion, never fused ──
@@ -1066,11 +1080,11 @@
     if(e.recommendations&&e.recommendations.length){
       var r0=e.recommendations[0];
       html+='<div class="lbl">'+t('oneMove')+'</div>'+
-        '<div class="c omcard"><div class="om-top"><div class="om-t">'+moveLabel(r0)+'</div><span class="eff '+r0.effort+'">'+r0.effort+'</span></div>'+moveImpact(r0,c)+'</div>';
+        '<div class="c omcard"><div class="om-top"><div class="om-t">'+moveLabel(r0)+'</div>'+effChip(r0.effort)+'</div>'+moveImpact(r0,c)+'</div>';
       var more=e.recommendations.slice(1);
       if(more.length){
         html+='<div class="lbl">More ways to earn · ranked by return</div>'+more.map(function(r,i){
-          return '<div class="c opt '+['','two','three','four'][Math.min(i+1,3)]+'"><div class="oh"><span class="rank">'+(i+2)+'</span><span class="act">'+moveLabel(r)+'</span><span class="eff '+r.effort+'">'+r.effort+'</span></div>'+moveImpact(r,c)+'</div>';
+          return '<div class="c opt '+['','two','three','four'][Math.min(i+1,3)]+'"><div class="oh"><span class="rank">'+(i+2)+'</span><span class="act">'+moveLabel(r)+'</span>'+effChip(r.effort)+'</div>'+moveImpact(r,c)+'</div>';
         }).join('');
       }
     }
@@ -1109,20 +1123,29 @@
   }
 
   // Point 5: the ₹ balance sheet — the payout waterfall as a ledger (component · effect · balance).
-  function balanceSheet(e){
-    var rows=e.journey.map(function(s,i){
+  // Point 5: the real calculation — each row shows the actual arithmetic (operands → result), driven
+  // by the reconciled journey + achievement inputs, so a DSE can follow ₹ from premium to payout.
+  function balanceSheet(e,A){
+    A=A||{};var prev=0,n=0,rows='';
+    e.journey.forEach(function(s){
+      if(s.key==='target'||s.key==='achievement')return;   // target is context; achievement is a duplicate subtotal
+      n++;
       var fin=(s.key==='final'),drag=(s.key==='nopMultiplier'||s.key==='hold');
-      var effect;
-      if(s.mult!=null)effect='<span class="bsx '+(s.mult<1?'neg':'pos')+'">× '+Math.round(s.mult*100)+'%</span>';
-      else if(s.key==='achievement')effect='<span class="bsx">'+pct(s.value)+' of target</span>';
-      else if(s.value!=null)effect='<span class="bsx">'+inr(s.value)+'</span>';
-      else effect='';
-      var run=(s.running!=null?inr(s.running):(s.value!=null?inr(s.value):''));
-      return '<div class="bsrow'+(fin?' total':'')+(drag?' drag':'')+'">'+
-        '<div class="bsl"><span class="bsn">'+(fin?'=':(i+1))+'</span><span class="bslab">'+s.label+'</span></div>'+
-        '<div class="bse">'+effect+'</div><div class="bsr">'+run+'</div></div>';
-    }).join('');
-    return '<div class="bshead"><span>Step</span><span>Effect</span><span>Running ₹</span></div>'+rows;
+      var label=s.label,form='',delta='',dcls='pos';
+      if(s.key==='payoutBase'){label='WFYP payout';form=lakh(A.wfypOthers||0)+' credited × '+pct(A.payoutPct||0)+' rate';delta='+'+inr(s.amount||0);}
+      else if(s.key==='payoutUlip'){label='ULIP slab credit';form=lakh(A.ulipFyp||A.ulipGap||0)+' ULIP premium × slab rate';delta='+'+inr(s.amount||0);}
+      else if(s.key==='persistency'){label='Persistency booster';form=inr(prev)+' × '+Math.round(s.mult*100)+'% ('+(A.persCM?pct(A.persCM):'—')+' kept)';var d1=(s.running-prev);dcls=d1>=0?'pos':'neg';delta=(d1>=0?'+':'−')+inr(Math.abs(d1));}
+      else if(s.key==='nopMultiplier'){label='NOP multiplier';form=inr(prev)+' × '+Math.round(s.mult*100)+'% ('+(A.nop||0)+' polic'+((A.nop===1)?'y':'ies')+' of 4)';var d2=(s.running-prev);dcls=d2>=0?'pos':'neg';delta=(d2>=0?'+':'−')+inr(Math.abs(d2));}
+      else if(s.key==='hold'){label='PIFA hold (25%)';form='held until year-to-date PIFA target is met';dcls='neg';delta='−'+inr(Math.abs(s.amount||0));}
+      else if(fin){label='Final incentive';form='what lands in your account this month';}
+      else if(s.value!=null){form='';delta='+'+inr(s.value);}
+      var run=(s.running!=null?inr(s.running):'');
+      rows+='<div class="bsrow'+(fin?' total':'')+(drag?' drag':'')+'">'+
+        '<div class="bsl"><span class="bsn">'+(fin?'=':n)+'</span><div class="bsl-t"><span class="bslab">'+label+'</span>'+(form?'<span class="bsform">'+form+'</span>':'')+'</div></div>'+
+        '<div class="bsright">'+(delta?'<span class="bsdelta '+dcls+'">'+delta+'</span>':'')+'<span class="bsr">'+run+'</span></div></div>';
+      if(s.running!=null)prev=s.running;
+    });
+    return '<div class="bshead"><span>Step · calculation</span><span>Running ₹</span></div>'+rows;
   }
 
   function renderEarnings(){
@@ -1163,8 +1186,13 @@
     $('v_earnings').innerHTML=
       // forecast placeholder (Phase 6 wires the real projection)
       '<div class="fcast"><div class="fi"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 14l4-4 3 3 5-6"/></svg></div><div style="flex:1"><div class="ft">Month-end forecast</div><div class="fs">Coming soon — a projection needs a few months of history.</div></div><span class="soon">Soon</span></div>'+
-      // secured hero
-      '<div class="hero"><div class="glow"></div><div class="row"><div style="flex:1;min-width:0"><span class="mbadge"><span class="d"></span>Monthly · '+(e.period||'Apr ’26')+'</span><div class="k" style="margin-top:10px">Secured this month</div><div class="big"><small>₹</small><span class="cu" data-to="'+H.finalAmount+'" data-fmt="int">'+Math.round(H.finalAmount).toLocaleString('en-IN')+'</span></div><div class="pot">Potential <b>'+inr(H.baseline)+'</b> · <b>'+inr(H.onTheTable)+'</b> recoverable</div></div>'+heroRing+'</div></div>'+
+      // secured hero — the "potential/recoverable" pill sits BELOW the row so it never collides with the ring on mobile
+      '<div class="hero"><div class="glow"></div><div class="row"><div style="flex:1;min-width:0"><span class="mbadge"><span class="d"></span>Monthly · '+(e.period||'Apr ’26')+'</span><div class="k" style="margin-top:10px">Secured this month</div><div class="big"><small>₹</small><span class="cu" data-to="'+H.finalAmount+'" data-fmt="int">'+Math.round(H.finalAmount).toLocaleString('en-IN')+'</span></div></div>'+heroRing+'</div><div class="pot">Potential <b>'+inr(H.baseline)+'</b> · <b>'+inr(H.onTheTable)+'</b> recoverable</div></div>'+
+      // ── Show the Math FIRST (point 5): the detailed step-by-step calculation, up top ──
+      '<div class="sect"><span class="h">Show the math</span><span class="sum">step-by-step ₹</span></div>'+
+      '<div class="c balancesheet"><div class="bstitle"><div><div class="bt2">How '+inr(H.finalAmount)+' is built</div><div class="bs2">Follow every rupee — premium credited, payout rate, boosters and holds, in order.</div></div></div>'+
+        balanceSheet(e,A)+
+        '<div class="bsfoot"><span>From '+lakh(A.wfypOthers+A.ulipGap)+' premium credited</span><span class="'+(H.onTheTable>0?'op':'ok')+'">'+(H.onTheTable>0?inr(H.onTheTable)+' still recoverable':'fully optimised ✓')+'</span></div></div>'+
       // this-month stats
       '<div class="grid2"><div class="c stat"><div class="k"><span>WFYP</span><small>premium credited</small></div><div class="v"><span class="cu" data-to="'+(A.wfypOthers+A.ulipGap)+'" data-fmt="lakh">'+lakh(A.wfypOthers+A.ulipGap)+'</span></div><div class="m up">'+pct(A.achievementPct)+' of target</div></div>'+
       '<div class="c stat"><div class="k"><span>NOP</span><small>policies sold</small></div><div class="v"><span class="cu" data-to="'+A.nop+'" data-fmt="int">'+A.nop+'</span></div><div class="m '+(A.nopMult<1?'warn':'up')+'">'+Math.round(A.nopMult*100)+'% multiplier</div></div>'+
@@ -1174,11 +1202,6 @@
       '<div class="sect"><span class="h op">On the table · recoverable</span><span class="sum op">'+inr(H.onTheTable)+'</span></div>'+levers+
       // supporting
       extra+
-      // ── Show the Math · a proper ₹ balance sheet, highlighted (point 5) ──
-      '<div class="sect"><span class="h">Show the math</span><span class="sum">₹ balance sheet</span></div>'+
-      '<div class="c balancesheet"><div class="bstitle"><div><div class="bt2">How '+inr(H.finalAmount)+' is built</div><div class="bs2">Every credit, multiplier and hold — the exact payout-sheet math, line by line.</div></div></div>'+
-        balanceSheet(e)+
-        '<div class="bsfoot"><span>Started from '+inr(H.baseline)+' potential</span><span class="'+(H.onTheTable>0?'op':'ok')+'">'+(H.onTheTable>0?inr(H.onTheTable)+' still recoverable':'fully optimised ✓')+'</span></div></div>'+
       // ranked moves live in Coach now (Optimize tab removed)
       '<div class="coachlink tap" onclick="go(\'today\')">See your ranked moves <span>›</span></div>'+
       '<div class="trust"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg><span>From the company payout sheet</span></div>';
@@ -1258,7 +1281,7 @@
     var cards=e.recommendations.map(function(r,i){
       var promo='';
       if(i===0&&c){promo='<div class="imp promo"><span class="ik">Promotion</span><span class="iv">'+(elig?'—':(dp>0?'+'+dp+'%':'—'))+'</span><span class="isub">'+(elig?'already eligible':'rolling')+'</span></div>';}
-      return '<div class="c opt '+['','','two','three','four'][Math.min(i,4)]+'"><div class="oh"><span class="rank">'+(i+1)+'</span><span class="act">'+moveLabel(r)+'</span><span class="eff '+r.effort+'">'+r.effort+'</span></div>'+
+      return '<div class="c opt '+['','','two','three','four'][Math.min(i,4)]+'"><div class="oh"><span class="rank">'+(i+1)+'</span><span class="act">'+moveLabel(r)+'</span>'+effChip(r.effort)+'</div>'+
         '<div class="impact"><div class="imp money"><span class="ik">Earn now</span><span class="iv">+'+inr(r.deltaFinal)+'</span><span class="isub">this month</span></div>'+promo+'</div></div>';
     }).join('');
     $('v_coach').innerHTML=lead+'<div class="lbl">'+t('rankedReturn')+'</div>'+cards+'<div class="etrust">'+(VM.dse.name||'')+' · '+VM.dse.grade+(VM.profile&&VM.profile.fullDesig?' · '+VM.profile.fullDesig:'')+' · engine-ranked</div>';
