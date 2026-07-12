@@ -53,6 +53,11 @@ function applyIncentive(view, inc) {
   if (near(inc.pifa.hold_amount)) E.journey.push({ key: 'hold', label: 'PIFA hold', amount: -inc.pifa.hold_amount, running: inc.final });
   E.journey.push({ key: 'final', label: 'Final incentive', running: inc.final });
 
+  // contract-accurate ranked moves (Step 10 decision layer) supersede the JS optimizer
+  if (Array.isArray(inc.recommendations) && inc.recommendations.length) {
+    E.recommendations = inc.recommendations;
+  }
+
   if (view.profile) {
     view.profile.monthlyTarget = inc.target_monthly;
     const ulip = inc.ulip.fyp || 0, trad = inc.wfyp.non_ulip || 0;

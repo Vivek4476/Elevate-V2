@@ -27,12 +27,13 @@ def _recoverable(inc: dict) -> list:
     return out
 
 
-def incentive_block(inc: dict, period: str, published_at: Optional[str] = None) -> dict:
+def incentive_block(inc: dict, period: str, recommendations=None, published_at: Optional[str] = None) -> dict:
     """Wrap the incentive engine output (already passed through apply_addons) as the contract block."""
     b = dict(inc)
     b["period"] = period
     b["published_at"] = published_at
     b["recoverable"] = _recoverable(inc)
+    b["recommendations"] = recommendations or []
     b.setdefault("addons_pending", {"bda_4x4x4": None, "lapsed_collection_2pct": None})
     b.setdefault("forecast", {"month_end": None, "confidence": "placeholder"})
     return b

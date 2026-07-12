@@ -148,3 +148,10 @@ Build-Plan-v2 Phase 4. **Backend = FastAPI service** (`admin/`, reuses the Pytho
 
 Count-ups, ring sweeps, press-scale, confetti-on-eligible, reduced-motion guards already existed. Added **the Pulse** (`pulseEvents()` + a `.pulse` card on Today) — a real-wins activity feed replacing the retired ticker, built from the DSE's REAL contract facts (rank #5/735, #2 in West zone, gates cleared, streak, best month, recoverable), staggered fade-in, reduced-motion safe. Prefers `VM.events` (server-emitted, Step 10) when present. Verified headless (6 rows, no errors). index.html only.
 - **Next: Step 10 — Decision layer** (recommend.py two separate deltas, project.py placeholder, events.py) wired into the contract.
+
+---
+
+## Step 10 — Decision layer (2026-07-12) ✅
+
+Build-Plan-v2 Phase 6. `pipeline/pipeline/engines/`: **recommend.py** `rank_moves(inc,sp,plan)` — each move carries TWO SEPARATE deltas (incentive_delta = compute_incentive(perturbed)−base ₹; spGateDelta = a rolling-gate descriptor, never summed), ranked by expectedValue = delta×prob(effort). **project.py** month_end_incentive/time_to_promotion → `confidence:"placeholder"` until ≥3 months history. **events.py** `emit(current,prior)` — real gate-cleared/eligible events by diffing vs the prior publish. Recommendations wired into the contract (schema.incentive_block + build.py rank_moves); `adapt.js` maps `contract.incentive.recommendations` → `view.earnings.recommendations` (supersedes the JS optimizer). AAA634: nop Δ₹1,530.38 / ulipGrid Δ₹7,640.75 / achievement Δ₹1,416.16 (contract-accurate). Verified: pipeline check GREEN, pytest 14 (9+5 decision), node 59/59, API serves contract-v3 top move Δ₹1,530.
+- **Next: Step 11 — Multi-tenant** (formalise config/tenants/<t>; a 2nd tenant reprices with no code change; tenant-A reconcile stays green). Build-Plan-v2 Phase 7.

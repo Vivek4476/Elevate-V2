@@ -18,6 +18,7 @@ from pipeline.ingest.sp import load_sp
 from pipeline.engines.incentive_calc import compute_incentive
 from pipeline.engines.addons import apply_addons
 from pipeline.engines.sp_calc import compute_sp
+from pipeline.engines.recommend import rank_moves
 from pipeline.contract.schema import assemble, incentive_block, sp_block, SCHEMA_VERSION
 
 
@@ -69,7 +70,10 @@ def build_contracts(inc_wb, sp_wb, plan: dict, out_dir: Path, month: str) -> dic
             },
         }
 
-        inc_blk = incentive_block(apply_addons(compute_incentive(idict, plan)), month) if idict else None
+        inc_blk = None
+        if idict:
+            inc_blk = incentive_block(apply_addons(compute_incentive(idict, plan)), month,
+                                      recommendations=rank_moves(idict, sdict, plan))
         sp_blk = sp_block(compute_sp(sdict, plan), month) if sdict else None
 
         contract = assemble(top, inc_blk, sp_blk)
