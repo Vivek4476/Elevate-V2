@@ -1,0 +1,52 @@
+{
+  "tenant": "tenantB",
+  "month": "2026-04",
+  "currency": "INR",
+  "incentive": {
+    "cadence": "monthly",
+    "wfyp_grid": [
+      { "from": 0.00, "pct": 0.000 },
+      { "from": 0.50, "pct": 0.010 },
+      { "from": 0.75, "pct": 0.020 },
+      { "from": 1.00, "pct": 0.030 },
+      { "from": 1.50, "pct": 0.050 },
+      { "from": 2.00, "pct": 0.080 }
+    ],
+    "ulip_slabs": [
+      { "from": 0, "pct": 0.000 },
+      { "from": 100000, "pct": 0.010 },
+      { "from": 500000, "pct": 0.020 },
+      { "from": 1500000, "pct": 0.030 },
+      { "from": 3000000, "pct": 0.050 }
+    ],
+    "ulip_gate_min_ach": 0.50,
+    "persistency": {
+      "level_bands": [
+        { "from": 0.00, "mult": 0.50 },
+        { "from": 0.65, "mult": "equal_cm" },
+        { "from": 0.85, "mult": 1.00 },
+        { "from": 0.90, "mult": 1.15 },
+        { "from": 0.95, "mult": 1.30 }
+      ],
+      "improvement": { "min_level": 0.82, "min_growth": 0.03, "mult": 1.00 },
+      "missing_default_mult": 1.00
+    },
+    "nop_bands": [
+      { "from": 0, "mult": 0.60 },
+      { "from": 3, "mult": 0.85 },
+      { "from": 5, "mult": 1.00 },
+      { "from": 10, "mult": 1.25 }
+    ],
+    "pifa_hold_pct": 0.20,
+    "pifa_hold_trigger": "Not Achieved"
+  },
+  "sp": {
+    "cadence": "rolling_12m",
+    "was_weights": { "wfyp": 0.70, "nop": 0.30 },
+    "ach_cap": 1.50,
+    "was_cap": 1.50,
+    "gates": { "wfyp_ach_min": 0.70, "nop_ach_min": 0.55, "was_min": 0.90, "persistency_min": 0.85 }
+  },
+  "ladder": ["JDSE", "DSE", "SDSE", "MGR", "SMGR", "AVP", "VP", "SVP"],
+  "_notes": "A second insurer with different grids/slabs/bands/gates/ladder — proves the pipeline reprices from config alone (no code change). Fictional numbers."
+}

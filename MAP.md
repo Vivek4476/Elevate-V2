@@ -155,3 +155,11 @@ Count-ups, ring sweeps, press-scale, confetti-on-eligible, reduced-motion guards
 
 Build-Plan-v2 Phase 6. `pipeline/pipeline/engines/`: **recommend.py** `rank_moves(inc,sp,plan)` — each move carries TWO SEPARATE deltas (incentive_delta = compute_incentive(perturbed)−base ₹; spGateDelta = a rolling-gate descriptor, never summed), ranked by expectedValue = delta×prob(effort). **project.py** month_end_incentive/time_to_promotion → `confidence:"placeholder"` until ≥3 months history. **events.py** `emit(current,prior)` — real gate-cleared/eligible events by diffing vs the prior publish. Recommendations wired into the contract (schema.incentive_block + build.py rank_moves); `adapt.js` maps `contract.incentive.recommendations` → `view.earnings.recommendations` (supersedes the JS optimizer). AAA634: nop Δ₹1,530.38 / ulipGrid Δ₹7,640.75 / achievement Δ₹1,416.16 (contract-accurate). Verified: pipeline check GREEN, pytest 14 (9+5 decision), node 59/59, API serves contract-v3 top move Δ₹1,530.
 - **Next: Step 11 — Multi-tenant** (formalise config/tenants/<t>; a 2nd tenant reprices with no code change; tenant-A reconcile stays green). Build-Plan-v2 Phase 7.
+
+---
+
+## Step 11 — Multi-tenant (2026-07-12) ✅ — MIGRATION COMPLETE
+
+Build-Plan-v2 Phase 7. The engines were already 100% config-driven, so the enterprise unlock is proven, not built: added `pipeline/config/tenants/tenantB/plan.2026-04.json` (different grids/slabs/bands/gates/ladder) + `test_multitenant.py`. Same engine + same AAA634 inputs reprice **from config alone (no code change)**: absli ₹5,356.34 / WAS 0.6271 → tenantB ₹7,060.65 / WAS 0.6427; tenant-A (absli) reconcile stays GREEN. cli.py `--tenant` already selects the tenant (per-tenant admin/output namespacing is a config param away). pytest **17 passed** (14+3). A new insurer = a config folder, not a fork.
+
+**ALL 11 STEPS (0–11) COMPLETE.** Correctness core (pipeline reconcile 891/891 + 1020/1020, contract, CI) + the app repointed/de-annualized behind a default-on flag + all surfaces redesigned (Money/Climb/Now + Pulse) + Admin publishing console + decision layer + multi-tenant. To show ₹5,356.34 in prod: seed Supabase `contract` table (schema SQL → `cli.py build` → `npm run seed:contract`).
