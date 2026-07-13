@@ -163,7 +163,8 @@
   .fcast .ft{font-size:12.5px;font-weight:750;color:var(--ink2)} .fcast .fs{font-size:10.5px;color:var(--muted);font-weight:550;margin-top:2px;line-height:1.4}
   .fcast .soon{margin-left:auto;flex:0 0 auto;font-size:8.5px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);background:var(--hair2);border:1px solid var(--hair);padding:4px 8px;border-radius:10px}
   .lever{padding:14px 15px;display:flex;align-items:flex-start;gap:12px}
-  .lever .lv-ic{width:34px;height:34px;border-radius:11px;flex:0 0 auto;display:flex;align-items:center;justify-content:center;background:var(--gold-bg);border:1px solid var(--gold-line);font-size:16px}
+  .lever .lv-ic{width:34px;height:34px;border-radius:11px;flex:0 0 auto;display:flex;align-items:center;justify-content:center;background:var(--gold-bg);border:1px solid var(--gold-line);color:var(--gold)}
+  .lever .lv-ic .svic{width:18px;height:18px}
   .lever .lv-t{font-size:13px;font-weight:750} .lever .lv-d{font-size:11.5px;color:var(--muted);font-weight:550;margin-top:3px;line-height:1.4}
   .lever .flag{display:inline-block;margin-top:7px;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;color:var(--gold);background:var(--gold-bg);border:1px solid var(--gold-line);padding:3px 8px;border-radius:10px}
   .lever .lv-amt{margin-left:auto;text-align:right;flex:0 0 auto;padding-left:6px}
@@ -367,8 +368,9 @@
   .gate.ok .gv{color:var(--green)} .gate.no .gv{color:var(--gold)}
   .remain{display:flex;align-items:center;gap:12px;padding:14px 15px;border-radius:var(--r-card);background:linear-gradient(100deg,#fff7ec,#fffdf8);border:1px solid var(--gold-line)}
   .remain.ok{background:var(--green-bg);border-color:var(--green-line)}
-  .remain .ic{width:36px;height:36px;border-radius:12px;flex:0 0 auto;display:flex;align-items:center;justify-content:center;font-size:18px;background:linear-gradient(135deg,var(--sun2),var(--sun3))}
-  .remain.ok .ic{background:linear-gradient(135deg,var(--green),#54cf96)}
+  .remain .ic{width:36px;height:36px;border-radius:12px;flex:0 0 auto;display:flex;align-items:center;justify-content:center;background:var(--gold-bg);color:var(--gold);border:1px solid var(--gold-line)}
+  .remain .ic .svic{width:20px;height:20px}
+  .remain.ok .ic{background:var(--green-bg);color:var(--green);border-color:var(--green-line)}
   .remain .tx{font-size:12.5px;line-height:1.4;color:var(--ink2);font-weight:600} .remain .tx b{color:var(--ink)}
   .momrow{display:flex;gap:5px;padding:13px 14px 9px}
   .mcell{flex:1;aspect-ratio:1/1.4;border-radius:4px;background:var(--hair2);animation:cellin .4s var(--ease-out) both}
@@ -378,7 +380,7 @@
   .benefits{padding:15px}
   .benefits .brow{display:flex;align-items:center;gap:10px;padding:8px 0;border-top:1px solid var(--hair2)}
   .benefits .brow:first-of-type{border-top:0}
-  .benefits .bi{color:var(--sun2)} .benefits .bt{font-size:12px;font-weight:600;color:var(--ink2)} .benefits .bt b{color:var(--ink)}
+  .benefits .bi{color:var(--ink60);display:flex;align-items:center} .benefits .bi .svic{width:20px;height:20px} .benefits .bt{font-size:12px;font-weight:600;color:var(--ink2)} .benefits .bt b{color:var(--ink)}
   .coachlead{padding:17px;border-radius:var(--r-lg);background:linear-gradient(120deg,#fff6ea,#fffdf9);border:1px solid var(--gold-line)}
   .coachlead .cl-k{font-size:10px;letter-spacing:.1em;text-transform:uppercase;font-weight:800;color:var(--sun2)}
   .coachlead .cl-t{font-size:16px;font-weight:800;letter-spacing:-.01em;margin-top:6px;line-height:1.25} .coachlead .cl-t b{color:var(--maroon)}
@@ -387,7 +389,8 @@
 
   /* empty state (incentive-only / not joined) */
   .empty{padding:26px 20px;text-align:center}
-  .empty .ei{width:46px;height:46px;border-radius:14px;margin:0 auto 12px;display:flex;align-items:center;justify-content:center;background:var(--gold-bg);border:1px solid var(--gold-line);font-size:22px}
+  .empty .ei{width:46px;height:46px;border-radius:14px;margin:0 auto 12px;display:flex;align-items:center;justify-content:center;background:var(--paper2);border:1px solid var(--hair);color:var(--ink40)}
+  .empty .ei .svic{width:24px;height:24px}
   .empty .et{font-size:14px;font-weight:800} .empty .es{font-size:12px;color:var(--muted);font-weight:600;margin-top:7px;line-height:1.5}
 
   /* ---------- bottom nav ---------- */
@@ -557,7 +560,7 @@
 
   /* ================= career benefits (point 6) ================= */
   .benefits .brow{align-items:flex-start;gap:11px}
-  .benefits .bi{font-size:17px;line-height:1.2;flex:0 0 auto}
+  .benefits .bi{line-height:1;flex:0 0 auto}
   .benefits .bth{font-size:13px;font-weight:700;color:var(--ink);line-height:1.35}
   .benefits .bts{font-size:11.5px;font-weight:600;color:var(--ink2);margin-top:2px;line-height:1.4}
 
@@ -583,7 +586,8 @@
   .pinfo{padding:4px 14px}
   .prow2{display:flex;align-items:center;gap:11px;padding:12px 0;border-bottom:1px solid var(--hair2)}
   .prow2:last-child{border-bottom:0}
-  .pic2{font-size:16px;flex:0 0 auto;width:20px;text-align:center}
+  .pic2{flex:0 0 auto;width:22px;height:22px;display:flex;align-items:center;justify-content:center;color:var(--muted)}
+  .pic2 .svic{width:19px;height:19px}
   .pk2{font-size:12.5px;font-weight:700;color:var(--ink2)}
   .pv2{margin-left:auto;font-size:12.5px;font-weight:700;color:var(--ink);text-align:right}
   .plang{margin-left:auto;display:inline-flex;background:var(--card2);border:1px solid var(--hair);border-radius:10px;padding:2px}
@@ -611,6 +615,20 @@
   <symbol id="i-flame" viewBox="0 0 24 24"><path d="M12 2.5c.7 3.2 3.3 4.5 4 7.4.3 1.1.3 2.2-.1 3.3A5 5 0 1 1 8.1 8.3c.3 1.3 1.1 2 1.9 2.5C10.4 8 9.5 5.3 12 2.5z"/></symbol>
   <symbol id="i-banknote" viewBox="0 0 24 24"><rect x="2.5" y="6" width="19" height="12" rx="2"/><circle cx="12" cy="12" r="2.6"/><path d="M6 9.2v5.6M18 9.2v5.6"/></symbol>
   <symbol id="i-map-pin" viewBox="0 0 24 24"><path d="M12 21c4-4.5 7-7.6 7-11a7 7 0 0 0-14 0c0 3.4 3 6.5 7 11z"/><circle cx="12" cy="10" r="2.6"/></symbol>
+  <symbol id="i-id-card" viewBox="0 0 24 24"><rect x="2.5" y="5" width="19" height="14" rx="2"/><circle cx="8" cy="10.8" r="2"/><path d="M4.8 16c.5-1.6 1.8-2.3 3.2-2.3s2.7.7 3.2 2.3"/><path d="M14 10h4.5M14 13.5h4.5"/></symbol>
+  <symbol id="i-smartphone" viewBox="0 0 24 24"><rect x="6.5" y="2.5" width="11" height="19" rx="2.5"/><path d="M10.8 18.5h2.4"/></symbol>
+  <symbol id="i-tag" viewBox="0 0 24 24"><path d="M3.6 12.6l8.4-8.4H20a.4.4 0 0 1 .4.4v8l-8.4 8.4a1 1 0 0 1-1.4 0l-7-7a1 1 0 0 1 0-1.4z"/><circle cx="16.4" cy="7.6" r="1.3"/></symbol>
+  <symbol id="i-file-text" viewBox="0 0 24 24"><path d="M6.5 2.5H14l4 4V20a1.5 1.5 0 0 1-1.5 1.5h-10A1.5 1.5 0 0 1 5 20V4a1.5 1.5 0 0 1 1.5-1.5z"/><path d="M14 2.6V7h4.2"/><path d="M8.5 12.5h7M8.5 16h7"/></symbol>
+  <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3.2 12h17.6"/><path d="M12 3c2.6 2.7 2.6 15.3 0 18M12 3c-2.6 2.7-2.6 15.3 0 18"/></symbol>
+  <symbol id="i-bell" viewBox="0 0 24 24"><path d="M6.2 9.5a5.8 5.8 0 0 1 11.6 0c0 4.8 2 5.8 2 5.8H4.2s2-1 2-5.8z"/><path d="M10 19a2 2 0 0 0 4 0"/></symbol>
+  <symbol id="i-bar-chart" viewBox="0 0 24 24"><path d="M3.5 20h17"/><rect x="5" y="11" width="3.4" height="6.5"/><rect x="10.3" y="6.5" width="3.4" height="11"/><rect x="15.6" y="9" width="3.4" height="8.5"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="10.5" width="14" height="10" rx="2"/><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5"/></symbol>
+  <symbol id="i-compass" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M15.6 8.4l-2.1 5.1-5.1 2.1 2.1-5.1z"/></symbol>
+  <symbol id="i-trophy" viewBox="0 0 24 24"><path d="M7 4h10v4.5a5 5 0 0 1-10 0z"/><path d="M7 5H4.2v1a3 3 0 0 0 3 3M17 5h2.8v1a3 3 0 0 1-3 3"/><path d="M12 13.5v2.5M9.2 20h5.6M10 20l.5-4h3l.5 4"/></symbol>
+  <symbol id="i-flag" viewBox="0 0 24 24"><path d="M6 21V3.5"/><path d="M6 4.5h11l-2.2 3.2L17 11H6"/></symbol>
+  <symbol id="i-crown" viewBox="0 0 24 24"><path d="M3 7.2l4 3.8 5-6 5 6 4-3.8-2 11.3H5z"/><path d="M5 20h14"/></symbol>
+  <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M3.4 19c.7-3.1 3.1-4.6 5.6-4.6S14 15.9 14.6 19"/><path d="M16 5.2a3.2 3.2 0 0 1 0 5.6M17.6 14.6c1.9.6 3.3 2 3.8 4.4"/></symbol>
+  <symbol id="i-wallet" viewBox="0 0 24 24"><path d="M4 7.5A2 2 0 0 1 6 5.5h11a1.5 1.5 0 0 1 1.5 1.5"/><rect x="3.5" y="7" width="17" height="12" rx="2.2"/><path d="M15.5 13.2h3.5"/></symbol>
 </svg>
 
 <!-- ===================== SPLASH / LAUNCH SCREEN ===================== -->
@@ -809,6 +827,8 @@
       '<circle class="rfill" cx="'+cx+'" cy="'+cx+'" r="'+r.toFixed(1)+'" fill="none" stroke="'+stroke+'" stroke-width="'+sw+'" stroke-linecap="round" stroke-dasharray="'+C.toFixed(1)+'" stroke-dashoffset="'+C.toFixed(1)+'" data-off="'+off.toFixed(1)+'"/></svg>';
   }
   function haptic(pat){try{navigator.vibrate&&navigator.vibrate(pat);}catch(e){}}
+  // Line-icon helper: renders a Lucide-style sprite icon that inherits currentColor.
+  function svic(n){return '<svg class="svic" aria-hidden="true"><use href="#i-'+n+'"/></svg>';}
   function celebrate(){
     if(REDUCE)return; haptic([12,40,12]);
     var cv=document.createElement('canvas');cv.style.cssText='position:fixed;inset:0;z-index:9999;pointer-events:none';
@@ -965,21 +985,21 @@
       stat(e&&e.headline?inr(e.headline.finalAmount):'—','₹ this month')+
       stat(c?(c.eligible?'✓':c.gatesCleared+'/4'):'—','promo gates')+
       stat(p&&p.rank?'#'+p.rank.wfyp:'—','rank')+'</div>';
-    var line=function(ic,k,v){return '<div class="prow2"><span class="pic2">'+ic+'</span><span class="pk2">'+k+'</span><span class="pv2">'+v+'</span></div>';};
+    var line=function(nm,k,v){return '<div class="prow2"><span class="pic2">'+svic(nm)+'</span><span class="pk2">'+k+'</span><span class="pv2">'+v+'</span></div>';};
     var srcTag=VM.dataSource==='contract-v3'?'Reconciled · payout sheet':'Live';
     $('pBody').innerHTML=
       '<div class="pcard"><div class="pav">'+ini+'</div><div class="pname">'+(d.name||'DSE')+'</div>'+
         '<div class="pdesig">'+desig+' · '+d.grade+'</div></div>'+
       stats+
       '<div class="lbl">Account</div><div class="c pinfo">'+
-        line('🆔','Employee ID','<b>'+emp+'</b>')+
-        line('📱','Mobile',phone)+
-        line('🏷️','Designation',desig)+
-        line('📄','Data',srcTag)+'</div>'+
+        line('id-card','Employee ID','<b>'+emp+'</b>')+
+        line('smartphone','Mobile',phone)+
+        line('tag','Designation',desig)+
+        line('file-text','Data',srcTag)+'</div>'+
       '<div class="lbl">Preferences</div><div class="c pinfo">'+
-        '<div class="prow2"><span class="pic2">🌐</span><span class="pk2">Language</span>'+
+        '<div class="prow2"><span class="pic2">'+svic('globe')+'</span><span class="pk2">Language</span>'+
           '<span class="plang"><button id="pLangEn" onclick="setLangP(\'en\')">EN</button><button id="pLangHi" onclick="setLangP(\'hi\')">हिंदी</button></span></div>'+
-        line('🔔','Notifications','On')+'</div>'+
+        line('bell','Notifications','On')+'</div>'+
       '<button class="psignout" onclick="signOut()">Sign out</button>'+
       '<div class="pfoot">ABSLI Direct Marketing · Elevate</div>';
     $('pLangEn').classList.toggle('on',LANG==='en');$('pLangHi').classList.toggle('on',LANG==='hi');
@@ -1167,7 +1187,7 @@
 
   function renderPerform(){
     var p=VM.perform,host=$('v_perform'),pr=VM.profile;
-    if(!p||!p.months){host.innerHTML='<div class="c empty"><div class="ei">📊</div><div class="et">'+t('notLinked')+'</div><div class="es">'+t('notLinkedSub')+'</div></div>';return;}
+    if(!p||!p.months){host.innerHTML='<div class="c empty"><div class="ei">'+svic('bar-chart')+'</div><div class="et">'+t('notLinked')+'</div><div class="es">'+t('notLinkedSub')+'</div></div>';return;}
     var months=p.months;
     function bars(vals){var mx=Math.max.apply(null,vals.map(Math.abs).concat([1]));return vals.map(function(v,i){var h=Math.max(3,Math.abs(v)/mx*100);var cls=(v===0?'zero':'')+(i===vals.length-1?' cur':'');return '<div class="col '+cls+'"><i data-w2="'+h.toFixed(0)+'%" style="height:'+h.toFixed(0)+'%"></i></div>';}).join('');}
     var w=months.map(function(m){return m.w;}),n=months.map(function(m){return m.n;});
@@ -1213,7 +1233,7 @@
     // lever cards = the recoverable deductions, each with a plain-language unlock
     var levers=e.deductions.length?e.deductions.map(function(d){
       var isNop=d.key==='nopMultiplier';
-      var icon=isNop?'📈':'🔒';
+      var icon=isNop?svic('trending-up'):svic('lock');
       var title=isNop?'Lift your NOP multiplier':'Release the PIFA hold';
       var desc=isNop?('You\'re at '+Math.round((A.nopMult||0)*100)+'% on '+A.nop+' polic'+(A.nop===1?'y':'ies')+' — reach 4 policies for the full 100%.')
                     :'25% is held until your year-to-date PIFA target is met.';
@@ -1266,7 +1286,7 @@
 
   function renderCareer(){
     var c=VM.career,d=VM.dse,p=VM.profile;
-    if(!c){$('v_career').innerHTML='<div class="c empty"><div class="ei">🧭</div><div class="et">'+t('notLinked')+'</div><div class="es">'+t('notLinkedSub')+'</div></div>';return;}
+    if(!c){$('v_career').innerHTML='<div class="c empty"><div class="ei">'+svic('compass')+'</div><div class="et">'+t('notLinked')+'</div><div class="es">'+t('notLinkedSub')+'</div></div>';return;}
     var idx=GRADE_LADDER.indexOf(d.grade),next=(idx>=0&&idx<GRADE_LADDER.length-1)?GRADE_LADDER[idx+1]:null;
 
     // WAS ring — overall WAS toward the 100% gate
@@ -1300,8 +1320,8 @@
       :((c.bindingConstraint?'<b>'+c.bindingConstraint+'</b> is the binding constraint. ':'')+'Lift <b>'+thinName+'</b> to move up.');
 
     var rungs=[[GRADE_LADDER[idx-1],'done','Cleared'],[d.grade,'you','You'],[next,'next','Next'],[GRADE_LADDER[idx+2],'lock','Later']].filter(function(r){return r[0];}).map(function(r){var cl=r[1];return '<div class="rung '+cl+'"><div class="rdot">'+(cl==='done'?'✓':cl==='you'?'●':cl==='next'?'◆':'·')+'</div><div class="gl">'+r[0]+'</div><div class="rl">'+r[2]+'</div></div>';}).join('');
-    var remain=c.eligible?'<div class="remain ok"><div class="ic">🏆</div><div class="tx"><b>Hold it.</b> All four gates cleared — you\'re eligible for '+(next||'promotion')+'. Keep the rolling numbers up to lock it in.</div></div>'
-      :'<div class="remain"><div class="ic">⚑</div><div class="tx"><b>'+thinName.charAt(0).toUpperCase()+thinName.slice(1)+'</b> is the closest gate — '+(unmet.length?'lift it +'+Math.round((unmet[0].thr-unmet[0].val)*100)+'% to clear':'almost there')+'. '+(4-c.gatesCleared)+' of 4 to reach <b>'+(next||'the next grade')+'</b>.</div></div>';
+    var remain=c.eligible?'<div class="remain ok"><div class="ic">'+svic('trophy')+'</div><div class="tx"><b>Hold it.</b> All four gates cleared — you\'re eligible for '+(next||'promotion')+'. Keep the rolling numbers up to lock it in.</div></div>'
+      :'<div class="remain"><div class="ic">'+svic('flag')+'</div><div class="tx"><b>'+thinName.charAt(0).toUpperCase()+thinName.slice(1)+'</b> is the closest gate — '+(unmet.length?'lift it +'+Math.round((unmet[0].thr-unmet[0].val)*100)+'% to clear':'almost there')+'. '+(4-c.gatesCleared)+' of 4 to reach <b>'+(next||'the next grade')+'</b>.</div></div>';
     var rank=(p&&p.rank)?'<div class="c rankc"><div class="rl"><div class="rp">#'+p.rank.wfyp+'</div><div class="rt">of '+p.rank.total+'</div></div><div class="rx"><div class="rn"><b>Top '+p.rank.pct+'%</b> on the promotion track</div><div class="rs">'+(p.rank.zone?'#'+p.rank.zoneRank+' of '+p.rank.zoneTotal+' in '+p.rank.zone+' zone · ':'')+'rolling-12mo WFYP</div></div></div>':'';
     var mom='';
     if(VM.perform&&VM.perform.months){var mw=VM.perform.months.map(function(m){return m.w;});var mx=Math.max.apply(null,mw.map(Math.abs).concat([1]));mom='<div class="lbl">'+t('momentum')+'</div><div class="c"><div class="momrow">'+VM.perform.months.map(function(m,i){var f=Math.abs(m.w)/mx;var lv=m.w<=0?0:f<.25?1:f<.5?2:f<.8?3:4;return '<div class="mcell '+(lv?'l'+lv:'')+'" style="animation-delay:'+(i*30)+'ms"></div>';}).join('')+'</div><div class="momlabels"><span>'+mLabel(VM.perform.months[0].m)+'</span><span>'+mLabel(VM.perform.months[11].m)+'</span></div></div>';}
@@ -1322,13 +1342,13 @@
   function benefitsBlock(next,p){
     var desigName=(p&&p.fullDesig)?p.fullDesig:(next||'the next grade');
     var rows=[
-      ['👑','A new designation — <b>'+desigName+'</b>','the title, the badge, the recognition'],
-      ['🤝','A team of your own to build &amp; lead','from selling to leading DSEs'],
-      ['💸','Every policy earns you more','a richer incentive grid works in your favour'],
-      ['🏆','A seat at the leaders\' table','convention &amp; club qualification opens up']
+      ['crown','A new designation — <b>'+desigName+'</b>','the title, the badge, the recognition'],
+      ['users','A team of your own to build &amp; lead','from selling to leading DSEs'],
+      ['wallet','Every policy earns you more','a richer incentive grid works in your favour'],
+      ['trophy','A seat at the leaders\' table','convention &amp; club qualification opens up']
     ];
     return '<div class="c benefits"><div class="lbl" style="padding:0 0 8px">What '+(next||'the next grade')+' unlocks for you</div>'+
-      rows.map(function(r){return '<div class="brow"><span class="bi">'+r[0]+'</span><div class="bt"><div class="bth">'+r[1]+'</div><div class="bts">'+r[2]+'</div></div></div>';}).join('')+'</div>';
+      rows.map(function(r){return '<div class="brow"><span class="bi">'+svic(r[0])+'</span><div class="bt"><div class="bth">'+r[1]+'</div><div class="bts">'+r[2]+'</div></div></div>';}).join('')+'</div>';
   }
 
   function renderCoach(){
