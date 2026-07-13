@@ -1356,8 +1356,8 @@
     var remain=c.eligible?'<div class="remain ok"><div class="ic">'+svic('trophy')+'</div><div class="tx"><b>Hold it.</b> All four gates cleared — you\'re eligible for '+(next||'promotion')+'. Keep the rolling numbers up to lock it in.</div></div>'
       :'<div class="remain"><div class="ic">'+svic('flag')+'</div><div class="tx"><b>'+thinName.charAt(0).toUpperCase()+thinName.slice(1)+'</b> is the closest gate — '+(unmet.length?'lift it +'+Math.round((unmet[0].thr-unmet[0].val)*100)+'% to clear':'almost there')+'. '+(4-c.gatesCleared)+' of 4 to reach <b>'+(next||'the next grade')+'</b>.</div></div>';
     var rank=(p&&p.rank)?'<div class="c rankc"><div class="rl"><div class="rp">#'+p.rank.wfyp+'</div><div class="rt">of '+p.rank.total+'</div></div><div class="rx"><div class="rn"><b>Top '+p.rank.pct+'%</b> on the promotion track</div><div class="rs">'+(p.rank.zone?'#'+p.rank.zoneRank+' of '+p.rank.zoneTotal+' in '+p.rank.zone+' zone · ':'')+'rolling-12mo WFYP</div></div></div>':'';
+    // 12-month momentum heat-map moved to the Perform page ("Your 12-month rhythm") — removed here to kill the duplicate.
     var mom='';
-    if(VM.perform&&VM.perform.months){var mw=VM.perform.months.map(function(m){return m.w;});var mx=Math.max.apply(null,mw.map(Math.abs).concat([1]));mom='<div class="lbl">'+t('momentum')+'</div><div class="c"><div class="momrow">'+VM.perform.months.map(function(m,i){var f=Math.abs(m.w)/mx;var lv=m.w<=0?0:f<.25?1:f<.5?2:f<.8?3:4;return '<div class="mcell '+(lv?'l'+lv:'')+'" style="animation-delay:'+(i*30)+'ms"></div>';}).join('')+'</div><div class="momlabels"><span>'+mLabel(VM.perform.months[0].m)+'</span><span>'+mLabel(VM.perform.months[11].m)+'</span></div></div>';}
     var tgtBand={CPM:'₹1.2 Cr',EPM:'₹1.6 Cr',SPMG:'₹1 Cr',PM:'₹80 L',CPMG:'₹1.4 Cr'}[next]||'a higher';
     var desig=(p&&p.fullDesig)?'<span class="nl">'+p.fullDesig+'</span>':'<span class="nl">next grade</span>';
     $('v_career').innerHTML=
