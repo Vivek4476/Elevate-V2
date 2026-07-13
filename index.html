@@ -17,7 +17,7 @@
     --green:#0E9A66; --green-bg:#E7F4EE; --green-line:#CDE9DB;
     --gold:#B87410; --gold-bg:#FBEFD7; --gold-line:#F0DBAE;
     /* 8-pt spacing */
-    --s1:4px; --s2:8px; --s3:12px; --s4:16px; --s5:20px; --s6:24px; --s8:32px; --s12:48px;
+    --s1:4px; --s2:8px; --s3:12px; --s4:16px; --s5:20px; --s6:24px; --s8:32px; --s12:48px; --s16:64px;
     --ui:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,"Helvetica Neue",Arial,"Kohinoor Devanagari","Noto Sans Devanagari","Nirmala UI",sans-serif;
     --mono:ui-monospace,"SF Mono",SFMono-Regular,Menlo,Consolas,monospace;
     --serif:ui-serif,"New York",Charter,"Iowan Old Style",Georgia,"Noto Serif",serif;
@@ -26,6 +26,11 @@
     --sh1:0 1px 2px rgba(90,20,32,.05);
     --sh2:0 2px 8px rgba(90,20,32,.05),0 14px 34px rgba(90,20,32,.08);
     --sh3:0 24px 60px rgba(90,20,32,.16);
+    /* P0 elevation families (warm, maroon-tinted) — role, not decoration */
+    --e-embed:inset 0 1px 3px rgba(26,20,22,.07);
+    --e-flat:0 1px 2px rgba(90,20,32,.04);
+    --e-raise:0 1px 2px rgba(90,20,32,.05),0 10px 24px -14px rgba(90,20,32,.22);
+    --e-float:0 2px 6px rgba(90,20,32,.06),0 26px 50px -24px rgba(90,20,32,.34);
     --ease-out:cubic-bezier(.16,1,.3,1);
     --ease-ring:cubic-bezier(.22,1,.36,1);
     --ease-back:cubic-bezier(.34,1.56,.64,1);
@@ -92,8 +97,10 @@
 
   .body{flex:1;overflow-y:auto;overflow-x:hidden;padding:10px 16px 24px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
   .body::-webkit-scrollbar{display:none}
-  .view{display:none;flex-direction:column;gap:var(--s4)}
+  .view{display:none;flex-direction:column;gap:var(--s6)}
   .view.on{display:flex}
+  /* P0: sections separate by distance — a section label after content gets big air */
+  .view.on>.lbl:not(:first-child){margin-top:var(--s6)}
   .view.on>*{animation:rise .44s var(--ease-out) both}
   .view.on>*:nth-child(2){animation-delay:.05s}.view.on>*:nth-child(3){animation-delay:.1s}
   .view.on>*:nth-child(4){animation-delay:.15s}.view.on>*:nth-child(5){animation-delay:.2s}
