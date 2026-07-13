@@ -45,27 +45,24 @@
   .num{font-family:var(--mono);font-variant-numeric:lining-nums tabular-nums}
   .cu{font-variant-numeric:lining-nums tabular-nums}
 
-  /* ================= splash / launch screen ================= */
+  /* ================= splash / launch screen — ascending-E build + curtain lift ================= */
   #splash{position:fixed;inset:0;z-index:9000;display:flex;flex-direction:column;align-items:center;justify-content:center;
     background:radial-gradient(120% 80% at 50% 22%,#B01D38 0%,var(--maroon) 45%,var(--maroon2) 100%);
-    transition:opacity .5s ease,visibility .5s ease}
-  #splash.gone{opacity:0;visibility:hidden;pointer-events:none}
-  .sp-inner{display:flex;flex-direction:column;align-items:center;text-align:center;animation:spRise .7s var(--ease-out) both}
-  .sp-mark{position:relative;width:76px;height:76px;display:flex;align-items:center;justify-content:center;margin-bottom:22px}
-  .sp-core{position:relative;z-index:2;width:60px;height:60px;border-radius:19px;display:flex;align-items:center;justify-content:center;
-    font-family:var(--serif);font-weight:700;font-size:32px;color:var(--maroon2);
-    background:linear-gradient(145deg,#FFE08A,var(--sun3) 55%,var(--sun2));box-shadow:0 10px 30px rgba(0,0,0,.28)}
-  .sp-ray{position:absolute;inset:-14px;border-radius:50%;background:radial-gradient(circle,rgba(253,185,19,.55),transparent 62%);animation:spPulse 1.6s ease-in-out infinite}
-  .sp-word{font-family:var(--serif);font-size:40px;font-weight:600;letter-spacing:.005em;color:#fff;line-height:1}
-  .sp-tag{margin-top:11px;font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.66)}
-  .sp-foot{position:absolute;bottom:calc(env(safe-area-inset-bottom) + 40px)}
-  .sp-dots{display:flex;gap:7px}
-  .sp-dots i{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.35);animation:spBlink 1.2s ease-in-out infinite}
-  .sp-dots i:nth-child(2){animation-delay:.18s}.sp-dots i:nth-child(3){animation-delay:.36s}
-  @keyframes spRise{from{opacity:0;transform:translateY(14px) scale(.97)}to{opacity:1;transform:none}}
-  @keyframes spPulse{0%,100%{transform:scale(.9);opacity:.7}50%{transform:scale(1.12);opacity:1}}
-  @keyframes spBlink{0%,100%{opacity:.3;transform:translateY(0)}50%{opacity:1;transform:translateY(-3px)}}
-  @media(prefers-reduced-motion:reduce){.sp-inner,.sp-ray,.sp-dots i{animation:none}}
+    transition:transform .62s cubic-bezier(.05,.7,.1,1)}
+  #splash.gone{transform:translateY(-104%);pointer-events:none}
+  .sp-inner{display:flex;flex-direction:column;align-items:center;text-align:center}
+  .sp-e{width:80px;height:80px;margin-bottom:22px}
+  .sp-e rect{transform-box:fill-box}
+  .sp-e .a-spine{animation:spArm .5s var(--ease-out) both .12s}
+  .sp-e .a-b{animation:spArm .5s var(--ease-out) both .28s}
+  .sp-e .a-m{animation:spArm .5s var(--ease-out) both .42s}
+  .sp-e .a-t{animation:spArmT .55s var(--ease-out) both .56s}
+  .sp-word{font-family:var(--serif);font-size:40px;font-weight:600;letter-spacing:.005em;color:#fff;line-height:1;animation:spFade .5s var(--ease-out) both .82s}
+  .sp-tag{margin-top:11px;font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.66);animation:spFade .5s var(--ease-out) both .96s}
+  @keyframes spArm{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+  @keyframes spArmT{0%{opacity:0;transform:translateY(20px)}72%{transform:translateY(-2px)}100%{opacity:1;transform:none}}
+  @keyframes spFade{from{opacity:0;transform:translateY(9px)}to{opacity:1;transform:none}}
+  @media(prefers-reduced-motion:reduce){#splash{transition:none}.sp-e rect,.sp-word,.sp-tag{animation:none}}
 
   /* ---------- shell ---------- */
   #main{max-width:480px;margin:0 auto;height:100dvh;display:flex;flex-direction:column;background:var(--paper);box-shadow:0 0 50px rgba(90,20,32,.07)}
@@ -634,11 +631,16 @@
 <!-- ===================== SPLASH / LAUNCH SCREEN ===================== -->
 <div id="splash" aria-hidden="true">
   <div class="sp-inner">
-    <div class="sp-mark"><span class="sp-ray"></span><span class="sp-core">E</span></div>
+    <svg class="sp-e" viewBox="0 0 200 200" aria-hidden="true">
+      <defs><linearGradient id="spgrad" x1="0" y1="1" x2="1" y2="0"><stop offset="0%" stop-color="#F58220"/><stop offset="55%" stop-color="#FDB913"/><stop offset="100%" stop-color="#FFE08A"/></linearGradient></defs>
+      <rect class="a-spine" x="62" y="54" width="14" height="94" rx="7" fill="url(#spgrad)"/>
+      <rect class="a-b" x="62" y="135" width="54" height="13" rx="6.5" fill="#FFF3E6"/>
+      <rect class="a-m" x="62" y="94" width="70" height="13" rx="6.5" fill="#FFF3E6"/>
+      <rect class="a-t" x="62" y="54" width="88" height="14" rx="7" fill="url(#spgrad)"/>
+    </svg>
     <div class="sp-word">Elevate</div>
     <div class="sp-tag">Aditya Birla Sun Life · Direct Marketing</div>
   </div>
-  <div class="sp-foot"><span class="sp-dots"><i></i><i></i><i></i></span></div>
 </div>
 
 <!-- ===================== LANDING / LOGIN ===================== -->
@@ -1382,7 +1384,7 @@
   // dismiss the branded splash once the app is painted (shorter when reduced-motion is on)
   (function(){
     var sp=$('splash');if(!sp)return;
-    var hold=REDUCE?300:1250;
+    var hold=REDUCE?250:1500;
     setTimeout(function(){sp.classList.add('gone');setTimeout(function(){sp.parentNode&&sp.parentNode.removeChild(sp);},600);},hold);
   })();
 </script>
