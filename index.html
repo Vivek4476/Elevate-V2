@@ -199,6 +199,18 @@
   .prow .pt{flex:1;font-size:12.5px;font-weight:650;color:var(--ink2);line-height:1.35} .prow .pt b{color:var(--ink)}
   .prow .pv{flex:0 0 auto;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.03em;color:var(--maroon);background:var(--maroon-tint);border:1px solid var(--maroon-line);padding:3px 8px;border-radius:10px}
   .prow .pv.g{color:var(--green);background:var(--green-bg);border-color:var(--green-line)}
+  /* Pulse hero row — the single biggest win, given a warm sunrise band + larger icon */
+  .pulse .phero-row{display:flex;align-items:center;gap:12px;padding:14px 15px;background:linear-gradient(120deg,#FFF1DC,#FFFBF4);border-bottom:1px solid var(--hair2)}
+  .pulse .phero-row+.prow{border-top:0}
+  .pulse .phero-row .phi{width:38px;height:38px;border-radius:11px;flex:0 0 auto;display:flex;align-items:center;justify-content:center;background:var(--maroon-tint);border:1px solid var(--maroon-line);color:var(--maroon)}
+  .pulse .phero-row.g .phi{background:var(--green-bg);border-color:var(--green-line);color:var(--green)}
+  .pulse .phero-row.o .phi{background:var(--gold-bg);border-color:var(--gold-line);color:var(--gold)}
+  .pulse .phero-row .phi .svic{width:21px;height:21px}
+  .pulse .phero-row .pht{flex:1;min-width:0}
+  .pulse .phero-row .phk{font-size:9px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--sun2)}
+  .pulse .phero-row .phv{font-size:14px;font-weight:750;color:var(--ink2);margin-top:2px;line-height:1.3}
+  .pulse .phero-row .phv b{color:var(--ink)}
+  .pulse .phero-row .pv{align-self:center}
 
   .nudge{display:flex;align-items:center;gap:12px;padding:14px 15px;border-radius:var(--r-card);background:linear-gradient(100deg,#fff7ec,#fffdf8);border:1px solid var(--gold-line);cursor:pointer}
   .nudge .ic{width:36px;height:36px;border-radius:12px;flex:0 0 auto;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--sun2),var(--sun3));box-shadow:0 5px 12px rgba(245,130,32,.3)}
@@ -391,10 +403,21 @@
   @keyframes cellin{from{opacity:0;transform:scale(.6)}to{opacity:1;transform:none}}
   .mcell.l1{background:#fdeccf} .mcell.l2{background:#fbcf8f} .mcell.l3{background:var(--sun2)} .mcell.l4{background:var(--sun1)}
   .momlabels{display:flex;justify-content:space-between;padding:0 14px 12px;font-size:8.5px;color:var(--faint);font-weight:700}
-  .benefits{padding:15px}
-  .benefits .brow{display:flex;align-items:center;gap:10px;padding:8px 0;border-top:1px solid var(--hair2)}
+  /* Reward manifest: maroon→gold header frames CPM as a prize; gold-leaf icon tiles read as rewards gained */
+  .benefits{padding:0;overflow:hidden}
+  .benefits .bhead{position:relative;padding:16px 16px 14px;color:#fff;overflow:hidden;
+    background:linear-gradient(120deg,var(--maroon2),var(--maroon) 55%,#B13A2A)}
+  .benefits .bhead::after{content:"";position:absolute;right:-30px;top:-40px;width:150px;height:150px;border-radius:50%;
+    background:radial-gradient(circle,rgba(253,185,19,.5),transparent 62%)}
+  .benefits .bhead .bk{position:relative;font-size:9.5px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--sun3)}
+  .benefits .bhead .bg{position:relative;font-size:15px;font-weight:800;letter-spacing:-.01em;margin-top:3px;line-height:1.25;text-wrap:balance}
+  .benefits .bhead .bg b{color:#FFE9AE}
+  .benefits .brow{display:flex;align-items:flex-start;gap:12px;padding:12px 16px;border-top:1px solid var(--hair2)}
   .benefits .brow:first-of-type{border-top:0}
-  .benefits .bi{color:var(--ink60);display:flex;align-items:center} .benefits .bi .svic{width:20px;height:20px} .benefits .bt{font-size:12px;font-weight:600;color:var(--ink2)} .benefits .bt b{color:var(--ink)}
+  .benefits .bi{width:34px;height:34px;border-radius:10px;flex:0 0 auto;display:flex;align-items:center;justify-content:center;
+    background:linear-gradient(150deg,#FEEBBE,#FAD483);border:1px solid var(--gold-line);color:var(--gold);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.6)}
+  .benefits .bi .svic{width:18px;height:18px}
   .coachlead{padding:17px;border-radius:var(--r-lg);background:linear-gradient(120deg,#fff6ea,#fffdf9);border:1px solid var(--gold-line)}
   .coachlead .cl-k{font-size:10px;letter-spacing:.1em;text-transform:uppercase;font-weight:800;color:var(--sun2)}
   .coachlead .cl-t{font-size:16px;font-weight:800;letter-spacing:-.01em;margin-top:6px;line-height:1.25} .coachlead .cl-t b{color:var(--maroon)}
@@ -572,10 +595,9 @@
   .bsfoot{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:11px 16px;border-top:1px solid var(--hair);font-size:11px;font-weight:700;color:var(--muted)}
   .bsfoot .op{color:var(--gold)}.bsfoot .ok{color:var(--green)}
 
-  /* ================= career benefits (point 6) ================= */
-  .benefits .brow{align-items:flex-start;gap:11px}
-  .benefits .bi{line-height:1;flex:0 0 auto}
-  .benefits .bth{font-size:13px;font-weight:700;color:var(--ink);line-height:1.35}
+  /* ================= career benefits (point 6) — reward manifest ================= */
+  .benefits .bth{font-size:13px;font-weight:750;color:var(--ink);line-height:1.3}
+  .benefits .bth b{color:var(--maroon)}
   .benefits .bts{font-size:11.5px;font-weight:600;color:var(--ink2);margin-top:2px;line-height:1.4}
 
   /* ================= profile (point 7) ================= */
@@ -1188,9 +1210,12 @@
     var pev=pulseEvents();
     if(pev.length){
       var PTONE={gate:'g',gate_cleared:'g',money:'o',recoverable:'o'};
-      html+='<div class="lbl">Your pulse · recent wins</div><div class="c pulse">'+pev.map(function(x,i){
-        return '<div class="prow" style="animation-delay:'+(i*45)+'ms"><span class="pic '+(PTONE[x[0]]||'')+'"><svg class="svic" aria-hidden="true"><use href="#i-'+x[1]+'"/></svg></span><div class="pt">'+x[2]+'</div>'+(x[3]?'<span class="pv'+(x[4]?' g':'')+'">'+x[3]+'</span>':'')+'</div>';
-      }).join('')+'</div>';
+      var ph=pev[0],prest=pev.slice(1);
+      var pHero='<div class="phero-row '+(PTONE[ph[0]]||'')+'"><span class="phi"><svg class="svic" aria-hidden="true"><use href="#i-'+ph[1]+'"/></svg></span><div class="pht"><div class="phk">Your biggest win</div><div class="phv">'+ph[2]+'</div></div>'+(ph[3]?'<span class="pv'+(ph[4]?' g':'')+'">'+ph[3]+'</span>':'')+'</div>';
+      var pList=prest.map(function(x,i){
+        return '<div class="prow" style="animation-delay:'+((i+1)*45)+'ms"><span class="pic '+(PTONE[x[0]]||'')+'"><svg class="svic" aria-hidden="true"><use href="#i-'+x[1]+'"/></svg></span><div class="pt">'+x[2]+'</div>'+(x[3]?'<span class="pv'+(x[4]?' g':'')+'">'+x[3]+'</span>':'')+'</div>';
+      }).join('');
+      html+='<div class="lbl">Your pulse · recent wins</div><div class="c pulse">'+pHero+pList+'</div>';
     }
     // ── readiness (stars) + this-month glance ──
     if(c){
@@ -1380,7 +1405,8 @@
       ['wallet','Every policy earns you more','a richer incentive grid works in your favour'],
       ['trophy','A seat at the leaders\' table','convention &amp; club qualification opens up']
     ];
-    return '<div class="c benefits"><div class="lbl" style="padding:0 0 8px">What '+(next||'the next grade')+' unlocks for you</div>'+
+    return '<div class="c benefits">'+
+      '<div class="bhead"><div class="bk">If you make the climb</div><div class="bg">Here’s what <b>'+desigName+'</b> puts in your hands</div></div>'+
       rows.map(function(r){return '<div class="brow"><span class="bi">'+svic(r[0])+'</span><div class="bt"><div class="bth">'+r[1]+'</div><div class="bts">'+r[2]+'</div></div></div>';}).join('')+'</div>';
   }
 
