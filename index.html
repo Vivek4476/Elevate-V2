@@ -82,9 +82,9 @@
   /* live ticker — "maroon-ink instrument" strip (dark, warm; cream values, taupe labels) */
   .tickwrap{flex:0 0 auto;overflow:hidden;background:#2A1418;border-top:1px solid #4A2A30;box-shadow:0 1px 2px rgba(42,20,24,.18),inset 0 1px 0 rgba(241,228,214,.05);
     -webkit-mask-image:linear-gradient(to right,transparent 0,#000 9%,#000 91%,transparent 100%);mask-image:linear-gradient(to right,transparent 0,#000 9%,#000 91%,transparent 100%)}
-  .tick{display:inline-flex;align-items:baseline;white-space:nowrap;padding:8px 0;animation:tickmove var(--tdur,32s) linear infinite;will-change:transform}
+  .tick{display:inline-flex;align-items:center;white-space:nowrap;padding:9px 0;animation:tickmove var(--tdur,32s) linear infinite;will-change:transform}
   .tickwrap:active .tick,.tick:hover{animation-play-state:paused}
-  .tk{display:inline-flex;align-items:baseline;gap:7px;padding:0 18px;position:relative;font-variant-numeric:tabular-nums}
+  .tk{display:inline-flex;align-items:center;gap:7px;padding:0 18px;position:relative;font-variant-numeric:tabular-nums}
   .tk::after{content:"";position:absolute;right:0;top:50%;transform:translateY(-50%);width:3px;height:3px;border-radius:50%;background:#7A5A5F;opacity:.5}
   .tk .tl{font-size:8.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#C9AE9C}
   .tk .tv{font-size:12px;font-weight:700;color:#F1E4D6}
@@ -94,10 +94,10 @@
 
   .body{flex:1;overflow-y:auto;overflow-x:hidden;padding:10px 16px 24px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
   .body::-webkit-scrollbar{display:none}
-  .view{display:none;flex-direction:column;gap:var(--s6)}
+  .view{display:none;flex-direction:column;gap:18px}
   .view.on{display:flex}
-  /* P0: sections separate by distance — a section label after content gets big air */
-  .view.on>.lbl:not(:first-child){margin-top:var(--s6)}
+  /* sections separate by a measured gap — enough to breathe, not so much it drifts apart */
+  .view.on>.lbl:not(:first-child){margin-top:10px}
   .view.on>*{animation:rise .44s var(--ease-out) both}
   .view.on>*:nth-child(2){animation-delay:.05s}.view.on>*:nth-child(3){animation-delay:.1s}
   .view.on>*:nth-child(4){animation-delay:.15s}.view.on>*:nth-child(5){animation-delay:.2s}
@@ -189,11 +189,12 @@
   .omcard .om-t{font-size:16px;font-weight:800;letter-spacing:-.01em;flex:1}
   .imp .iv.txt{font-family:var(--ui);font-size:13px;letter-spacing:0;line-height:1.15}
   /* the Pulse — real-wins feed (Step 9) */
-  .pulse{overflow:hidden}
+  .pulse{overflow:hidden;background:linear-gradient(180deg,#FFFFFF,#FBF4F0);box-shadow:var(--sh1),inset 0 1px 0 rgba(255,255,255,.6)}
   .prow{display:flex;align-items:center;gap:11px;padding:11px 14px;border-top:1px solid var(--hair2);animation:rise .4s var(--ease-out) both}
   .prow:first-child{border-top:0}
-  .prow .pic{width:24px;height:24px;flex:0 0 auto;display:flex;align-items:center;justify-content:center;color:var(--muted)}
-  .prow .pic.g{color:var(--green)} .prow .pic.o{color:var(--gold)}
+  .prow .pic{width:30px;height:30px;border-radius:9px;flex:0 0 auto;display:flex;align-items:center;justify-content:center;background:var(--maroon-tint);border:1px solid var(--maroon-line);color:var(--maroon)}
+  .prow .pic .svic{width:16px;height:16px}
+  .prow .pic.g{background:var(--green-bg);border-color:var(--green-line);color:var(--green)} .prow .pic.o{background:var(--gold-bg);border-color:var(--gold-line);color:var(--gold)}
   .svic{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round;flex:0 0 auto}
   .prow .pt{flex:1;font-size:12.5px;font-weight:650;color:var(--ink2);line-height:1.35} .prow .pt b{color:var(--ink)}
   .prow .pv{flex:0 0 auto;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.03em;color:var(--maroon);background:var(--maroon-tint);border:1px solid var(--maroon-line);padding:3px 8px;border-radius:10px}
@@ -329,6 +330,22 @@
   .bars .col.cur i{background:linear-gradient(180deg,var(--maroon),var(--maroon2))}
   .bars .col.zero i{background:var(--hair)}
   .barx{display:flex;justify-content:space-between;font-size:8.5px;color:var(--faint);font-weight:700;margin-top:7px}
+  /* Perform: this-month hero, rhythm, insight */
+  .phero{padding:16px 16px 15px;color:#fff;position:relative;overflow:hidden;background:radial-gradient(130% 130% at 100% 0%,#a51f39,var(--maroon) 46%,var(--maroon2))}
+  .phero .ph-k{font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;font-weight:800;color:rgba(255,255,255,.72)}
+  .phero .ph-v{font-family:var(--mono);font-size:32px;font-weight:800;letter-spacing:-.02em;margin-top:5px;line-height:1}
+  .phero .ph-chips{display:flex;gap:7px;margin-top:12px;flex-wrap:wrap}
+  .phero .ph-chip{font-size:10px;font-weight:800;letter-spacing:.02em;padding:4px 10px;border-radius:11px;background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.2);color:#fff}
+  .phero .ph-chip.up{color:#8DE8BE;background:rgba(46,190,134,.18);border-color:rgba(46,190,134,.34)}
+  .phero .ph-chip.dn{color:#FABAB3;background:rgba(224,50,43,.16);border-color:rgba(224,50,43,.34)}
+  .prhythm{padding:14px 15px 12px}
+  .prhythm .prh-h{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:11px}
+  .prhythm .prh-h b{font-size:12.5px;font-weight:800} .prhythm .prh-h span{font-size:10px;color:var(--muted);font-weight:700}
+  .prhythm .momrow{padding:0}
+  .pinsight{display:flex;align-items:center;gap:11px;padding:13px 15px}
+  .pinsight .pi-ic{width:32px;height:32px;border-radius:10px;flex:0 0 auto;display:flex;align-items:center;justify-content:center;background:var(--gold-bg);border:1px solid var(--gold-line);color:var(--gold)}
+  .pinsight .pi-ic .svic{width:17px;height:17px}
+  .pinsight .pi-t{font-size:12px;color:var(--ink2);font-weight:600;line-height:1.4} .pinsight .pi-t b{color:var(--ink)}
 
   .chero{position:relative;overflow:hidden;padding:var(--s5);border-radius:var(--r-lg);box-shadow:var(--sh2);background:linear-gradient(160deg,#fff8ee 0%,#fffdfa 60%);border:1px solid #fbe6c9}
   .chero .glow{position:absolute;left:-40px;bottom:-56px;width:190px;height:190px;border-radius:50%;background:radial-gradient(circle at 50% 50%,rgba(253,185,19,.3),transparent 68%);pointer-events:none}
@@ -496,7 +513,7 @@
   .aroll{margin-left:auto;flex:0 0 auto;border:1px solid var(--hair);background:var(--card);color:var(--maroon);font-family:inherit;font-weight:800;font-size:11px;padding:6px 11px;border-radius:10px;cursor:pointer}
 
   /* ================= welcome (point 8) ================= */
-  .welcome{padding:2px 2px 13px}
+  .welcome{padding:2px 2px 0}
   .welcome .wtop{display:flex;align-items:baseline;gap:7px;flex-wrap:wrap}
   .welcome .wk{font-size:18px;font-weight:650;color:var(--ink2);letter-spacing:-.01em}
   .welcome .wn{font-family:var(--serif);font-size:20px;font-weight:600;color:var(--ink);letter-spacing:-.01em}
@@ -1193,11 +1210,25 @@
     var months=p.months;
     function bars(vals){var mx=Math.max.apply(null,vals.map(Math.abs).concat([1]));return vals.map(function(v,i){var h=Math.max(3,Math.abs(v)/mx*100);var cls=(v===0?'zero':'')+(i===vals.length-1?' cur':'');return '<div class="col '+cls+'"><i data-w2="'+h.toFixed(0)+'%" style="height:'+h.toFixed(0)+'%"></i></div>';}).join('');}
     var w=months.map(function(m){return m.w;}),n=months.map(function(m){return m.n;});
-    var streakChip=(pr&&pr.rolling)?'<div class="c glance" style="padding:13px 14px"><div class="g"><div class="gv">'+pr.rolling.streak+'</div><div class="gk">mo streak</div></div><div class="g"><div class="gv">'+pr.rolling.posMonths+'/12</div><div class="gk">active mo</div></div><div class="g"><div class="gv">'+pr.rolling.nop+'</div><div class="gk">NOP 12mo</div></div></div>':'';
+    var cur=months[months.length-1],prevM=months[months.length-2]||{w:0,n:0};
+    var dW=cur.w-(prevM.w||0);
+    var totalW=w.reduce(function(a,b){return a+b;},0),totalN=n.reduce(function(a,b){return a+b;},0);
+    var best=months.slice().sort(function(a,b){return b.w-a.w;})[0];
+    var posMonths=(pr&&pr.rolling)?pr.rolling.posMonths:w.filter(function(x){return x>0;}).length;
+    var mx=Math.max.apply(null,w.map(Math.abs).concat([1]));
+    var cells=w.map(function(v,i){var f=Math.abs(v)/mx;var lv=v<=0?0:f<.25?1:f<.5?2:f<.8?3:4;return '<div class="mcell '+(lv?'l'+lv:'')+'" style="animation-delay:'+(i*30)+'ms"></div>';}).join('');
+    var dChip=(dW===0)?'':'<span class="ph-chip '+(dW>0?'up':'dn')+'">'+(dW>0?'▲ ':'▼ ')+lakh(Math.abs(dW))+' vs last mo</span>';
+    var hero='<div class="c phero"><div class="ph-k">This month · WFYP written</div><div class="ph-v">'+lakh(cur.w)+'</div><div class="ph-chips"><span class="ph-chip">'+cur.n+' NOP</span>'+dChip+'<span class="ph-chip">'+posMonths+'/12 active</span></div></div>';
+    var totals='<div class="c glance" style="padding:13px 14px"><div class="g"><div class="gv">'+lakh(totalW)+'</div><div class="gk">WFYP · 12mo</div></div><div class="g"><div class="gv">'+totalN+'</div><div class="gk">NOP · 12mo</div></div>'+((pr&&pr.rolling)?'<div class="g"><div class="gv">'+pr.rolling.streak+'</div><div class="gk">mo streak</div></div>':'')+'</div>';
+    var insight=(best&&best.w>0)?'<div class="c pinsight"><div class="pi-ic">'+svic('star')+'</div><div class="pi-t">Your strongest month was <b>'+mLabel(best.m)+'</b> — <b>'+lakh(best.w)+'</b> WFYP.</div></div>':'';
     host.innerHTML=
-      '<div class="lbl">'+t('rawBiz')+'</div>'+streakChip+
-      '<div class="c barwrap"><div class="barhead"><span class="bt">'+t('wfypMo')+'</span><span class="bm">'+lakh(w.reduce(function(a,b){return a+b;},0))+' / 12 mo</span></div><div class="bars">'+bars(w)+'</div><div class="barx"><span>'+mLabel(months[0].m)+'</span><span>'+mLabel(months[11].m)+'</span></div></div>'+
-      '<div class="c barwrap"><div class="barhead"><span class="bt">'+t('nopMo')+'</span><span class="bm">'+n.reduce(function(a,b){return a+b;},0)+' / 12 mo</span></div><div class="bars">'+bars(n)+'</div><div class="barx"><span>'+mLabel(months[0].m)+'</span><span>'+mLabel(months[11].m)+'</span></div></div>'+
+      '<div class="lbl">'+t('rawBiz')+'</div>'+
+      hero+totals+
+      '<div class="c prhythm"><div class="prh-h"><b>Your 12-month rhythm</b><span>'+mLabel(months[0].m)+' – '+mLabel(months[11].m)+'</span></div><div class="momrow">'+cells+'</div></div>'+
+      insight+
+      '<div class="lbl">Month by month</div>'+
+      '<div class="c barwrap"><div class="barhead"><span class="bt">'+t('wfypMo')+'</span><span class="bm">'+lakh(totalW)+' / 12 mo</span></div><div class="bars">'+bars(w)+'</div><div class="barx"><span>'+mLabel(months[0].m)+'</span><span>'+mLabel(months[11].m)+'</span></div></div>'+
+      '<div class="c barwrap"><div class="barhead"><span class="bt">'+t('nopMo')+'</span><span class="bm">'+totalN+' / 12 mo</span></div><div class="bars">'+bars(n)+'</div><div class="barx"><span>'+mLabel(months[0].m)+'</span><span>'+mLabel(months[11].m)+'</span></div></div>'+
       '<div class="c" style="padding:14px 15px;font-size:12px;color:var(--ink2);line-height:1.5;font-weight:600">Your rolling 12-month totals feed both your <b style="color:var(--ink)">incentive</b> (this month) and your <b style="color:var(--ink)">promotion</b> gates.</div>';
   }
 
