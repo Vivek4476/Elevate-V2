@@ -105,7 +105,11 @@ export default async function handler(req, res) {
     view.sim = {
       design: 'apr26',
       incentive: { ...rec.incentiveInputs },
-      sp: rec.spInputs ? { ...rec.spInputs } : null,
+      sp: rec.spInputs ? {
+        trailingWfyp: rec.spInputs.trailingWfyp, trailingNop: rec.spInputs.trailingNop,
+        targetWfyp: rec.spInputs.targetWfyp, targetNop: rec.spInputs.targetNop,
+        persistency: rec.spInputs.persistency,
+      } : null,
     };
     // Step 3: behind the flag, override the computed numbers with the reconciled contract.
     // Missing/erroring contract → keep the computed view (graceful, still deployable).
