@@ -152,11 +152,11 @@ export function promotionETA(rules, spInp, rate) {
   return { months, perGate, basis: 'provided' };
 }
 
-export function crossWindowNote(design, incInputs, spRules, spInp, action) {
+export function crossWindowNote(design, incInputs, spInp, action) {
   const base = evaluateDSE(design, incInputs).finalAmount;
 
   // incentive window: this-month ₹ impact of the action
-  let incFinal = base, promo;
+  let incFinal, promo;
   if (action.kind === 'policies') {
     incFinal = evaluateDSE(design, { ...incInputs, nop: incInputs.nop + action.count }).finalAmount;
     // rolling window: same policies lift rolling NOP achievement

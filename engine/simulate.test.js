@@ -99,7 +99,7 @@ test('promotionETA: pace at/below current window average never crosses → null'
 });
 
 test('crossWindowNote: an action returns two SEPARATE readouts, not one fused number', () => {
-  const note = crossWindowNote(APR26, AAA634, SP_RULES, SP, { kind: 'policies', count: 4 });
+  const note = crossWindowNote(APR26, AAA634, SP, { kind: 'policies', count: 4 });
   assert.ok('incentive' in note && 'promotion' in note, 'must expose both windows separately');
   assert.equal(typeof note.incentive.rupees, 'number');       // ₹ this month
   assert.equal(note.promotion.gate, 'nop');                   // rolling gate touched by policies
