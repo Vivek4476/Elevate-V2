@@ -1445,5 +1445,13 @@
     setTimeout(function(){sp.classList.add('gone');setTimeout(function(){sp.parentNode&&sp.parentNode.removeChild(sp);},950);},hold);
   })();
 </script>
+<script type="module">
+  import { APR26 } from '/engine/designs/apr26.js';
+  import { SP_RULES } from '/engine/designs/spRules.js';
+  import { evaluateDSE } from '/engine/incentiveEngine.js';
+  import { reachTargetPaths, nextBandPaths, promotionGaps, promotionETA, crossWindowNote } from '/engine/simulate.js';
+  window.Sim = { APR26, SP_RULES, evaluateDSE, reachTargetPaths, nextBandPaths, promotionGaps, promotionETA, crossWindowNote };
+  window.dispatchEvent(new Event('sim-ready'));
+</script>
 </body>
 </html>
