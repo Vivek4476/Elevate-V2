@@ -130,3 +130,24 @@ export function promotionGaps(rules, spInp) {
 
   return { eligible: state.eligible, gaps, thinnest: state.nextGate };
 }
+
+function monthsToCross(current, target, monthlyRate, windowAvg, maxK = 120) {
+  if (current >= target) return 0;
+  const perMonth = monthlyRate - windowAvg;   // net change to the trailing total each month
+  if (perMonth <= 0) return null;              // never crosses at this pace
+  const k = Math.ceil((target - current) / perMonth);
+  return k <= maxK ? k : null;
+}
+
+export function promotionETA(rules, spInp, rate) {
+  const { gates } = rules;
+  const wfypTarget = gates.wfypMin * spInp.targetWfyp;
+  const nopTarget = gates.nopMin * spInp.targetNop;
+  const wfypK = monthsToCross(spInp.trailingWfyp, wfypTarget, rate.wfypPerMonth, spInp.trailingWfyp / 12);
+  const nopK = monthsToCross(spInp.trailingNop, nopTarget, rate.nopPerMonth, spInp.trailingNop / 12);
+
+  const perGate = [{ gate: 'wfyp', months: wfypK }, { gate: 'nop', months: nopK }];
+  const unreachable = perGate.some((g) => g.months === null);
+  const months = unreachable ? null : Math.max(...perGate.map((g) => g.months));
+  return { months, perGate, basis: 'provided' };
+}

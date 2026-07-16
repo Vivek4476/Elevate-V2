@@ -2,7 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { APR26 } from './designs/apr26.js';
 import { evaluateDSE } from './incentiveEngine.js';
-import { reachTargetPaths, nextBandPaths, promotionGaps } from './simulate.js';
+import { reachTargetPaths, nextBandPaths, promotionGaps, promotionETA } from './simulate.js';
 import { SP_RULES } from './designs/spRules.js';
 
 // AAA634 base inputs (derived from the pinned golden contract).
@@ -83,4 +83,17 @@ test('promotionGaps: persistency gate framed as quality, not additive', () => {
   const g = r.gaps.find((x) => x.gate === 'persistency');
   assert.equal(g.unit, 'quality');
   assert.equal(g.met, false);
+});
+
+test('promotionETA: faster pace → fewer (or equal) months than slower pace', () => {
+  const slow = promotionETA(SP_RULES, SP, { wfypPerMonth: 60000, nopPerMonth: 5 });
+  const fast = promotionETA(SP_RULES, SP, { wfypPerMonth: 120000, nopPerMonth: 10 });
+  assert.ok(fast.months != null && slow.months != null, 'both reachable');
+  assert.ok(fast.months <= slow.months, 'faster pace must not take longer');
+});
+
+test('promotionETA: pace at/below current window average never crosses → null', () => {
+  // trailing avg = 600000/12 = 50000 wfyp, 40/12≈3.33 nop; a pace equal to avg makes no progress
+  const r = promotionETA(SP_RULES, SP, { wfypPerMonth: 50000, nopPerMonth: 3.33 });
+  assert.equal(r.months, null);
 });
