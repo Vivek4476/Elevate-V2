@@ -100,6 +100,13 @@ export default async function handler(req, res) {
         note: 'DSE not in the promotion dataset',
       };
     }
+    // Raw inputs for the client-side What-If simulator (Plan surface). A shallow copy of the
+    // exact inputs the engine used, so the client reproduces this result. SP is null when unjoined.
+    view.sim = {
+      design: 'apr26',
+      incentive: { ...rec.incentiveInputs },
+      sp: rec.spInputs ? { ...rec.spInputs } : null,
+    };
     // Step 3: behind the flag, override the computed numbers with the reconciled contract.
     // Missing/erroring contract → keep the computed view (graceful, still deployable).
     if (contractEnabled()) {

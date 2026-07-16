@@ -101,6 +101,23 @@ export function applyContract(view, contract) {
   if (!contract) return view;
   if (contract.incentive) applyIncentive(view, contract.incentive);
   if (contract.sp) applySp(view, contract.sp);
+  // keep the simulator's base inputs identical to what produced the frozen contract
+  if (view.sim && contract.incentive) {
+    const inc = contract.incentive;
+    view.sim.incentive = {
+      target: inc.target_monthly, wfypOthers: inc.wfyp.non_ulip, ulipGap: inc.wfyp.ulip_gap,
+      ulipFyp: inc.ulip.fyp, persCM: inc.persistency.cm, persLM: inc.persistency.lm,
+      nop: inc.nop.count, holdNotAchieved: (inc.pifa && inc.pifa.hold_amount > 0) || false,
+    };
+  }
+  if (view.sim && contract.sp) {
+    const sp = contract.sp;
+    view.sim.sp = {
+      trailingWfyp: sp.wfyp.ytd_ach, trailingNop: sp.nop.ytd_ach,
+      targetWfyp: sp.wfyp.ytd_target, targetNop: sp.nop.ytd_target,
+      persistency: sp.persistency_overall,
+    };
+  }
   view.dataSource = 'contract-v3';
   return view;
 }
