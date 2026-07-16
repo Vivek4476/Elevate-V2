@@ -187,6 +187,32 @@
   .goalchip.on{color:#fff;background:var(--maroon);border-color:var(--maroon)}
   .goalgroup:nth-of-type(2) .goalchip.on{background:var(--gold);border-color:var(--gold)}
 
+  /* Plan surface (Task 9) — goal-seek results: verdict, path cards, two-window tags */
+  #plan-result{display:flex;flex-direction:column;gap:10px;margin-top:10px}
+  .plan-verdict{background:var(--card);border:1px solid var(--hair);border-radius:var(--r-card);box-shadow:var(--sh1);padding:14px 15px;display:flex;flex-wrap:wrap;align-items:center;gap:10px;font-size:13px;font-weight:700;color:var(--ink)}
+  .plan-verdict label{display:inline-flex;align-items:center;gap:8px;font-size:12.5px;font-weight:700;color:var(--ink2)}
+  .plan-verdict input{width:110px;font-family:var(--mono);font-size:13px;font-weight:800;color:var(--ink);background:var(--card2);border:1px solid var(--hair);border-radius:9px;padding:6px 9px}
+  /* .wtag: the two windows must never be visually confused — inc=maroon, pro=gold */
+  .wtag{display:inline-flex;align-items:center;font-size:9px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;padding:4px 9px;border-radius:9px;white-space:nowrap}
+  .wtag.inc{color:var(--maroon);background:var(--maroon-tint);border:1px solid var(--maroon-line)}
+  .wtag.pro{color:var(--gold);background:var(--gold-bg);border:1px solid var(--gold-line)}
+  .card{background:var(--card);border:1px solid var(--hair);border-radius:var(--r-card);box-shadow:var(--sh1);padding:14px 15px}
+  .card.small{font-size:11px;color:var(--muted);font-weight:600;padding:11px 15px}
+  .card.path{display:flex;flex-direction:column;gap:9px}
+  .path-act{font-size:13px;font-weight:750;color:var(--ink);display:flex;align-items:center;flex-wrap:wrap;gap:9px}
+  .path-primary{display:flex;align-items:center;gap:9px;font-family:var(--mono);font-size:17px;font-weight:800;color:var(--ink)}
+  .xwin{display:flex;align-items:center;gap:9px;font-size:11.5px;font-weight:650;color:var(--ink2);padding-top:8px;border-top:1px dashed var(--hair2)}
+  .card.gate{display:flex;flex-direction:column;gap:4px;padding:13px 15px}
+  .card.gate.met{background:var(--green-bg);border-color:var(--green-line)}
+  .card.gate.closest{box-shadow:inset 0 0 0 1.5px var(--gold-line);background:linear-gradient(100deg,#fff7ec,#fffdf8)}
+  .gate-name{font-size:11.5px;font-weight:800;letter-spacing:.03em;color:var(--ink)}
+  .card.gate.met .gate-name{color:var(--green)}
+  .gate-note{font-size:12px;color:var(--ink2);font-weight:550}
+  .pace-toggle{display:flex;gap:8px}
+  .pace-toggle button{flex:1;font-family:var(--ui);font-size:12px;font-weight:750;color:var(--ink2);background:var(--card2);border:1px solid var(--hair);border-radius:var(--r-chip);padding:9px 12px;cursor:pointer;transition:background .15s,border-color .15s,color .15s}
+  .pace-toggle button.on{color:#fff;background:var(--gold);border-color:var(--gold)}
+  @media(prefers-reduced-motion:reduce){.pace-toggle button,.goalchip{transition:none}}
+
   /* Climb surface (Step 6) */
   .mbadge.sp{color:var(--maroon);background:var(--maroon-tint);border-color:var(--maroon-line)}
   .mbadge.sp .d{background:var(--maroon)}
@@ -1437,8 +1463,91 @@
     el.innerHTML=html;
     renderPlanResult();
   }
-  // TASK-9 REPLACES THIS STUB with the real goal-seek result renderer.
-  function renderPlanResult(){ var box=document.getElementById('plan-result'); if(box) box.innerHTML='<div class="card">Pick a goal above.</div>'; }
+  // Task 9: real goal-seek result renderer. Calls the browser-exposed solver
+  // engine (window.Sim) and renders, per goal destination, the answer —
+  // enforcing the HARD RULE: an incentive (₹, this-month) figure and a
+  // Sales-Progression (%, rolling-12mo) figure are NEVER summed into one
+  // number. Reuses inr()/effChip() already defined above (Earnings/Career).
+  function renderPlanResult(){
+    var box=document.getElementById('plan-result');
+    if(!box) return;
+    if(!window.Sim){ box.innerHTML='<div class="card">Loading…</div>'; return; }
+    if(!VM||!VM.sim){ box.innerHTML=''; return; }
+
+    var S=window.Sim, inc=VM.sim.incentive, sp=VM.sim.sp;
+    var base=S.evaluateDSE(S.APR26, inc).finalAmount;
+    var html='';
+
+    if(PLAN.goal==='target'){
+      var target=PLAN.target!=null?PLAN.target:Math.ceil((base+1500)/500)*500;
+      var r=S.reachTargetPaths(S.APR26, inc, target);
+      html+='<div class="plan-verdict"><span class="wtag inc">This month · ₹</span>'
+          + '<label>Target <input id="plan-target" type="number" value="'+target+'" onchange="PLAN.target=+this.value;renderPlanResult()"></label></div>';
+      if(r.alreadySecured){ html+='<div class="card">You\'ve already secured '+inr(base)+' — set a higher target.</div>'; }
+      else if(!r.paths.length){ html+='<div class="card">Even maxed, this month tops out at '+inr(r.ceiling)+'. Try a target below that.</div>'; }
+      else html+=r.paths.map(function(p){
+        var actLabel=p.unit==='policies'?('Sell '+p.need+' more '+(p.need===1?'policy':'policies')):('Write '+inr(p.need)+' more '+(p.lever==='ulipFyp'?'ULIP premium':'WFYP'));
+        var act=p.unit==='policies'?{kind:'policies',count:p.need}:{kind:'wfyp',rupees:p.need};
+        var note=sp?S.crossWindowNote(S.APR26,inc,sp,act):null;
+        return planCard(actLabel, inr(p.projectedFinal), effChip(p.effort), note);
+      }).join('');
+    }
+
+    else if(PLAN.goal==='band'){
+      var cliffs=S.nextBandPaths(S.APR26, inc);
+      html+='<div class="plan-verdict"><span class="wtag inc">This month · ₹</span>Your highest-leverage cliffs</div>';
+      html+=cliffs.map(function(c){
+        var actLabel=c.label+(c.unit==='rupees'?(' ('+inr(c.need)+' more)'):(' (+'+c.need+' '+(c.need===1?'policy':'policies')+')'));
+        var act=c.unit==='policies'?{kind:'policies',count:c.need}:{kind:'wfyp',rupees:c.need};
+        var note=sp?S.crossWindowNote(S.APR26,inc,sp,act):null;
+        return planCard(actLabel, '+'+inr(c.deltaFinal), effChip(c.effort), note);
+      }).join('') || '<div class="card">You\'re already in the top band.</div>';
+    }
+
+    else if(PLAN.goal==='eligible'){
+      if(!sp){ box.innerHTML='<div class="empty">Promotion data isn\'t linked for your profile yet.</div>'; return; }
+      var g=S.promotionGaps(S.SP_RULES, sp);
+      html+='<div class="plan-verdict"><span class="wtag pro">Rolling 12-mo · promotion</span>'
+          + (g.eligible?'You\'re eligible — hold it.':('You\'re '+g.gaps.filter(function(x){return !x.met;}).length+' gate(s) from promotion.'))+'</div>';
+      html+=g.gaps.map(function(x){
+        return '<div class="card gate'+(x.met?' met':'')+(x.gate===g.thinnest?' closest':'')+'">'
+          + '<div class="gate-name">'+x.gate.toUpperCase()+(x.met?' ✓':'')+(x.gate===g.thinnest?' · closest':'')+'</div>'
+          + '<div class="gate-note">'+x.note+'</div></div>';
+      }).join('');
+    }
+
+    else if(PLAN.goal==='eta'){
+      if(!sp){ box.innerHTML='<div class="empty">Promotion data isn\'t linked for your profile yet.</div>'; return; }
+      var avg={ wfypPerMonth: sp.trailingWfyp/12, nopPerMonth: sp.trailingNop/12 };
+      var stretch={ wfypPerMonth: (sp.trailingWfyp/12)*1.5, nopPerMonth: (sp.trailingNop/12)*1.5 };
+      var rate=PLAN.pace==='month'?stretch:avg;
+      var e=S.promotionETA(S.SP_RULES, sp, rate);
+      html+='<div class="plan-verdict"><span class="wtag pro">Rolling 12-mo · promotion</span>'
+          + (e.months==null?'At this pace the gates don\'t clear within the year.':('At this pace: about '+e.months+' month(s) to eligible.'))+'</div>';
+      html+='<div class="pace-toggle"><button class="'+(PLAN.pace==='avg'?'on':'')+'" onclick="PLAN.pace=\'avg\';renderPlanResult()">Current pace</button>'
+          + '<button class="'+(PLAN.pace==='month'?'on':'')+'" onclick="PLAN.pace=\'month\';renderPlanResult()">Stretch (+50%)</button></div>';
+      html+='<div class="card small">Estimate: assumes renewals stay ≥87% and applies the WAS cap. Not a guarantee.</div>';
+    }
+
+    box.innerHTML=html;
+  }
+
+  // One path card: the PRIMARY readout stays in the goal's own window (tagged);
+  // the SECONDARY cross-window readout (from crossWindowNote) is a SEPARATE
+  // element with its OWN opposite-window tag — the two figures are never summed.
+  function planCard(action, primary, effortHtml, note){
+    var secondary='';
+    if(note){
+      secondary='<div class="xwin">'
+        + '<span class="wtag pro">rolling 12-mo · promotion</span>'
+        + '+'+(note.promotion.deltaPct*100).toFixed(1)+'% toward your '+note.promotion.gate.toUpperCase()+' gate'
+        + '</div>';
+    }
+    return '<div class="card path">'
+      + '<div class="path-act">'+action+' '+effortHtml+'</div>'
+      + '<div class="path-primary"><span class="wtag inc">this month · ₹</span>'+primary+'</div>'
+      + secondary + '</div>';
+  }
 
   // Point 6: what a promotion actually unlocks — framed as rewards you gain, not harder targets.
   function benefitsBlock(next,p){
