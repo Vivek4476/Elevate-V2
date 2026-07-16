@@ -785,7 +785,7 @@ function renderPlanResult(){
     else html+=r.paths.map(function(p){
       var actLabel=p.unit==='policies'?('Sell '+p.need+' more '+(p.need===1?'policy':'policies')):('Write '+inr(p.need)+' more '+(p.lever==='ulipFyp'?'ULIP premium':'WFYP'));
       var act=p.unit==='policies'?{kind:'policies',count:p.need}:{kind:'wfyp',rupees:p.need};
-      var note=sp?S.crossWindowNote(S.APR26,inc,S.SP_RULES,sp,act):null;
+      var note=sp?S.crossWindowNote(S.APR26,inc,sp,act):null;
       return planCard(actLabel, inr(p.projectedFinal), effChip(p.effort), note);
     }).join('');
   }
@@ -796,7 +796,7 @@ function renderPlanResult(){
     html+=cliffs.map(function(c){
       var actLabel=c.label+(c.unit==='rupees'?(' ('+inr(c.need)+' more)'):(' (+'+c.need+' '+(c.need===1?'policy':'policies')+')'));
       var act=c.unit==='policies'?{kind:'policies',count:c.need}:{kind:'wfyp',rupees:c.need};
-      var note=sp?S.crossWindowNote(S.APR26,inc,S.SP_RULES,sp,act):null;
+      var note=sp?S.crossWindowNote(S.APR26,inc,sp,act):null;
       return planCard(actLabel, '+'+inr(c.deltaFinal), effChip(c.effort), note);
     }).join('') || '<div class="card">You\'re already in the top band.</div>';
   }
