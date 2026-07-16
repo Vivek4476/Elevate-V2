@@ -57,3 +57,44 @@ export function reachTargetPaths(design, inputs, target) {
   paths.sort((a, b) => rank[a.effort] - rank[b.effort]);
   return { target, alreadySecured: false, ceiling, paths };
 }
+
+const nextFrom = (bands, x) => { for (const b of bands) if (b.from > x) return b.from; return null; };
+
+export function nextBandPaths(design, inputs) {
+  const base = evaluateDSE(design, inputs).finalAmount;
+  const cliffs = [];
+
+  // achievement slab
+  const credited = inputs.wfypOthers + inputs.ulipGap;
+  const achNow = inputs.target ? credited / inputs.target : 0;
+  const achTo = nextFrom(design.achievementSlabs, achNow);
+  if (achTo != null && inputs.target) {
+    const need = achTo * inputs.target - credited;
+    if (need > 0) cliffs.push({ lever: 'achievement', label: `Reach ${Math.round(achTo * 100)}% achievement`,
+      need, unit: 'rupees', to: achTo,
+      deltaFinal: evaluateDSE(design, { ...inputs, wfypOthers: inputs.wfypOthers + need }).finalAmount - base,
+      effort: need <= 100000 ? 'medium' : 'hard' });
+  }
+
+  // ULIP grid slab
+  const ulipTo = nextFrom(design.ulipGrid.slabs, inputs.ulipFyp);
+  if (ulipTo != null) {
+    const need = ulipTo - inputs.ulipFyp;
+    if (need > 0) cliffs.push({ lever: 'ulipGrid', label: `Reach the ₹${ulipTo.toLocaleString('en-IN')} ULIP slab`,
+      need, unit: 'rupees', to: ulipTo,
+      deltaFinal: evaluateDSE(design, { ...inputs, ulipFyp: inputs.ulipFyp + need, ulipGap: inputs.ulipGap + need }).finalAmount - base,
+      effort: need <= 100000 ? 'medium' : 'hard' });
+  }
+
+  // NOP multiplier tier
+  const nopTo = nextFrom(design.nopMultiplier, inputs.nop);
+  if (nopTo != null) {
+    const need = nopTo - inputs.nop;
+    cliffs.push({ lever: 'nop', label: `Reach ${nopTo} policies (next multiplier)`,
+      need, unit: 'policies', to: nopTo,
+      deltaFinal: evaluateDSE(design, { ...inputs, nop: nopTo }).finalAmount - base,
+      effort: need <= 1 ? 'easy' : need <= 3 ? 'medium' : 'hard' });
+  }
+
+  return cliffs.filter((c) => c.deltaFinal > 0.005).sort((a, b) => b.deltaFinal - a.deltaFinal);
+}

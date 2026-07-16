@@ -2,7 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { APR26 } from './designs/apr26.js';
 import { evaluateDSE } from './incentiveEngine.js';
-import { reachTargetPaths } from './simulate.js';
+import { reachTargetPaths, nextBandPaths } from './simulate.js';
 
 // AAA634 base inputs (derived from the pinned golden contract).
 const AAA634 = {
@@ -37,4 +37,23 @@ test('reachTargetPaths: each path actually reaches the target and is minimal', (
       assert.ok(less < target + 0.01, 'rupee path must be near-minimal');
     }
   }
+});
+
+test('nextBandPaths: AAA634 next achievement cliff is the 2.00 slab, delta positive', () => {
+  const cliffs = nextBandPaths(APR26, AAA634);
+  const ach = cliffs.find((c) => c.lever === 'achievement');
+  assert.ok(ach, 'expected an achievement cliff');
+  assert.equal(ach.to, 2.00);              // current ach 1.854 → next slab from=2.00
+  assert.ok(ach.deltaFinal > 0);
+  // reaching exactly the cliff lifts achievement to >= 2.00
+  const credited = AAA634.wfypOthers + AAA634.ulipGap + ach.need;
+  assert.ok(credited / AAA634.target >= 2.00 - 1e-9);
+});
+
+test('nextBandPaths: AAA634 next NOP tier is 2 (from count 1), delta positive', () => {
+  const cliffs = nextBandPaths(APR26, AAA634);
+  const nop = cliffs.find((c) => c.lever === 'nop');
+  assert.equal(nop.to, 2);
+  assert.equal(nop.need, 1);
+  assert.ok(nop.deltaFinal > 0);
 });
