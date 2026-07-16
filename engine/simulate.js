@@ -151,3 +151,24 @@ export function promotionETA(rules, spInp, rate) {
   const months = unreachable ? null : Math.max(...perGate.map((g) => g.months));
   return { months, perGate, basis: 'provided' };
 }
+
+export function crossWindowNote(design, incInputs, spRules, spInp, action) {
+  const base = evaluateDSE(design, incInputs).finalAmount;
+
+  // incentive window: this-month ₹ impact of the action
+  let incFinal = base, promo;
+  if (action.kind === 'policies') {
+    incFinal = evaluateDSE(design, { ...incInputs, nop: incInputs.nop + action.count }).finalAmount;
+    // rolling window: same policies lift rolling NOP achievement
+    const before = spInp.targetNop ? spInp.trailingNop / spInp.targetNop : 0;
+    const after = spInp.targetNop ? (spInp.trailingNop + action.count) / spInp.targetNop : 0;
+    promo = { gate: 'nop', deltaPct: after - before };
+  } else { // 'wfyp'
+    incFinal = evaluateDSE(design, { ...incInputs, wfypOthers: incInputs.wfypOthers + action.rupees }).finalAmount;
+    const before = spInp.targetWfyp ? spInp.trailingWfyp / spInp.targetWfyp : 0;
+    const after = spInp.targetWfyp ? (spInp.trailingWfyp + action.rupees) / spInp.targetWfyp : 0;
+    promo = { gate: 'wfyp', deltaPct: after - before };
+  }
+
+  return { incentive: { rupees: incFinal - base }, promotion: promo };
+}

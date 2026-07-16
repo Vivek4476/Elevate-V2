@@ -2,7 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { APR26 } from './designs/apr26.js';
 import { evaluateDSE } from './incentiveEngine.js';
-import { reachTargetPaths, nextBandPaths, promotionGaps, promotionETA } from './simulate.js';
+import { reachTargetPaths, nextBandPaths, promotionGaps, promotionETA, crossWindowNote } from './simulate.js';
 import { SP_RULES } from './designs/spRules.js';
 
 // AAA634 base inputs (derived from the pinned golden contract).
@@ -96,4 +96,14 @@ test('promotionETA: pace at/below current window average never crosses → null'
   // trailing avg = 600000/12 = 50000 wfyp, 40/12≈3.33 nop; a pace equal to avg makes no progress
   const r = promotionETA(SP_RULES, SP, { wfypPerMonth: 50000, nopPerMonth: 3.33 });
   assert.equal(r.months, null);
+});
+
+test('crossWindowNote: an action returns two SEPARATE readouts, not one fused number', () => {
+  const note = crossWindowNote(APR26, AAA634, SP_RULES, SP, { kind: 'policies', count: 4 });
+  assert.ok('incentive' in note && 'promotion' in note, 'must expose both windows separately');
+  assert.equal(typeof note.incentive.rupees, 'number');       // ₹ this month
+  assert.equal(note.promotion.gate, 'nop');                   // rolling gate touched by policies
+  assert.ok(note.promotion.deltaPct >= 0);                    // rolling NOP achievement moves up
+  // the two are never combined into a single field
+  assert.ok(!('total' in note) && !('combined' in note));
 });
