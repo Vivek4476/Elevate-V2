@@ -1487,8 +1487,9 @@
       else if(!r.paths.length){ html+='<div class="card">Even maxed, this month tops out at '+inr(r.ceiling)+'. Try a target below that.</div>'; }
       else html+=r.paths.map(function(p){
         var actLabel=p.unit==='policies'?('Sell '+p.need+' more '+(p.need===1?'policy':'policies')):('Write '+inr(p.need)+' more '+(p.lever==='ulipFyp'?'ULIP premium':'WFYP'));
-        var act=p.unit==='policies'?{kind:'policies',count:p.need}:{kind:'wfyp',rupees:p.need};
-        var note=sp?S.crossWindowNote(S.APR26,inc,sp,act):null;
+        // ULIP premium's rolling-WFYP effect is weighted/indirect — don't attribute it to the WFYP gate; omit the cross-window note.
+        var act=p.unit==='policies'?{kind:'policies',count:p.need}:(p.lever==='ulipFyp'?null:{kind:'wfyp',rupees:p.need});
+        var note=(sp&&act)?S.crossWindowNote(S.APR26,inc,sp,act):null;
         return planCard(actLabel, inr(p.projectedFinal), effChip(p.effort), note);
       }).join('');
     }
@@ -1498,8 +1499,9 @@
       html+='<div class="plan-verdict"><span class="wtag inc">This month · ₹</span>Your highest-leverage cliffs</div>';
       html+=cliffs.map(function(c){
         var actLabel=c.label+(c.unit==='rupees'?(' ('+inr(c.need)+' more)'):(' (+'+c.need+' '+(c.need===1?'policy':'policies')+')'));
-        var act=c.unit==='policies'?{kind:'policies',count:c.need}:{kind:'wfyp',rupees:c.need};
-        var note=sp?S.crossWindowNote(S.APR26,inc,sp,act):null;
+        // The ULIP-grid cliff is ULIP premium — its rolling-WFYP effect is weighted/indirect, so omit the cross-window note (achievement→WFYP and nop→NOP stay attributed).
+        var act=c.unit==='policies'?{kind:'policies',count:c.need}:(c.lever==='ulipGrid'?null:{kind:'wfyp',rupees:c.need});
+        var note=(sp&&act)?S.crossWindowNote(S.APR26,inc,sp,act):null;
         return planCard(actLabel, '+'+inr(c.deltaFinal), effChip(c.effort), note);
       }).join('') || '<div class="card">You\'re already in the top band.</div>';
     }

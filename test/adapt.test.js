@@ -6,6 +6,8 @@ import { readdirSync, readFileSync, existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import { applyContract } from '../api/_lib/adapt.js';
+import { evaluateDSE } from '../engine/incentiveEngine.js';
+import { APR26 } from '../engine/designs/apr26.js';
 
 function stubView() {
   return {
@@ -32,7 +34,10 @@ const AAA634 = {
   },
   sp: {
     overall_was: 0.62712516695, eligible: false, tier: 'on_track', thinnest_gate: 'wfyp',
-    wfyp: { ach_pct: 0.5495002226, gate_met: false }, nop: { ach_pct: 0.86, gate_met: true },
+    // ytd_ach/ytd_target are the rolling-12m absolutes the sim remap reads; kept internally
+    // consistent with ach_pct (ytd_ach / ytd_target === ach_pct).
+    wfyp: { ach_pct: 0.5495002226, gate_met: false, ytd_target: 10000000, ytd_ach: 5495002.226 },
+    nop: { ach_pct: 0.86, gate_met: true, ytd_target: 100, ytd_ach: 86 },
     gates: { wfyp_75: false, nop_50: true, was_100: false, persistency_87: true },
     persistency_overall: 0.95415,
   },
@@ -44,6 +49,30 @@ test('parity: displayed incentive == contract final (AAA634 = ₹5,356.34)', () 
   assert.equal(v.earnings.headline.finalAmount, 5356.336356);
   assert.equal(v.earnings.achievement.achievementPct, 1.8543434333);
   assert.equal(v.dataSource, 'contract-v3');
+});
+
+// Closes the parity-lock blind spot: the raw inputs the CLIENT simulator receives on the
+// contract (production) path come from applyContract's remap — not the hardcoded fixture in
+// sim-parity.test.js. A single wrong field in that remap would silently diverge every simulated
+// path while sim-parity.test.js stayed green. Assert the remapped inputs reproduce the frozen final.
+test('parity: contract-path view.sim.incentive reproduces the frozen final (AAA634 = ₹5,356.34)', () => {
+  const v = stubView();
+  v.sim = { design: 'apr26', incentive: {}, sp: {} }; // present so applyContract remaps it
+  applyContract(v, AAA634);
+  const f = evaluateDSE(APR26, v.sim.incentive).finalAmount;
+  assert.ok(Math.abs(f - AAA634.incentive.final) <= 0.01,
+    `client sim inputs must reproduce the contract final: got ${f}, want ${AAA634.incentive.final}`);
+});
+
+test('parity: contract-path view.sim.sp maps the rolling-12m absolutes from the contract', () => {
+  const v = stubView();
+  v.sim = { design: 'apr26', incentive: {}, sp: {} };
+  applyContract(v, AAA634);
+  assert.equal(v.sim.sp.trailingWfyp, AAA634.sp.wfyp.ytd_ach);
+  assert.equal(v.sim.sp.targetWfyp, AAA634.sp.wfyp.ytd_target);
+  assert.equal(v.sim.sp.trailingNop, AAA634.sp.nop.ytd_ach);
+  assert.equal(v.sim.sp.targetNop, AAA634.sp.nop.ytd_target);
+  assert.equal(v.sim.sp.persistency, AAA634.sp.persistency_overall);
 });
 
 test('parity: SP eligibility/gates from the contract, never annualised (AAA634 = 2/4, not eligible)', () => {
