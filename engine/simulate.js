@@ -2,6 +2,7 @@
 // Forward-scan / bisection only — never algebraic inversion. Incentive (this-month ₹) and
 // SP (rolling-12mo) logic stay in separate functions and are NEVER summed together.
 import { evaluateDSE } from './incentiveEngine.js';
+import { evaluateSalesProgression } from './spEngine.js';
 
 const effortPolicies = (n) => (n <= 1 ? 'easy' : n <= 3 ? 'medium' : 'hard');
 const effortRupees = (x) => (x <= 100000 ? 'medium' : 'hard');
@@ -97,4 +98,35 @@ export function nextBandPaths(design, inputs) {
   }
 
   return cliffs.filter((c) => c.deltaFinal > 0.005).sort((a, b) => b.deltaFinal - a.deltaFinal);
+}
+
+export function promotionGaps(rules, spInp) {
+  const { gates, was } = rules;
+  const state = evaluateSalesProgression(rules, {
+    trailingWfyp: spInp.trailingWfyp, trailingNop: spInp.trailingNop,
+    targetWfyp: spInp.targetWfyp, targetNop: spInp.targetNop, persistency: spInp.persistency,
+  });
+  const gaps = [];
+
+  // WFYP gate → ₹ short of wfypMin × target
+  const wfypNeed = Math.max(0, gates.wfypMin * spInp.targetWfyp - spInp.trailingWfyp);
+  gaps.push({ gate: 'wfyp', met: state.gates.wfyp, unit: 'rupees', need: Math.ceil(wfypNeed),
+    note: `₹${Math.ceil(wfypNeed).toLocaleString('en-IN')} more rolling WFYP to clear 75%` });
+
+  // NOP gate → policies short of nopMin × target
+  const nopNeed = Math.max(0, Math.ceil(gates.nopMin * spInp.targetNop - spInp.trailingNop));
+  gaps.push({ gate: 'nop', met: state.gates.nop, unit: 'policies', need: nopNeed,
+    note: `${nopNeed} more policies to clear 50%` });
+
+  // WAS gate → lift via whichever component is capped-liftable (ratio units)
+  gaps.push({ gate: 'was', met: state.gates.was, unit: 'ratio',
+    need: Math.max(0, gates.wasMin - state.was),
+    note: state.gates.was ? 'WAS above 100%' : 'Lift WFYP/NOP to push WAS above 100%' });
+
+  // Persistency gate → quality behaviour, not additive
+  gaps.push({ gate: 'persistency', met: state.gates.persistency, unit: 'quality',
+    need: Math.max(0, gates.persistencyMin - (spInp.persistency ?? 0)),
+    note: 'Hold renewals at or above 87%' });
+
+  return { eligible: state.eligible, gaps, thinnest: state.nextGate };
 }

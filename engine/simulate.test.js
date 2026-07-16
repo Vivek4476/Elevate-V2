@@ -2,7 +2,8 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { APR26 } from './designs/apr26.js';
 import { evaluateDSE } from './incentiveEngine.js';
-import { reachTargetPaths, nextBandPaths } from './simulate.js';
+import { reachTargetPaths, nextBandPaths, promotionGaps } from './simulate.js';
+import { SP_RULES } from './designs/spRules.js';
 
 // AAA634 base inputs (derived from the pinned golden contract).
 const AAA634 = {
@@ -56,4 +57,30 @@ test('nextBandPaths: AAA634 next NOP tier is 2 (from count 1), delta positive', 
   assert.equal(nop.to, 2);
   assert.equal(nop.need, 1);
   assert.ok(nop.deltaFinal > 0);
+});
+
+// Synthetic rolling inputs with round numbers so gaps are hand-checkable.
+// wfyp: 60% of target (needs 75%) ; nop: 40% (needs 50%) ; persistency below 87%.
+const SP = { trailingWfyp: 600000, targetWfyp: 1000000, trailingNop: 40, targetNop: 100, persistency: 0.80 };
+
+test('promotionGaps: WFYP gap = ₹ to reach 75% of target', () => {
+  const r = promotionGaps(SP_RULES, SP);
+  const g = r.gaps.find((x) => x.gate === 'wfyp');
+  assert.equal(g.met, false);
+  assert.equal(g.unit, 'rupees');
+  assert.equal(g.need, 150000);   // 0.75*1_000_000 - 600_000
+});
+
+test('promotionGaps: NOP gap = policies to reach 50% of target', () => {
+  const r = promotionGaps(SP_RULES, SP);
+  const g = r.gaps.find((x) => x.gate === 'nop');
+  assert.equal(g.unit, 'policies');
+  assert.equal(g.need, 10);       // ceil(0.50*100 - 40)
+});
+
+test('promotionGaps: persistency gate framed as quality, not additive', () => {
+  const r = promotionGaps(SP_RULES, SP);
+  const g = r.gaps.find((x) => x.gate === 'persistency');
+  assert.equal(g.unit, 'quality');
+  assert.equal(g.met, false);
 });
