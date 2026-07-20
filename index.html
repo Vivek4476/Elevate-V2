@@ -583,12 +583,12 @@
   .welcome .wsub b{color:var(--maroon);font-weight:800}
 
   /* ================= live ticker (point 3) ================= */
-  .ticker{position:relative;margin:0 -16px 14px;padding:9px 0;overflow:hidden;
+  .ticker{position:relative;margin:0 -16px 14px;padding:9px 0;overflow:hidden;display:flex;align-items:center;
     background:linear-gradient(90deg,var(--maroon2),var(--maroon));border-top:1px solid rgba(255,255,255,.08);border-bottom:1px solid rgba(0,0,0,.12)}
   .ticker::before,.ticker::after{content:"";position:absolute;top:0;bottom:0;width:34px;z-index:2;pointer-events:none}
   .ticker::before{left:0;background:linear-gradient(90deg,var(--maroon2),transparent)}
   .ticker::after{right:0;background:linear-gradient(270deg,var(--maroon2),transparent)}
-  .ttrack{display:inline-flex;align-items:center;gap:14px;white-space:nowrap;padding-left:16px;will-change:transform;
+  .ttrack{display:inline-flex;align-items:center;gap:14px;white-space:nowrap;padding-left:16px;will-change:transform;flex:0 0 auto;
     animation:tick 40s linear infinite}
   .ticker:hover .ttrack{animation-play-state:paused}
   /* two identical runs; sliding by half the track loops seamlessly with content always on-screen */
